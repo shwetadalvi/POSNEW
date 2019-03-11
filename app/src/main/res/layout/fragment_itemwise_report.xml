@@ -92,7 +92,7 @@
             android:singleLine="true"
             android:text="@string/present"
             android:textColor="#FFFFFF"
-            android:theme="@style/AppTheme.EditText" />
+            android:theme="@style/AppTheme.EditText"  />
     </LinearLayout>
 
     </LinearLayout>

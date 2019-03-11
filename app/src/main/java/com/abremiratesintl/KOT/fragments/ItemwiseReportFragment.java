@@ -169,7 +169,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
 
     private void onClickedFilter(boolean b) {
         if (b) {
-            filter.setVisibility(View.VISIBLE);
+            filter.setVisibility(View.VISIBLE) ;
         } else {
             filter.setVisibility(View.GONE);
         }

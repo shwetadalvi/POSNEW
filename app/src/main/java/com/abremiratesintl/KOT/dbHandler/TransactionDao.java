@@ -11,7 +11,7 @@ import java.util.List;
 
 @Dao
 public interface TransactionDao {
-    @Query("SELECT * FROM Transactions ") LiveData<List<Transaction>> getAllItems();
+    @Query("SELECT * FROM Transactions ") LiveData<List<Transaction>> getAllItems ();
 
     @Query("SELECT * FROM Transactions WHERE transMasterId = :trId") LiveData<List<Transaction>> findByTransactionMasterId(int trId);
 

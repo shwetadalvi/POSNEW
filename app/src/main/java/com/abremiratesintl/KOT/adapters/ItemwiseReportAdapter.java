@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 
 public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAdapter.ViewHolder> {
 
-    List<Transaction> mTransactionList = new ArrayList<>();
+    List<Transaction> mTransactionList = new ArrayList<>() ;
     private ClickListeners.ItemClick<Transaction> mTransactionItemClick;
 
     public ItemwiseReportAdapter(List<Transaction> TransactionList, ClickListeners.ItemClick<Transaction> TransactionItemClick) {

@@ -96,7 +96,7 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
             return;
         }
         VATwiseReportAdapter adapter = new VATwiseReportAdapter(transactionMasterList, this);
-        reportRecyclerview.setAdapter(adapter);
+        reportRecyclerview.setAdapter(adapter) ;
     }
 
     @OnClick(R.id.fromDate) public void onClickedFromDate() {

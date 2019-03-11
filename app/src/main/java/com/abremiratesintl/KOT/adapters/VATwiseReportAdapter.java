@@ -23,7 +23,7 @@ public class VATwiseReportAdapter extends RecyclerView.Adapter<VATwiseReportAdap
     private ClickListeners.ItemClick<TransactionMaster> mTransactionMasterItemClick;
 
     public VATwiseReportAdapter(List<TransactionMaster> transactionMasterList, ClickListeners.ItemClick<TransactionMaster> transactionMasterItemClick) {
-        mTransactionMasterList = transactionMasterList;
+        mTransactionMasterList = transactionMasterList ;
         mTransactionMasterItemClick = transactionMasterItemClick;
     }
 

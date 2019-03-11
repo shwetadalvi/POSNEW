@@ -13,7 +13,7 @@ import java.util.List;
 public interface TransactionMasterDao {
     @Query("SELECT * FROM TransactionMaster") LiveData<List<TransactionMaster>> getAllItems();
 
-    @Query("SELECT * FROM  TransactionMaster WHERE invoiceNo=:invNo") LiveData<TransactionMaster> findByInvNo(String invNo);
+    @Query("SELECT * FROM  TransactionMaster WHERE invoiceNo=:invNo") LiveData<TransactionMaster> findByInvNo(String invNo) ;
 
   //  @Query("SELECT * FROM  TransactionMaster WHERE invoiceNo=:invNo") LiveData<TransactionMaster> findByInvNo(String invNo);
 
