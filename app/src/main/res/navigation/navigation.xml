@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/homeFragment2">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.abremiratesintl.KOT.fragments.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login">
+        <argument
+            android:name="from_fragment"
+            android:defaultValue="1"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment2"
+            app:destination="@id/homeFragment2" />
+        <action
+            android:id="@+id/action_loginFragment_to_userManagementFragment2"
+            app:destination="@id/userManagementFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_superAdminHome"
+            app:destination="@id/superAdminHome" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment2"
+        android:name="com.abremiratesintl.KOT.fragments.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment2_to_addNewItem"
+            app:destination="@id/addNewItem" />
+        <action
+            android:id="@+id/action_homeFragment2_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment2_to_itemFragment"
+            app:destination="@id/itemFragment" />
+        <action
+            android:id="@+id/action_homeFragment2_to_reportsFragmentHome"
+            app:destination="@id/reportsHomeFragment" />
+        <action
+            android:id="@+id/action_homeFragment2_to_reportsFragment2"
+            app:destination="@id/reportsFragment" />
+        <action
+            android:id="@+id/action_homeFragment2_to_loginFragment4"
+            app:destination="@id/loginFragment" />
+        <argument
+            android:name="user"
+            app:argType="string" />
+        <argument
+            android:name="adminStat"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_homeFragment2_to_preferencesFragment"
+            app:destination="@id/preferencesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addNewItem"
+        android:name="com.abremiratesintl.KOT.fragments.AddNewItem"
+        android:label="fragment_add_new_item"
+        tools:layout="@layout/fragment_add_new_item">
+        <action
+            android:id="@+id/action_addNewItem_to_checkoutFragment"
+            app:destination="@id/checkoutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/checkoutFragment"
+        android:name="com.abremiratesintl.KOT.fragments.CheckoutFragment"
+        android:label="fragment_checkout"
+        tools:layout="@layout/fragment_checkout">
+        <argument
+            android:name="cart"
+            app:argType="com.abremiratesintl.KOT.models.CartItems" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.abremiratesintl.KOT.fragments.CategoryFragment"
+        android:label="fragment_category"
+        tools:layout="@layout/fragment_category" />
+    <fragment
+        android:id="@+id/itemFragment"
+        android:name="com.abremiratesintl.KOT.fragments.ItemFragment"
+        android:label="fragment_item"
+        tools:layout="@layout/fragment_item" />
+
+
+
+    <fragment
+        android:id="@+id/reportsHomeFragment"
+        android:name="com.abremiratesintl.KOT.fragments.ReportsHomeFragment"
+        android:label="fragment_home_reports"
+        tools:layout="@layout/fragment_reports_home" >
+        <action
+            android:id="@+id/action_reportsHomeFragment_to_reportsFragment"
+            app:destination="@id/reportsFragment" />
+        <action
+            android:id="@+id/action_reportsHomeFragment_to_reportDailyFragment"
+            app:destination="@id/reportDailyFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/reportsFragment"
+        android:name="com.abremiratesintl.KOT.fragments.ReportsFragment"
+        android:label="fragment_reports"
+        tools:layout="@layout/fragment_reports" />
+    <fragment
+        android:id="@+id/userManagementFragment"
+        android:name="com.abremiratesintl.KOT.fragments.UserManagementFragment"
+        android:label="fragment_user_management"
+        tools:layout="@layout/fragment_user_management" />
+    <fragment
+        android:id="@+id/preferencesFragment"
+        android:name="com.abremiratesintl.KOT.fragments.PreferencesFragment"
+        android:label="PreferencesFragment" />
+    <fragment
+        android:id="@+id/superAdminHome"
+        android:name="com.abremiratesintl.KOT.fragments.super_user.SuperAdminHome"
+        android:label="fragment_super_admin_home"
+        tools:layout="@layout/fragment_super_admin_home" />
+
+
+    <fragment
+        android:id="@+id/reportDailyFragment"
+        android:name="com.abremiratesintl.KOT.fragments.ReportsDailyFragment"
+        android:label="fragment_daily_report"
+        tools:layout="@layout/fragment_reports_daily" />
+</navigation>

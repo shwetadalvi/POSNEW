@@ -1,0 +1,110 @@
+<resources>
+    <string name="app_name">ABR POS</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="category">Category Management</string>
+    <string name="ok">OK</string>
+    <string name="item">Item Management</string>
+    <string name="users">User Management</string>
+    <string name="pos">POS</string>
+    <string name="reports">Reports</string>
+    <string name="proceed">Proceed</string>
+    <string name="checkout_item">Item</string>
+    <string name="checkout_qty">Qty</string>
+    <string name="checkout_price">Price</string>
+    <string name="vat">VAT :</string>
+    <string name="discount">Discount :</string>
+    <string name="cash">Cash:</string>
+    <string name="card">Card:</string>
+    <string name="total">Total :</string>
+    <string name="save">Save</string>
+    <string name="hint_add_category">Enter category name</string>
+    <string name="category_name_exist">Category name already exists</string>
+    <string name="edit">Edit</string>
+    <string name="category_update_failed">Category updation failed</string>
+    <string name="hint_item_name">Enter item name</string>
+    <string name="hint_item_price">Enter item price (per item)</string>
+    <string name="hint_item_barcode">Scan barcode here</string>
+    <string name="hint_item_cost">Enter item cost</string>
+    <string name="hint_vat_perc">VAT</string>
+    <string name="hint_item_category">Enter Category</string>
+    <string name="name">Name</string>
+    <string name="hint_category">Category</string>
+    <string name="hint_price">Price</string>
+    <string name="deleted">Deleted</string>
+    <string name="cart_vat">VAT</string>
+    <string name="cart_total_price">Total :</string>
+    <string name="cart_total_item_count">Items :</string>
+    <string name="discount_footer_et">Enter discount (if any)</string>
+    <string name="sales_report">Sales Report</string>
+    <string name="present">Present</string>
+    <string name="invoive_no">Invoice No.</string>
+    <string name="invoice_date">Invoice Date</string>
+    <string name="from_date_empty">Select \'from\' Date</string>
+    <string name="total_item_count">Total No. Items</string>
+    <string name="empty_reports">Cannot find any reports</string>
+    <string name="item_divider">Registed Items</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="invalid_login">Entered pin is wrong</string>
+    <string name="storage_permission_alert_title">Storage Permission</string>
+    <string name="storage_permission_alert_message">This permission is required for the fluent working of the app. If you checked to "don't ask again" please go to settings and revoke the permission"</string>
+    <string name="change_picture">Change Picture</string>
+    <string name="choose_printer">Choose printer</string>
+    <string name="printer_selection_pref">Choose printer type</string>
+    <string name="slNo">Sl.No</string>
+    <string name="printer_selection_desc">Choose printer type from the dropdown below</string>
+    <string name="select_bluetooth_device">Select Device</string>
+    <string name="delete_conform">Are you sure to delete these items?</string>
+    <string name="alert">Alert</string>
+    <string name="current_item">Current Item</string>
+    <string name="admin_login">Admin Login</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="company_details">Company Details</string>
+    <string name="new_user">New User</string>
+    <string name="company_name">Company name</string>
+    <string name="telephone">Telephone</string>
+    <string name="address">Address</string>
+    <string name="trn">TRN</string>
+    <string name="company_prefix">Company prefix</string>
+    <string name="every_fields_are_mandatory">Every fields are mandatory</string>
+    <string name="enter_the_admin_name">Enter the admin name</string>
+    <string name="is_open">Open item ?</string>
+    <string name="emptyCategory">Category not found, Or empty</string>
+    <string name="fields_cannot_be_empty">Fields can not be empty</string>
+    <string name="payment">Payment</string>
+    <string name="amount">Amount</string>
+    <string name="total_item">Total Item</string>
+
+    <string name="dayreport">Day Report</string>
+    <string name="itemwise_report">Itemwise Report</string>
+    <string name="vat_report">VAT Report</string>
+
+
+
+    <string name="selectpayment">Select Payment</string>
+
+    <string-array name="printers">S
+        <item>POS Bluetooth</item>
+        <item>POS Built-In</item>
+    </string-array>
+
+    <string-array name="printers_values">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="payment">
+        <item>Cash</item>
+        <item>Card</item>
+        <item>Cash+Card</item>
+    </string-array>
+
+    <string-array name="payment_values">
+        <item>CASH</item>
+        <item>CARD</item>
+        <item>CASH+CARD</item>
+    </string-array>
+</resources>

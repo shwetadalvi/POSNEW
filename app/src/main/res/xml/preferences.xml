@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:iconSpaceReserved="false"
+        android:title="@string/choose_printer">
+        <DropDownPreference
+            android:entries="@array/printers"
+            android:entryValues="@array/printers_values"
+            android:key="dropdown_preference"
+            android:summary="@string/printer_selection_desc"
+            android:title="@string/printer_selection_pref" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

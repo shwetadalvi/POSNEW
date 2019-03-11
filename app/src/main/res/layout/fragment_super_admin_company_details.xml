@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.super_user.SuperAdminCompanyDetails">
+
+    <EditText
+        android:id="@+id/company_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:ems="10"
+        android:hint="@string/company_name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/company_tel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <EditText
+        android:id="@+id/company_tel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/telephone"
+        android:inputType="number"
+        android:singleLine="true"
+        app:layout_constraintBottom_toTopOf="@+id/company_address"
+        app:layout_constraintEnd_toEndOf="@+id/company_name"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/company_name"
+        app:layout_constraintTop_toBottomOf="@+id/company_name" />
+
+    <EditText
+        android:id="@+id/company_address"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/address"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:singleLine="false"
+        app:layout_constraintBottom_toTopOf="@+id/company_trn"
+        app:layout_constraintEnd_toEndOf="@+id/company_tel"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/company_tel"
+        app:layout_constraintTop_toBottomOf="@+id/company_tel" />
+
+    <EditText
+        android:id="@+id/company_trn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/trn"
+        android:inputType="textPersonName"
+        android:singleLine="true"
+        app:layout_constraintBottom_toTopOf="@+id/company_prefix"
+        app:layout_constraintEnd_toEndOf="@+id/company_address"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/company_address"
+        app:layout_constraintTop_toBottomOf="@+id/company_address" />
+
+    <EditText
+        android:id="@+id/company_prefix"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/company_prefix"
+        app:layout_constraintBottom_toTopOf="@+id/admin_company_save"
+        app:layout_constraintEnd_toEndOf="@+id/company_trn"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/company_trn"
+        app:layout_constraintTop_toBottomOf="@+id/company_trn" />
+
+    <Button
+        android:id="@+id/admin_company_save"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/company_prefix"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/company_prefix"
+        app:layout_constraintTop_toBottomOf="@+id/company_prefix" />
+
+</android.support.constraint.ConstraintLayout>
