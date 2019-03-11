@@ -116,6 +116,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="itemwiseReportFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-81" />
+                            <option name="y" value="517" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="loginFragment">
                     <value>
                       <LayoutPositions>
@@ -194,6 +206,11 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_reportsHomeFragment_to_itemwiseReportFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_reportsHomeFragment_to_reportDailyFragment">
                               <value>
                                 <LayoutPositions />

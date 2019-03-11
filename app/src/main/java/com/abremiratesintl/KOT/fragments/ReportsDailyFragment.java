@@ -81,7 +81,8 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
     RecyclerView reportRecyclerview;
     @BindView(R.id.filter)
     LinearLayout filter;
-
+    @BindView(R.id.layout)
+    LinearLayout layout;
     @BindView(R.id.toDate)
     EditText toDate;
     @BindView(R.id.emptyReportView)
@@ -122,6 +123,7 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
         if(transactionMasterList.size()==0){
             emptyView.setVisibility(View.VISIBLE);
             reportRecyclerview.setVisibility(View.GONE);
+            layout.setVisibility(View.GONE);
             return;
         }
         ReportDailyAdapter adapter = new ReportDailyAdapter(transactionMasterList, this);

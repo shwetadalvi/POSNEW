@@ -45,7 +45,7 @@
     <string name="invoice_date">Invoice Date</string>
     <string name="from_date_empty">Select \'from\' Date</string>
     <string name="total_item_count">Total No. Items</string>
-    <string name="empty_reports">Cannot find any reports</string>
+    <string name="empty_reports">Can not find any reports</string>
     <string name="item_divider">Registed Items</string>
     <string name="choose_date">Choose Date</string>
     <string name="invalid_login">Entered pin is wrong</string>
@@ -77,11 +77,10 @@
     <string name="payment">Payment</string>
     <string name="amount">Amount</string>
     <string name="total_item">Total Item</string>
-
+    <string name="date">Date</string>
     <string name="dayreport">Day Report</string>
     <string name="itemwise_report">Itemwise Report</string>
     <string name="vat_report">VAT Report</string>
-
 
 
     <string name="selectpayment">Select Payment</string>

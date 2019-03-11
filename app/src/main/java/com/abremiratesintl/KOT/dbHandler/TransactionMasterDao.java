@@ -15,6 +15,8 @@ public interface TransactionMasterDao {
 
     @Query("SELECT * FROM  TransactionMaster WHERE invoiceNo=:invNo") LiveData<TransactionMaster> findByInvNo(String invNo);
 
+  //  @Query("SELECT * FROM  TransactionMaster WHERE invoiceNo=:invNo") LiveData<TransactionMaster> findByInvNo(String invNo);
+
     //
     @Query("SELECT MAX(transMasterId) FROM TRANSACTIONMASTER") int findTransMasterOfMaxId();
 

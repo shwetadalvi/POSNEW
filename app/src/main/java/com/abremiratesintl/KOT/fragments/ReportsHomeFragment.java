@@ -55,5 +55,9 @@ public class ReportsHomeFragment extends BaseFragment  {
 
         Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_reportsFragment);
     }
+    @OnClick(R.id.itemReport) public void OnClickedItemwiseReport(View view) {
+
+        Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_itemwiseReportFragment);
+    }
 
 }

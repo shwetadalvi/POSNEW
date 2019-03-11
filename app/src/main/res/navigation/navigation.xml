@@ -92,13 +92,16 @@
         android:id="@+id/reportsHomeFragment"
         android:name="com.abremiratesintl.KOT.fragments.ReportsHomeFragment"
         android:label="fragment_home_reports"
-        tools:layout="@layout/fragment_reports_home" >
+        tools:layout="@layout/fragment_reports_home2" >
         <action
             android:id="@+id/action_reportsHomeFragment_to_reportsFragment"
             app:destination="@id/reportsFragment" />
         <action
             android:id="@+id/action_reportsHomeFragment_to_reportDailyFragment"
             app:destination="@id/reportDailyFragment" />
+        <action
+            android:id="@+id/action_reportsHomeFragment_to_itemwiseReportFragment"
+            app:destination="@id/itemwiseReportFragment" />
     </fragment>
 
     <fragment
@@ -127,4 +130,9 @@
         android:name="com.abremiratesintl.KOT.fragments.ReportsDailyFragment"
         android:label="fragment_daily_report"
         tools:layout="@layout/fragment_reports_daily" />
+    <fragment
+        android:id="@+id/itemwiseReportFragment"
+        android:name="com.abremiratesintl.KOT.fragments.ItemwiseReportFragment"
+        android:label="fragment_itemwise_report"
+        tools:layout="@layout/fragment_itemwise_report" />
 </navigation>

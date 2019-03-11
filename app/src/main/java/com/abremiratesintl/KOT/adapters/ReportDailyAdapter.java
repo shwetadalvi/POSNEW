@@ -44,6 +44,8 @@ public class ReportDailyAdapter extends RecyclerView.Adapter<ReportDailyAdapter.
         TextView slNo;
         @BindView(R.id.invNo)
         TextView invoiceNo;
+        @BindView(R.id.totalItem)
+        TextView totalItem;
         @BindView(R.id.payment)
         TextView payment;
         @BindView(R.id.total)
@@ -59,6 +61,7 @@ public class ReportDailyAdapter extends RecyclerView.Adapter<ReportDailyAdapter.
             slNo.setText(String.valueOf(getAdapterPosition() + 1));
             invoiceNo.setText(transactionMaster.getInvoiceNo());
             payment.setText(transactionMaster.getType());
+            totalItem.setText(transactionMaster.getTotalQty());
             total.setText(String.valueOf(transactionMaster.getGrandTotal()));
             itemView.setOnClickListener(view -> mTransactionMasterItemClick.onClickedItem(transactionMaster));
         }
