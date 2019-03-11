@@ -26,13 +26,12 @@ import android.widget.Spinner;
 import com.abremiratesintl.KOT.BaseFragment;
 import com.abremiratesintl.KOT.MainActivity;
 import com.abremiratesintl.KOT.R;
-import com.abremiratesintl.KOT.adapters.CategorySpinnerAdapter;
 import com.abremiratesintl.KOT.adapters.ItemSpinnerAdapter;
 import com.abremiratesintl.KOT.adapters.ItemwiseReportAdapter;
 import com.abremiratesintl.KOT.adapters.ReportAdapter;
+import com.abremiratesintl.KOT.adapters.VATwiseReportAdapter;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
-import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.Items;
 import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
@@ -51,17 +50,9 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ItemwiseReportFragment extends BaseFragment implements ClickListeners.ItemClick<Transaction>, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener, CustomSpinner.OnSpinnerEventsListener  {
+public class VATwiseReportFragment extends BaseFragment implements ClickListeners.ItemClick<TransactionMaster>, DatePickerDialog.OnDateSetListener {
 
-    @BindView(R.id.spinItem)
-    CustomSpinner spinItem;
-    @BindView(R.id.spinner_arrow)
-    ImageView mSpinnerArrow;
-    @BindDrawable(R.drawable.ic_arrow_down)
-    Drawable icDown;
-    @BindDrawable(R.drawable.ic_arrow_up)
-    Drawable icUp;
-    @BindView(R.id.reportRecyclerViewReport)
+    @BindView(R.id.reportRecyclerView)
     RecyclerView reportRecyclerview;
     @BindView(R.id.filter)
     LinearLayout filter;
@@ -74,9 +65,8 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     private Unbinder mUnbinder;
     private AppDatabase mDatabase;
     View mSelectedDateView;
-    private List<Items> mItemsList;
-    private Items mSelectedItem;
-    public ItemwiseReportFragment() {
+
+    public VATwiseReportFragment() {
         // Required empty public constructor
     }
 
@@ -84,48 +74,28 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_itemwise_report, container, false);
+        View view = inflater.inflate(R.layout.fragment_reports, container, false);
         mDatabase = AppDatabase.getInstance(getContext());
         mUnbinder = ButterKnife.bind(this, view);
-        ((MainActivity)getActivity()).changeTitle(" Itemwise REPORTS");
-
-        spinItem.setOnItemSelectedListener(this);
-        spinItem.setSpinnerEventsListener(this);
-        getItems();
+        ((MainActivity)getActivity()).changeTitle(" VATWISE REPORTS");
 
         setHasOptionsMenu(true);
         fetchTransactions();
         return view;
     }
-    private void getItems() {
-        LiveData<List<Items>> itemLiveList = mDatabase.mItemsDao().getAllItems();
-        itemLiveList.observe(this, items -> {
-            if (items == null || items.size() == 0) {
-                return;
-            }
-            mItemsList = items;
-            mSelectedItem = items.get(0);
 
-            setUpSpinner();
-        });
-    }
-
-    private void setUpSpinner() {
-        ItemSpinnerAdapter<Items> itemSpinnerAdapter = new ItemSpinnerAdapter<>(getContext(), R.id.categoryListItem, mItemsList);
-        spinItem.setAdapter(itemSpinnerAdapter);
-    }
     private void fetchTransactions() {
-        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getItemsByItemId(mSelectedItem.getItemId());
+        LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionMasterDao().getAllItems();
         listLiveData.observe(this, this::setUpRecycler);
     }
 
-    private void setUpRecycler(List<Transaction> transactionList){
-        if(transactionList.size()==0){
+    private void setUpRecycler(List<TransactionMaster> transactionMasterList){
+        if(transactionMasterList.size()==0){
             emptyView.setVisibility(View.VISIBLE);
             reportRecyclerview.setVisibility(View.GONE);
             return;
         }
-        ItemwiseReportAdapter adapter = new ItemwiseReportAdapter(transactionList, this);
+        VATwiseReportAdapter adapter = new VATwiseReportAdapter(transactionMasterList, this);
         reportRecyclerview.setAdapter(adapter);
     }
 
@@ -141,14 +111,14 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.day_menu, menu);
+        inflater.inflate(R.menu.menu_filter, menu);
     }
 
     int menuClickCount = 0;
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.filter:
+            case R.id.menu_filter:
                 menuClickCount++;
                 if (menuClickCount % 2 == 0) {
                     onClickedFilter(false);
@@ -158,9 +128,9 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
 
                 }
                 break;
-            case R.id.menu_print:
-//                LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionDao().getAllItems();
-//                listLiveData.observe(this, this::setUpRecycler);
+            case R.id.menu_all:
+                LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionMasterDao().getAllItems();
+                listLiveData.observe(this, this::setUpRecycler);
                 break;
         }
 
@@ -184,7 +154,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         mUnbinder.unbind();
     }
 
-    @Override public void onClickedItem(Transaction item) {
+    @Override public void onClickedItem(TransactionMaster item) {
 
     }
 
@@ -215,7 +185,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
             showSnackBar(getView(),getStringfromResource(R.string.present),1000);
             return;
         }
-        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByBetween(fromDate, toDate,mSelectedItem.getItemId());
+        LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionMasterDao().findItemsByBetween(fromDate, toDate);
         listLiveData.observe(this, this::setUpRecycler);
     }
 
@@ -228,24 +198,5 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     @Override public void onPause() {
         super.onPause();
 
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        mSelectedItem = mItemsList.get(position);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-    @Override
-    public void onSpinnerOpened(Spinner spinner) {
-        mSpinnerArrow.setImageDrawable(icUp);
-    }
-
-    @Override
-    public void onSpinnerClosed(Spinner spinner) {
-        mSpinnerArrow.setImageDrawable(icDown);
     }
 }

@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
-import com.abremiratesintl.KOT.models.TransactionMaster;
+import com.abremiratesintl.KOT.models.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +19,12 @@ import butterknife.ButterKnife;
 
 public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAdapter.ViewHolder> {
 
-    List<TransactionMaster> mTransactionMasterList = new ArrayList<>();
-    private ClickListeners.ItemClick<TransactionMaster> mTransactionMasterItemClick;
+    List<Transaction> mTransactionList = new ArrayList<>();
+    private ClickListeners.ItemClick<Transaction> mTransactionItemClick;
 
-    public ItemwiseReportAdapter(List<TransactionMaster> transactionMasterList, ClickListeners.ItemClick<TransactionMaster> transactionMasterItemClick) {
-        mTransactionMasterList = transactionMasterList;
-        mTransactionMasterItemClick = transactionMasterItemClick;
+    public ItemwiseReportAdapter(List<Transaction> TransactionList, ClickListeners.ItemClick<Transaction> TransactionItemClick) {
+        mTransactionList = TransactionList;
+        mTransactionItemClick = TransactionItemClick;
     }
 
     @NonNull @Override public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -32,11 +32,11 @@ public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAd
     }
 
     @Override public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.bind(mTransactionMasterList.get(i));
+        viewHolder.bind(mTransactionList.get(i));
     }
 
     @Override public int getItemCount() {
-        return mTransactionMasterList.size();
+        return mTransactionList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -52,20 +52,22 @@ public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAd
         TextView amount;
         @BindView(R.id.textTotal)
         TextView textTotal;
+        @BindView(R.id.itemlayout)
+        TextView itemlayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
         }
 
-        void bind(TransactionMaster transactionMaster) {
+        void bind(Transaction Transaction) {
             slNo.setText(getAdapterPosition() + 1);
-            item.setText(transactionMaster.getInvoiceNo());
-            qty.setText(transactionMaster.getTotalQty());
-            date.setText(String.valueOf(transactionMaster.getInvoiceDate()));
-            amount.setText(String.valueOf(transactionMaster.getGrandTotal()));
-            textTotal.setText(String.valueOf(transactionMaster.getItemTotalAmount()));
-            //itemView.setOnClickListener(view -> mTransactionMasterItemClick.onClickedItem(transactionMaster));
+            item.setText(Transaction.getTransactionId());
+            qty.setText(Transaction.getQty());
+            date.setText(String.valueOf(Transaction.getCreatedDate()));
+            amount.setText(String.valueOf(Transaction.getPrice()));
+            textTotal.setText(String.valueOf(Transaction.getGrandTotal()));
+            itemlayout.setOnClickListener(view -> mTransactionItemClick.onClickedItem(Transaction));
         }
     }
 }
