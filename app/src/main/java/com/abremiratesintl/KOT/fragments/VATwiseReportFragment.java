@@ -74,7 +74,7 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_reports, container, false);
+        View view = inflater.inflate(R.layout.fragment_vatwise_report, container, false);
         mDatabase = AppDatabase.getInstance(getContext());
         mUnbinder = ButterKnife.bind(this, view);
         ((MainActivity)getActivity()).changeTitle(" VATWISE REPORTS");

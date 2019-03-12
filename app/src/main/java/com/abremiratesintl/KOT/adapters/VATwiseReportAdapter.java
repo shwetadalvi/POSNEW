@@ -28,7 +28,7 @@ public class VATwiseReportAdapter extends RecyclerView.Adapter<VATwiseReportAdap
     }
 
     @NonNull @Override public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new ViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.report_item,viewGroup,false));
+        return new ViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.vatwise_report_data,viewGroup,false));
     }
 
     @Override public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
@@ -40,16 +40,18 @@ public class VATwiseReportAdapter extends RecyclerView.Adapter<VATwiseReportAdap
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.invoiceNo)
-        TextView invoiceNo;
-        @BindView(R.id.invoiceDate)
-        TextView invoiceDate;
-        @BindView(R.id.report_vat)
-        TextView invoiceVat;
-        @BindView(R.id.total)
-        TextView total;
-        @BindView(R.id.total_no_items)
-        TextView totalNoItems;
+        @BindView(R.id.slNo)
+        TextView slNo;
+        @BindView(R.id.inv_no)
+        TextView inv_no;
+        @BindView(R.id.date)
+        TextView date;
+        @BindView(R.id.vatable_amt)
+        TextView vatable_amt;
+        @BindView(R.id.vat_amt)
+        TextView vat_amt;
+        @BindView(R.id.net_amt)
+        TextView net_amt;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,12 +59,13 @@ public class VATwiseReportAdapter extends RecyclerView.Adapter<VATwiseReportAdap
         }
 
         void bind(TransactionMaster transactionMaster) {
-            invoiceNo.setText(transactionMaster.getInvoiceNo());
-            invoiceDate.setText(transactionMaster.getInvoiceDate());
-            invoiceVat.setText(String.valueOf(transactionMaster.getVatAmount()));
-            total.setText(String.valueOf(transactionMaster.getGrandTotal()));
-            totalNoItems.setText(String.valueOf(transactionMaster.getTotalQty()));
-            itemView.setOnClickListener(view -> mTransactionMasterItemClick.onClickedItem(transactionMaster));
+            slNo.setText("1");
+            inv_no.setText(transactionMaster.getInvoiceNo());
+            date.setText(transactionMaster.getInvoiceDate());
+            vatable_amt.setText(String.valueOf(transactionMaster.getItemTotalAmount()));
+            vat_amt.setText(String.valueOf(transactionMaster.getVatAmount()));
+            net_amt.setText(String.valueOf(transactionMaster.getGrandTotal()));
+            //itemView.setOnClickListener(view -> mTransactionMasterItemClick.onClickedItem(transactionMaster));
         }
     }
 }
