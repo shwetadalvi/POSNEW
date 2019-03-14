@@ -79,10 +79,10 @@
     <string name="total_item">Total Item</string>
     <string name="date">Date</string>
     <string name="dayreport">Day Report</string>
-    <string name="itemwise_report">Itemwise Report</string>
+    <string name="itemwise_report">Item Report</string>
     <string name="vat_report">VAT Report</string>
 
-
+    <string name="category_report">Category Report</string>
     <string name="selectpayment">Select Payment</string>
 
     <string-array name="printers">S

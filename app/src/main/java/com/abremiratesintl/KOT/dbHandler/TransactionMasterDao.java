@@ -29,4 +29,6 @@ public interface TransactionMasterDao {
 //    @Query("UPDATE TransactionMaster SET itemName = :itemName WHERE itemId = :itemId") void editItemsNameById(String itemName, int itemId);
 //
 //    @Query("UPDATE TransactionMaster SET isDeleted = :isDelete WHERE itemId = :itemId") void editItemsDeleteById(boolean isDelete, int itemId);
+
+
 }

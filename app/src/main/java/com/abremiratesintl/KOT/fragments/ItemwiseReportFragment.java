@@ -88,7 +88,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         View view = inflater.inflate(R.layout.fragment_itemwise_report, container, false);
         mDatabase = AppDatabase.getInstance(getContext());
         mUnbinder = ButterKnife.bind(this, view);
-        ((MainActivity)getActivity()).changeTitle(" Itemwise REPORTS");
+        ((MainActivity)getActivity()).changeTitle(" Item REPORTS");
 
         spinItem.setOnItemSelectedListener(this);
         spinItem.setSpinnerEventsListener(this);

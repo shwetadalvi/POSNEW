@@ -21,8 +21,9 @@ public interface TransactionDao {
 
     @Insert() void insertNewItems(Transaction category);
     @Query("SELECT * FROM Transactions  WHERE itemId=:itemId") LiveData<List<Transaction>> getItemsByItemId(int itemId);
-    @Query("SELECT * FROM Transactions WHERE itemId=:itemId & createdDate BETWEEN date(:from) AND date(:to)") LiveData<List<Transaction>> findItemsByBetween(String from, String to,int itemId);
+    @Query("SELECT * FROM Transactions WHERE itemId=:itemId AND createdDate BETWEEN date(:from) AND date(:to)") LiveData<List<Transaction>> findItemsByBetween(String from, String to,int itemId);
 //    @Query("UPDATE Transactions SET itemName = :itemName WHERE itemId = :itemId") void editItemsNameById(String itemName, int itemId);
 //
 //    @Query("UPDATE Transactions SET isDeleted = :isDelete WHERE itemId = :itemId") void editItemsDeleteById(boolean isDelete, int itemId);
+@Query("SELECT * FROM Transactions WHERE category=:category AND createdDate BETWEEN date(:from) AND date(:to)") LiveData<List<Transaction>> findItemsByBetween(String from, String to,String category );
 }

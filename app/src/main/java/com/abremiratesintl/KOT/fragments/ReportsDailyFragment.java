@@ -459,8 +459,8 @@ Log.e("Inside :","date :"+toDate);
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                             .setText(order.getInvoiceNo() + createSpace(COMPANY_ORDER_NO, String.valueOf(order.getInvoiceNo()).length(), false) +
                                     order.getTotalQty() + createSpace(COMPANY_TOTAL_ITEM, String.valueOf(order.getTotalQty()).length(), false) +
-                                    price + createSpace(COMPANY_ITEM_PAYMENT, String.format("%.2f", order.getType()).length(), false) )
-                                  //  totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                    order.getType() + createSpace(COMPANY_ITEM_PAYMENT, String.format("%.2f", order.getType()).length(), false) +
+                            order.getGrandTotal() + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getGrandTotal()).length(), false))
                             .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());
@@ -511,9 +511,9 @@ Log.e("Inside :","date :"+toDate);
                         .setNewLinesAfter(2)
                         .build());*/
                 Printooth.INSTANCE.printer().print(printables);
-                if (getFragmentManager() != null) {
+               /* if (getFragmentManager() != null) {
                     getFragmentManager().popBackStack();
-                }
+                }*/
             }).start();
         }
     }

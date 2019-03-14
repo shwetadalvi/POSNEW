@@ -53,6 +53,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="categoryReport2">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="133" />
+                            <option name="y" value="1472" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="checkoutFragment">
                     <value>
                       <LayoutPositions>
@@ -228,6 +240,11 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_reportsHomeFragment_to_VATwiseReportFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_reportsHomeFragment_to_categoryReport2">
                               <value>
                                 <LayoutPositions />
                               </value>
