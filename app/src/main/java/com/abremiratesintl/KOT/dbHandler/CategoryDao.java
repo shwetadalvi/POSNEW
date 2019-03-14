@@ -22,4 +22,7 @@ public interface CategoryDao {
     @Query("UPDATE Category SET categoryName = :categoryName WHERE categoryId = :categoryId") void editCategoryNameById(String categoryName, int categoryId);
 
     @Query("UPDATE Category SET isDeleted = :isDelete WHERE categoryId = :categoryId") void editCategoryDeleteById(boolean isDelete, int categoryId);
+
+    @Query("SELECT  categoryName FROM Category WHERE categoryId=:categoryId") String getCategoryById(int categoryId);
+
 }

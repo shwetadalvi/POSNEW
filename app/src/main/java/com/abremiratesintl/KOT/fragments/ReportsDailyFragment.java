@@ -1,10 +1,12 @@
 package com.abremiratesintl.KOT.fragments;
 
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.LiveData;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.abremiratesintl.KOT.BaseFragment;
 import com.abremiratesintl.KOT.Dialog;
@@ -35,6 +38,7 @@ import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
 import com.abremiratesintl.KOT.models.BtDevice;
 import com.abremiratesintl.KOT.models.Items;
+import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
 import com.abremiratesintl.KOT.utils.PrefUtils;
@@ -61,6 +65,7 @@ import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_DESCRIPTION;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_DISCOUNT;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_GROSS_AMOUNT;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_NET_AMOUNT;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_PAYMENT;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_PRICE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_QUANTITY;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_TOTAL;
@@ -69,6 +74,7 @@ import static com.abremiratesintl.KOT.utils.Constants.COMPANY_NAME;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ORDER_NO;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TAX;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TELE;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TOTAL_ITEM;
 import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
 import static com.abremiratesintl.KOT.utils.Constants.REQUEST_CODE_ENABLE_BLUETOOTH;
 
@@ -87,6 +93,17 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
     EditText toDate;
     @BindView(R.id.emptyReportView)
     ConstraintLayout emptyView;
+    @BindView(R.id.textCash)
+    TextView textCash;
+    @BindView(R.id.textCard)
+    TextView textCard;
+    @BindView(R.id.textVATAmount)
+    TextView textVATAmount;
+    @BindView(R.id.textTotalAmount)
+    TextView textTotalAmount;
+    @BindView(R.id.footer)
+    LinearLayout footer;
+
     private Unbinder mUnbinder;
     private AppDatabase mDatabase;
     View mSelectedDateView;
@@ -94,7 +111,7 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
     private List<Items> mItemsList;
     private BluetoothAdapter bluetoothAdapter;
     private int ret;
-
+private List<TransactionMaster> mTransactionMasterList;
     public ReportsDailyFragment() {
         // Required empty public constructor
     }
@@ -120,14 +137,48 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
     }
 
     private void setUpRecycler(List<TransactionMaster> transactionMasterList){
+        mTransactionMasterList = transactionMasterList;
         if(transactionMasterList.size()==0){
-            emptyView.setVisibility(View.VISIBLE);
+           emptyView.setVisibility(View.VISIBLE);
             reportRecyclerview.setVisibility(View.GONE);
             layout.setVisibility(View.GONE);
+
+            footer.setVisibility(View.GONE);
+
             return;
         }
+        emptyView.setVisibility(View.GONE);
+        footer.setVisibility(View.VISIBLE);
+        layout.setVisibility(View.VISIBLE);
+        reportRecyclerview.setVisibility(View.VISIBLE);
+        // layout.setVisibility(View.GONE);
+
+        textCash.setVisibility(View.VISIBLE);
+        textCard.setVisibility(View.VISIBLE);
+        textVATAmount.setVisibility(View.VISIBLE);
+        textTotalAmount.setVisibility(View.VISIBLE);
         ReportDailyAdapter adapter = new ReportDailyAdapter(transactionMasterList, this);
         reportRecyclerview.setAdapter(adapter);
+
+        setFooterValues(transactionMasterList);
+    }
+
+    private void setFooterValues(List<TransactionMaster> transactionMasterList) {
+        float cash = 0;
+        float card = 0;
+        float vat_amount = 0;
+        float total = 0;
+        for (TransactionMaster items : transactionMasterList) {
+          cash = cash + items.getCash();
+          card = card + items.getCard();
+          vat_amount = vat_amount + items.getVatAmount();
+          total = total + items.getGrandTotal();
+        }
+        textCash.setText("Cash : "+String.valueOf(Constants.round(cash, 2)));
+        textCard.setText("Card : "+String.valueOf(Constants.round(card,2)));
+        textVATAmount.setText("VAT Amount : "+String.valueOf(Constants.round(vat_amount,2)));
+        textTotalAmount.setText("Total Amount : "+String.valueOf(Constants.round(total,2)));
+
     }
 
 
@@ -199,6 +250,23 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothChecking()) {
             printViaBluetoothPrinter();
+        }else{
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+            builder1.setMessage("No Printer is attached");
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+
+                        }
+                    });
+
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
         }
     }
 
@@ -213,16 +281,6 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
 
             filter.setVisibility(View.GONE);
 
-        }
-    }
-    private void onClickedFilter1() {
-
-        if(filter.getVisibility() == View.VISIBLE)
-            filter.setVisibility(View.GONE);
-         else {
-
-            filter.setVisibility(View.VISIBLE);
-            Log.e("Daily Report","Inside3");
         }
     }
 
@@ -260,7 +318,8 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
         if (toDate.equals(getStringfromResource(R.string.present))) {
             toDate = Constants.getCurrentDate();
         }
-
+Log.e("Inside :","date :"+toDate);
+        Log.e("Inside :","date :"+Constants.getCurrentDate());
         LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionMasterDao().findItemsByDate(toDate);
         listLiveData.observe(this, this::setUpRecycler);
     }
@@ -377,10 +436,10 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                       /* .setText(COMPANY_ITEM_DESCRIPTION + createSpace(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
-                                COMPANY_ITEM_QUANTITY + createSpace(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
-                                COMPANY_ITEM_PRICE + createSpace(COMPANY_ITEM_PRICE, COMPANY_ITEM_PRICE.length(), false) +
-                                COMPANY_ITEM_AMOUNT + createSpace(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))*/
+                        .setText(COMPANY_ORDER_NO + createSpace(COMPANY_ORDER_NO, COMPANY_ORDER_NO.length(), false) +
+                                COMPANY_TOTAL_ITEM + createSpace(COMPANY_TOTAL_ITEM, COMPANY_TOTAL_ITEM.length(), false) +
+                                COMPANY_ITEM_PAYMENT + createSpace(COMPANY_ITEM_PAYMENT, COMPANY_ITEM_PAYMENT.length(), false) +
+                                COMPANY_ITEM_AMOUNT + createSpace(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -391,17 +450,17 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
                         .setNewLinesAfter(2)
                         .build());
                //
-                for (Items order :mItemsList ) {
-                    String price = decimalAdjust(order.getPrice());
-                    String totalprice = decimalAdjust(order.getTotalItemPrice());
-                    if (price == null) price = String.valueOf(order.getPrice());
-                    if (totalprice == null) totalprice = String.valueOf(order.getTotalItemPrice());
+                for (TransactionMaster order : mTransactionMasterList) {
+                    String price = decimalAdjust(order.getGrandTotal());
+                    String totalprice = decimalAdjust(order.getItemTotalAmount());
+                    if (price == null) price = String.valueOf(order.getGrandTotal());
+                    if (totalprice == null) totalprice = String.valueOf(order.getItemTotalAmount());
                     printables.add(new Printable.PrintableBuilder()
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                           /* .setText(order.getItemName() + createSpace(COMPANY_ITEM_DESCRIPTION, order.getItemName().length(), false) +
-                                    order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                    price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
-                                    totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))*/
+                            .setText(order.getInvoiceNo() + createSpace(COMPANY_ORDER_NO, String.valueOf(order.getInvoiceNo()).length(), false) +
+                                    order.getTotalQty() + createSpace(COMPANY_TOTAL_ITEM, String.valueOf(order.getTotalQty()).length(), false) +
+                                    price + createSpace(COMPANY_ITEM_PAYMENT, String.format("%.2f", order.getType()).length(), false) )
+                                  //  totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
                             .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());
@@ -534,12 +593,35 @@ public class ReportsDailyFragment extends BaseFragment implements ClickListeners
     }*/
 
 
+    private String createSpace(String item, int length, boolean isBluetooth) {
+        int total;
+        int num;
+        switch (item) {
+            case COMPANY_ITEM_DESCRIPTION:
+                total = !isBluetooth ? 19 : 48;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+                total = !isBluetooth ? 7 : 7;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_PRICE:
+                total = !isBluetooth ? 7 : 7;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                total = !isBluetooth ? 10 : 7;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
+
     private String createSpace(int firstLength, int secondLegth) {
         int num = 32 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
-
 
     private String decimalAdjust(float value) {
         String stringValue = String.valueOf(value);

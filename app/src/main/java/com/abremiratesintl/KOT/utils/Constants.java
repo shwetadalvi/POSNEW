@@ -27,6 +27,8 @@ public class Constants {
     public static final String COMPANY_ITEM_GROSS_AMOUNT = "Gross Amount";
     public static final String COMPANY_ITEM_VAT = "VAT";
     public static final String COMPANY_ITEM_NET_AMOUNT = "Net Amount";
+    public static final String COMPANY_ITEM_PAYMENT = "Payment";
+    public static final String COMPANY_TOTAL_ITEM = "Total Item";
     public static final String PERMISSION_STORAGE_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final String PERMISSION_STORAGE_READ = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final int REQUEST_CODE_PERMISSION_STORAGE = 0x123;

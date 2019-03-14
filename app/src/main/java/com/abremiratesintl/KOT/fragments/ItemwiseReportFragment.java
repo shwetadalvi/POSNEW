@@ -129,6 +129,8 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
             reportRecyclerview.setVisibility(View.GONE);
             return;
         }
+        emptyView.setVisibility(View.GONE);
+        reportRecyclerview.setVisibility(View.VISIBLE);
         ItemwiseReportAdapter adapter = new ItemwiseReportAdapter(transactionList, this);
         reportRecyclerview.setAdapter(adapter);
     }
@@ -145,7 +147,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.day_menu, menu);
+        inflater.inflate(R.menu.item_report_menu, menu);
     }
 
     int menuClickCount = 0;
@@ -162,10 +164,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
 
                 }
                 break;
-            case R.id.menu_print:
-//                LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionDao().getAllItems();
-//                listLiveData.observe(this, this::setUpRecycler);
-                break;
+
         }
 
         return true;

@@ -53,6 +53,8 @@ public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAd
         TextView amount;
         @BindView(R.id.textTotal)
         TextView textTotal;
+        @BindView(R.id.textCategory)
+        TextView textCategory;
        // @BindView(R.id.itemlayout)
        // RelativeLayout itemlayout;
 
@@ -67,7 +69,8 @@ public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAd
             qty.setText(String.valueOf(Transaction.getQty()));
             date.setText(String.valueOf(Transaction.getCreatedDate()));
             amount.setText(String.valueOf(Transaction.getPrice()));
-            textTotal.setText(String.valueOf(Transaction.getGrandTotal()));
+            textTotal.setText("Total : "+String.valueOf(Transaction.getGrandTotal()));
+            textCategory.setText(Transaction.getCategory());
             //itemlayout.setOnClickListener(view -> mTransactionItemClick.onClickedItem(Transaction));
         }
     }

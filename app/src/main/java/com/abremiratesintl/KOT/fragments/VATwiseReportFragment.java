@@ -96,6 +96,8 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
             reportRecyclerview.setVisibility(View.GONE);
             return;
         }
+        emptyView.setVisibility(View.GONE);
+        reportRecyclerview.setVisibility(View.VISIBLE);
         VATwiseReportAdapter adapter = new VATwiseReportAdapter(transactionMasterList, this);
         reportRecyclerview.setAdapter(adapter) ;
     }

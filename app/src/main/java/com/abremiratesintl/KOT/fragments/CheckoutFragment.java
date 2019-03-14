@@ -1,12 +1,14 @@
 package com.abremiratesintl.KOT.fragments;
 
 
-import android.arch.lifecycle.LiveData;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -21,13 +23,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.abremiratesintl.KOT.BaseFragment;
@@ -55,13 +59,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import androidx.navigation.Navigation;
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.Unbinder;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import vpos.apipackage.PosApiHelper;
 
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ADDRESS;
@@ -86,12 +89,17 @@ import static com.abremiratesintl.KOT.utils.Constants.REQUEST_CODE_ENABLE_BLUETO
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CheckoutFragment extends BaseFragment implements ClickListeners.CheckoutCountClickListeners, TextWatcher, ClickListeners.BtResponseListener, AdapterView.OnItemSelectedListener {
+public class CheckoutFragment extends BaseFragment implements ClickListeners.CheckoutCountClickListeners, TextWatcher, ClickListeners.BtResponseListener, AdapterView.OnItemSelectedListener, CustomSpinner.OnSpinnerEventsListener {
 
     private static MarkItemListener mMarkItemListener;
     @BindView(R.id.checkout_recycler)
     RecyclerView mCheckoutRecyclerView;
-
+    @BindView(R.id.spinner_arrow)
+    ImageView mSpinnerArrow;
+    @BindDrawable(R.drawable.ic_arrow_down)
+    Drawable icDown;
+    @BindDrawable(R.drawable.ic_arrow_up)
+    Drawable icUp;
     @BindView(R.id.footer_total)
     TextView mFooterTotal;
     @BindView(R.id.footer_vat)
@@ -102,12 +110,15 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     CheckBox mCheckBoxPercentage;
     @BindView(R.id.spinner1)
     Spinner mSpinner;
-
+    @BindView(R.id.edtChange)
+    EditText edtChange;
+    @BindView(R.id.edtBalance)
+    EditText edtBalance;
 
     @BindView(R.id.cash)
-    TextView mCash;
+    EditText mCash;
     @BindView(R.id.card)
-    TextView mCard;
+    EditText mCard;
 
     private AppDatabase mDatabase;
     private PrefUtils mPrefUtils;
@@ -120,7 +131,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     private int ret;
     private int BatteryV;
     private boolean mIsPercentage;
-    private  String selectedItem = "CASH";
+    private String selectedItem = "CASH";
+    private int btnCounter = 0;
+    private boolean disableDelete = false;
     /*
    * private String decimalAdjust(float value) {
        String stringValue = String.valueOf(value);
@@ -145,6 +158,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     private BluetoothAdapter bluetoothAdapter;
 
     String[] items = new String[]{"CASH", "CARD", "CASH+CARD"};
+
     public CheckoutFragment() {
         // Required empty public constructor
     }
@@ -162,10 +176,10 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(((MainActivity) getActivity()), android.R.layout.simple_spinner_dropdown_item, items);
         mSpinner.setAdapter(adapter);
 
-    // mSpinner.setSelection(1);
+        // mSpinner.setSelection(1);
 
-
-
+        btnCounter = 0;
+        disableDelete = false;
         mSpinner.setOnItemSelectedListener(this);
         setHasOptionsMenu(true);
         CheckoutFragmentArgs args = CheckoutFragmentArgs.fromBundle(getArguments());
@@ -190,9 +204,34 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() != 0) {
+                if (s.length() > 1) {
                     if (selectedItem == "CASH+CARD") {
+                        // if (mCash.hasFocus()){
+                        mCash.setText("");
+                        //  }
+                        float total = Float.parseFloat(mFooterTotal.getText().toString());
+                        float card = Float.parseFloat(mCard.getText().toString());
 
+                        if (card > total) {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                            builder1.setMessage("Card amount cant not be greater than total");
+                            builder1.setCancelable(true);
+
+                            builder1.setPositiveButton(
+                                    "Ok",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+
+                                        }
+                                    });
+
+
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
+                        }
+                        float cash = total - card;
+                        mCash.setText(String.valueOf(cash));
                     }
                 }
             }
@@ -211,14 +250,67 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(s.length() != 0){
-                    if(selectedItem == "CASH+CARD"){
+                if (s.length() > 1) {
+                    if (selectedItem == "CASH+CARD") {
+                        if (mCard.hasFocus()) {
+                            mCard.setText("");
+                        }
+                        float total = Float.parseFloat(mFooterTotal.getText().toString());
 
+                        float cash = Float.parseFloat(mCash.getText().toString());
+
+                        if (cash > total) {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                            builder1.setMessage("Card amount cant not be greater than total");
+                            builder1.setCancelable(true);
+
+                            builder1.setPositiveButton(
+                                    "Ok",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+
+                                        }
+                                    });
+
+
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
+                        }
+                        float card = total - cash;
+                        mCard.setText(String.valueOf(card));
                     }
                 }
 
             }
         });
+        edtChange.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 1) {
+
+                    float total = Float.parseFloat(mFooterTotal.getText().toString());
+                    float change = Float.parseFloat(edtChange.getText().toString());
+
+
+                    float balance = change - total;
+                    if (balance > 0)
+                        edtBalance.setText(String.valueOf(balance));
+                }
+            }
+
+        });
+
         return view;
 
     }
@@ -229,23 +321,48 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         mCheckoutRecyclerView.setAdapter(mCheckoutAdapter);
     }
 
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
     }
 
-    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.print_menu, menu);
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
+    /*  @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+         super.onPrepareOptionsMenu(menu);
+         if (disableDelete) {
+             menu.getItem(2).setEnabled(false);
+             menu.getItem(2).getIcon().setAlpha(130);
+         }
+     }
+ */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_print:
+
                 saveCart();
                 break;
             case R.id.delete:
-                mCheckoutAdapter.deleteCheck();
+                if (btnCounter == 1)
+                    mCheckoutAdapter.deleteCheck();
+                else{
+                    item.setEnabled(false);
+                    item.getIcon().setAlpha(130);
+                }
+
+                break;
+            case R.id.add_new:
+               // Navigation.findNavController(item.).navigate(R.id.action_checkoutFragment_to_addNewItem);
+                if (getFragmentManager() != null) {
+                    getFragmentManager().popBackStack();
+                }
                 break;
         }
         return true;
@@ -258,7 +375,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             mOnItemChangedListener.itemChanged(itemsList);
     }
 
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
         calculateTotal();
     }
@@ -268,7 +386,24 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
 
     private void saveCart() {
-        insertTransactions(mItemsList);
+        btnCounter++;
+        if (btnCounter == 1) {
+            disableDelete = true;
+            insertTransactions(mItemsList);
+        }else {
+            String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "3");
+            switch (printerCategory) {
+                case "1":
+                    printReciptBluetooth(newInvoiceNo);
+                    break;
+                case "2":
+                    printReciptBuiltin(newInvoiceNo);
+                    break;
+                case "3":
+                    showRecipt(newInvoiceNo);
+                    break;
+            }
+        }
     }
 
     float getTotalItemAmount() {
@@ -300,9 +435,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         transactionMaster.setItemTotalAmount(itemAmount);
         transactionMaster.setTotalQty(getTotalItemCount());
         transactionMaster.setCreatedDate(Constants.getCurrentDateTime());
-       transactionMaster.setCash(cash);
-       transactionMaster.setCard(card);
-       transactionMaster.setType(ptype);
+        transactionMaster.setCash(cash);
+        transactionMaster.setCard(card);
+        transactionMaster.setType(ptype);
 //        LiveData<Integer> t.ransactionMasterLiveData = mDatabase.mTransactionMasterDao().findTransMasterOfMaxId();
         new Thread(() -> {
             int transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
@@ -311,25 +446,14 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             transactionMaster.setInvoiceNo(newInvoiceNo);
             mDatabase.mTransactionMasterDao().insertNewItems(transactionMaster);
             for (Items item : mItemsList) {//item.getItemName();
-                Log.e("INSERTION MASTER1", "inside2"+item.getItemName());
+
                 insertTransactionMaster(true, item, transactionMasterMaxId);
-                Log.e("INSERTION MASTER1", "inside3"+item.getCreatedDate());
+
             }
             /*DialogFragment dialogFragment = BillSampleDialog.newInstance(newInvoiceNo,mItemsList);
             dialogFragment.show(getFragmentManager(),"dialog");
 */
-            String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "3");
-            switch (printerCategory) {
-                case "1":
-                    printReciptBluetooth(newInvoiceNo);
-                    break;
-                case "2":
-                   printReciptBuiltin(newInvoiceNo);
-                    break;
-                case "3":
-                    showRecipt(newInvoiceNo);
-                    break;
-            }
+
 
         }).start();
     }
@@ -481,9 +605,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setNewLinesAfter(2)
                         .build());
                 Printooth.INSTANCE.printer().print(printables);
-                if (getFragmentManager() != null) {
+               /* if (getFragmentManager() != null) {
                     getFragmentManager().popBackStack();
-                }
+                }*/
             }).start();
         }
     }
@@ -629,7 +753,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         int num;
         switch (item) {
             case COMPANY_ITEM_DESCRIPTION:
-                total = !isBluetooth ? 19: 48;
+                total = !isBluetooth ? 19 : 48;
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_QUANTITY:
@@ -675,6 +799,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             transaction.setGrandTotal(item.getQty() * item.getPrice());
 
 
+            String category = mDatabase.mCategoryDao().getCategoryById(item.getCategoryId());
+            transaction.setCategory(category);
+
 
            /* Completable.fromAction(() -> mDatabase.mTransactionDao().insertNewItems(transaction))
                     .subscribeOn(Schedulers.io())
@@ -686,9 +813,11 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }*/
             mDatabase.mTransactionDao().insertNewItems(transaction);
 
+        }
     }
-    }
-    @Override public void onClickedPlus(Items item) {
+
+    @Override
+    public void onClickedPlus(Items item) {
         int qty = item.getQty();
         qty += 1;
         float price = item.getPrice() * qty;
@@ -703,7 +832,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
     }
 
-    @Override public void onClickedMinus(Items item) {
+    @Override
+    public void onClickedMinus(Items item) {
         if (item.getQty() > 1) {
             int qty = item.getQty();
             qty -= 1;
@@ -774,40 +904,48 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         calculateTotal();
     }
 
-    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
     }
 
-    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (!s.toString().equals("0.0")) {
             calculateTotal();
         }
     }
 
-    @Override public void afterTextChanged(Editable s) {
+    @Override
+    public void afterTextChanged(Editable s) {
 
     }
 
-    @Override public void interacterOne(BtDevice btDevice) {
+    @Override
+    public void interacterOne(BtDevice btDevice) {
         Printooth.INSTANCE.setPrinter(btDevice.getDeviceName(), btDevice.getDeviceMac());
         printViaBluetoothPrinter();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-       selectedItem =  items[position];
-        String total=mFooterTotal.getText().toString();
+        selectedItem = items[position];
+        String total = mFooterTotal.getText().toString();
 
-       if(selectedItem=="CASH") {
-           mCash.setText(total);
-           mCard.setText("");
+        if (selectedItem == "CASH") {
+            mCash.setText(total);
+            mCard.setText("");
 
-       }
-        if(selectedItem=="CARD") {
+        }
+        if (selectedItem == "CARD") {
             mCard.setText(total);
             mCash.setText("");
         }
-        if(selectedItem=="CASH+CARD") {
+        if (selectedItem == "CASH+CARD") {
+            mCash.requestFocus();
+            InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(getView(), InputMethodManager.SHOW_IMPLICIT);
+
             mCard.setText("");
             mCash.setText("");
         }
@@ -818,6 +956,16 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public void onSpinnerOpened(Spinner spinner) {
+        mSpinnerArrow.setImageDrawable(icUp);
+    }
+
+    @Override
+    public void onSpinnerClosed(Spinner spinner) {
+        mSpinnerArrow.setImageDrawable(icDown);
     }
 
     public class BatteryReceiver extends BroadcastReceiver {
@@ -832,14 +980,11 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
     }
 
-    @Override public void onPause() {
+    @Override
+    public void onPause() {
         super.onPause();
 
     }
-
-
-
-
 
 
 }

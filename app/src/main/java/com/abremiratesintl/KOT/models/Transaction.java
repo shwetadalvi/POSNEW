@@ -19,6 +19,7 @@ public class Transaction {
     private float grandTotal;
     public String createdDate;
     private String ItemName;
+    private String category;
 
     public int getTransactionId() {
         return transactionId;
@@ -98,5 +99,13 @@ public class Transaction {
 
     public void setItemName(String itemName) {
         ItemName = itemName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

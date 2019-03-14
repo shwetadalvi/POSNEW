@@ -61,7 +61,7 @@ public class ReportDailyAdapter extends RecyclerView.Adapter<ReportDailyAdapter.
             slNo.setText(String.valueOf(getAdapterPosition() + 1));
             invoiceNo.setText(transactionMaster.getInvoiceNo());
             payment.setText(transactionMaster.getType());
-            totalItem.setText(transactionMaster.getTotalQty());
+            totalItem.setText(String.valueOf(transactionMaster.getTotalQty()));
             total.setText(String.valueOf(transactionMaster.getGrandTotal()));
             itemView.setOnClickListener(view -> mTransactionMasterItemClick.onClickedItem(transactionMaster));
         }

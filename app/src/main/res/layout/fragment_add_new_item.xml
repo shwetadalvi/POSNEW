@@ -65,7 +65,7 @@
         android:id="@+id/constraintLayout7"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#C0CA33"
+        android:background="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -109,7 +109,7 @@
             android:id="@+id/addNewItemProceed"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:background="#F4511E"
+            android:background="@color/brown"
             android:gravity="center"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"

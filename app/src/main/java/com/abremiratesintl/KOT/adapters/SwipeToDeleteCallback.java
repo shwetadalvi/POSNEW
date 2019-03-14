@@ -43,7 +43,7 @@ public class SwipeToDeleteCallback<T> extends ItemTouchHelper.SimpleCallback {
     @Override public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
         builder1.setMessage("Are you sure want to Delete ?");
-        builder1.setCancelable(true);
+        builder1.setCancelable(false);
 
         builder1.setPositiveButton(
                 "Yes",
@@ -63,7 +63,14 @@ public class SwipeToDeleteCallback<T> extends ItemTouchHelper.SimpleCallback {
                 "No",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
                         dialog.cancel();
+                        if (mCategoryAdapter instanceof CategoryAdapter) {
+                            mCategoryAdapter.notifyDataSetChanged();
+                        }else {
+                            mItemsAdapter.notifyDataSetChanged();
+                        }
+
                     }
                 });
 

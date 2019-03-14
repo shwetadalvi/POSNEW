@@ -62,6 +62,15 @@
                             <option name="y" value="368" />
                           </Point>
                         </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_checkoutFragment_to_addNewItem">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                       </LayoutPositions>
                     </value>
                   </entry>
@@ -218,6 +227,11 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_reportsHomeFragment_to_VATwiseReportFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_reportsHomeFragment_to_itemwiseReportFragment">
                               <value>
                                 <LayoutPositions />

@@ -74,6 +74,9 @@
         <argument
             android:name="cart"
             app:argType="com.abremiratesintl.KOT.models.CartItems" />
+        <action
+            android:id="@+id/action_checkoutFragment_to_addNewItem"
+            app:destination="@id/addNewItem" />
     </fragment>
     <fragment
         android:id="@+id/categoryFragment"

@@ -1,74 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#000">
+    android:orientation="vertical"
+    android:layout_marginRight="10dp"
+    android:background="@color/brown">
 
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3"
+        android:layout_marginTop="20dp">
 
-    <com.abremiratesintl.KOT.views.CustomSpinner
-        android:id="@+id/spinner1"
-        android:layout_width="130dp"
+    <RelativeLayout
+        android:id="@+id/layoutSpinner"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:spinnerMode="dropdown"
-        android:background="@android:drawable/btn_dropdown"
-        android:textColor="@color/white"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        android:layout_weight="1"
+        android:layout_margin="20dp"
+        >
 
-    <EditText
-        android:id="@+id/cash"
+        <com.abremiratesintl.KOT.views.CustomSpinner
+            android:id="@+id/spinner1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
 
-        android:layout_width="95dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:hint="@string/cash"
-        android:inputType="numberDecimal"
-        android:textColor="#FFFFFF"
-        android:textColorHint="@color/grey"
-        android:textColorLink="#ffffff"
-        android:theme="@style/AppTheme.EditText"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/card"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/spinner1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/card"
+            android:background="@null" />
 
-        android:layout_width="121dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="@string/card"
-        android:inputType="numberDecimal"
-        android:textColor="#FFFFFF"
-        android:textColorHint="@color/grey"
-        android:textColorLink="#ffffff"
-        android:theme="@style/AppTheme.EditText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/cash"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/spinner_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/spinner1"
+            app:srcCompat="@drawable/ic_arrow_down" />
+    </RelativeLayout>
+        <EditText
+            android:id="@+id/cash"
 
-    <ImageView
-        android:id="@+id/imageView7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginBottom="8dp"
+            android:hint="@string/cash"
+            android:inputType="numberDecimal"
+            android:textColor="#FFFFFF"
+            android:textColorHint="@color/grey"
+            android:textColorLink="#ffffff"
+            android:theme="@style/AppTheme.EditText"
+            android:layout_margin="20dp"
+       />
+
+        <EditText
+            android:id="@+id/card"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/card"
+            android:layout_weight="1"
+            android:inputType="numberDecimal"
+            android:textColor="#FFFFFF"
+            android:textColorHint="@color/grey"
+            android:textColorLink="#ffffff"
+            android:layout_margin="20dp"
+            android:theme="@style/AppTheme.EditText"
+             />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_below="@+id/layout"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
+    <TextView
+
+        android:id="@+id/textChange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/spinner1"
-        app:layout_constraintEnd_toEndOf="@+id/spinner1"
-        app:layout_constraintTop_toTopOf="@+id/spinner1"
-        app:srcCompat="@drawable/ic_arrow_down"
-        android:visibility="gone"/>
+      android:layout_margin="10dp"
+        android:padding="5dp"
 
+        android:text="Change : "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#FFFFFF"
+       />
 
-</android.support.constraint.ConstraintLayout>
+    <EditText
+        android:id="@+id/edtChange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:hint="change"
+        android:inputType="number"
+        android:textColor="#FFFFFF"
+        android:textColorHint="@color/grey"
+        android:textColorLink="#ffffff"
+        android:theme="@style/AppTheme.EditText"
+        app:layout_constraintStart_toEndOf="@+id/textChange"
+        app:layout_constraintTop_toBottomOf="@+id/cash" />
+
+    <TextView
+        android:id="@+id/textBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:text="Balance : "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toEndOf="@+id/edtChange"
+        app:layout_constraintTop_toBottomOf="@+id/card" />
+
+    <EditText
+        android:id="@+id/edtBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:hint="Balance"
+        android:inputType="number"
+        android:textColor="#FFFFFF"
+        android:textColorHint="@color/grey"
+        android:textColorLink="#ffffff"
+        android:theme="@style/AppTheme.EditText"
+        app:layout_constraintStart_toEndOf="@+id/textBalance"
+        app:layout_constraintTop_toBottomOf="@+id/card" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public static native String getAdminKey();
 
     private TextView mTitle;
+    private ImageView imageAddItem;
 
     @RequiresApi(api = Build.VERSION_CODES.M) @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +42,18 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("");
         mTitle = findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.app_name);
+        imageAddItem = findViewById(R.id.imageAddItem);
         /*DatabaseCopier databaseCopier = new DatabaseCopier();
         AppDatabase appDatabase = databaseCopier.getRoomDatabase();*/
 
+        imageAddItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getFragmentManager() != null) {
+                    getFragmentManager().popBackStack();
+                }
+            }
+        });
 
         if (Build.VERSION.SDK_INT < 16) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -101,6 +112,11 @@ void permissionAlert() {
 
     public void changeTitle(String title) {
         mTitle.setText(title);
+        imageAddItem.setVisibility(View.GONE);
+    }
+    public void addNewItem() {
+
+        imageAddItem.setVisibility(View.VISIBLE);
     }
 
 }

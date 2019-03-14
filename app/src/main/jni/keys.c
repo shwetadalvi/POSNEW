@@ -3,7 +3,7 @@
 
 JNIEXPORT jstring JNICALL
 Java_com_abremiratesintl_KOT_MainActivity_getNativeKey(JNIEnv *env, jobject instance) {
-    return (*env)->NewStringUTF(env, "TllSN21CeipARUdCSFZcfg==");
+    return (*env)->NewStringUTF(env, "YWJyYWRtaW4xMjM=");
 }
 JNIEXPORT jstring JNICALL
 Java_com_abremiratesintl_KOT_MainActivity_getAdminKey(JNIEnv *env, jobject instance){
