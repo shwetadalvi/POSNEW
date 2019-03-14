@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.abremiratesintl.KOT.BaseFragment;
 import com.abremiratesintl.KOT.MainActivity;
@@ -52,14 +53,14 @@ import butterknife.Unbinder;
  */
 public class VATwiseReportFragment extends BaseFragment implements ClickListeners.ItemClick<TransactionMaster>, DatePickerDialog.OnDateSetListener {
 
-    @BindView(R.id.reportRecyclerView)
+    @BindView(R.id.reportRecyclerViewReport)
     RecyclerView reportRecyclerview;
     @BindView(R.id.filter)
     LinearLayout filter;
     @BindView(R.id.fromDate)
-    EditText fromDate;
+    TextView fromDate;
     @BindView(R.id.toDate)
-    EditText toDate;
+    TextView toDate;
     @BindView(R.id.emptyReportView)
     ConstraintLayout emptyView;
     private Unbinder mUnbinder;

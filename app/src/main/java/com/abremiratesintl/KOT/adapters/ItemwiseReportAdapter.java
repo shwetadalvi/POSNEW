@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.abremiratesintl.KOT.R;
@@ -52,8 +53,8 @@ public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAd
         TextView amount;
         @BindView(R.id.textTotal)
         TextView textTotal;
-        @BindView(R.id.itemlayout)
-        TextView itemlayout;
+       // @BindView(R.id.itemlayout)
+       // RelativeLayout itemlayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -61,13 +62,13 @@ public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAd
         }
 
         void bind(Transaction Transaction) {
-            slNo.setText(getAdapterPosition() + 1);
-            item.setText(Transaction.getTransactionId());
-            qty.setText(Transaction.getQty());
+            slNo.setText(String.valueOf(getAdapterPosition() + 1));
+            item.setText(String.valueOf(Transaction.getTransactionId()));
+            qty.setText(String.valueOf(Transaction.getQty()));
             date.setText(String.valueOf(Transaction.getCreatedDate()));
             amount.setText(String.valueOf(Transaction.getPrice()));
             textTotal.setText(String.valueOf(Transaction.getGrandTotal()));
-            itemlayout.setOnClickListener(view -> mTransactionItemClick.onClickedItem(Transaction));
+            //itemlayout.setOnClickListener(view -> mTransactionItemClick.onClickedItem(Transaction));
         }
     }
 }

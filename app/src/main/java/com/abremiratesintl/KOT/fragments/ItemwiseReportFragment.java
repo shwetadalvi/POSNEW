@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -94,7 +95,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         getItems();
 
         setHasOptionsMenu(true);
-        fetchTransactions();
+      //  fetchTransactions();
         return view;
     }
     private void getItems() {
@@ -113,13 +114,16 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     private void setUpSpinner() {
         ItemSpinnerAdapter<Items> itemSpinnerAdapter = new ItemSpinnerAdapter<>(getContext(), R.id.categoryListItem, mItemsList);
         spinItem.setAdapter(itemSpinnerAdapter);
+        fetchTransactions();
     }
     private void fetchTransactions() {
         LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getItemsByItemId(mSelectedItem.getItemId());
+
         listLiveData.observe(this, this::setUpRecycler);
     }
 
     private void setUpRecycler(List<Transaction> transactionList){
+        Log.e("INSERTION MASTER1", "inside22"+transactionList.size());
         if(transactionList.size()==0){
             emptyView.setVisibility(View.VISIBLE);
             reportRecyclerview.setVisibility(View.GONE);

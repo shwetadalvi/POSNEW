@@ -102,6 +102,9 @@
         <action
             android:id="@+id/action_reportsHomeFragment_to_itemwiseReportFragment"
             app:destination="@id/itemwiseReportFragment" />
+        <action
+            android:id="@+id/action_reportsHomeFragment_to_VATwiseReportFragment"
+            app:destination="@id/VATwiseReportFragment" />
     </fragment>
 
     <fragment
@@ -135,4 +138,9 @@
         android:name="com.abremiratesintl.KOT.fragments.ItemwiseReportFragment"
         android:label="fragment_itemwise_report"
         tools:layout="@layout/fragment_itemwise_report" />
+    <fragment
+        android:id="@+id/VATwiseReportFragment"
+        android:name="com.abremiratesintl.KOT.fragments.VATwiseReportFragment"
+        android:label="fragment_vatwise_report"
+        tools:layout="@layout/fragment_vatwise_report" />
 </navigation>

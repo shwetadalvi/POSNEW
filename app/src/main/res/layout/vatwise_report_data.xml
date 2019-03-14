@@ -6,7 +6,7 @@
         android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
+        android:background="@color/text_black"
         android:orientation="horizontal"
  
         android:padding="5dp"
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
 
 
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:text="@string/slNo"
             android:textColor="@color/white" />
         <TextView

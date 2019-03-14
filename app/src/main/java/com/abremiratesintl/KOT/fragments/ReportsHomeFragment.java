@@ -59,5 +59,8 @@ public class ReportsHomeFragment extends BaseFragment  {
 
         Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_itemwiseReportFragment);
     }
+    @OnClick(R.id.vatReport) public void OnClickedVATwiseReport(View view) {
 
+        Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_VATwiseReportFragment);
+    }
 }

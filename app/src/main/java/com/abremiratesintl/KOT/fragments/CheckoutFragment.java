@@ -1,6 +1,7 @@
 package com.abremiratesintl.KOT.fragments;
 
 
+import android.arch.lifecycle.LiveData;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -309,9 +310,10 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_ID_PREF, "SJ") + transactionMasterMaxId;
             transactionMaster.setInvoiceNo(newInvoiceNo);
             mDatabase.mTransactionMasterDao().insertNewItems(transactionMaster);
-            for (Items item : mItemsList) {
-                Log.d("INSERTION MASTER", "Count   ");
+            for (Items item : mItemsList) {//item.getItemName();
+                Log.e("INSERTION MASTER1", "inside2"+item.getItemName());
                 insertTransactionMaster(true, item, transactionMasterMaxId);
+                Log.e("INSERTION MASTER1", "inside3"+item.getCreatedDate());
             }
             /*DialogFragment dialogFragment = BillSampleDialog.newInstance(newInvoiceNo,mItemsList);
             dialogFragment.show(getFragmentManager(),"dialog");
@@ -322,7 +324,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                     printReciptBluetooth(newInvoiceNo);
                     break;
                 case "2":
-                    printReciptBuiltin(newInvoiceNo);
+                   printReciptBuiltin(newInvoiceNo);
                     break;
                 case "3":
                     showRecipt(newInvoiceNo);
@@ -668,18 +670,24 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             transaction.setItemId(item.getItemId());
             transaction.setQty(item.getQty());
             transaction.setPrice(item.getPrice());
+            transaction.setItemName(item.getItemName());
             transaction.setCreatedDate(Constants.getCurrentDateTime());
             transaction.setGrandTotal(item.getQty() * item.getPrice());
-            Completable.fromAction(() -> mDatabase.mTransactionDao().insertNewItems(transaction))
+
+
+
+           /* Completable.fromAction(() -> mDatabase.mTransactionDao().insertNewItems(transaction))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
-                    }, throwable -> Log.d("INSERTION FAIL", "Count   "));
+                    }, throwable -> Log.e("INSERTION MASTER2", "Count   "));
         } else {
 
-        }
-    }
+        }*/
+            mDatabase.mTransactionDao().insertNewItems(transaction);
 
+    }
+    }
     @Override public void onClickedPlus(Items item) {
         int qty = item.getQty();
         qty += 1;

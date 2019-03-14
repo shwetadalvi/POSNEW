@@ -18,6 +18,7 @@ public class Transaction {
     private float vat;
     private float grandTotal;
     public String createdDate;
+    private String ItemName;
 
     public int getTransactionId() {
         return transactionId;
@@ -89,5 +90,13 @@ public class Transaction {
 
     public void setCreatedDate(String createdDate) {
         new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date().getTime());
+    }
+
+    public String getItemName() {
+        return ItemName;
+    }
+
+    public void setItemName(String itemName) {
+        ItemName = itemName;
     }
 }
