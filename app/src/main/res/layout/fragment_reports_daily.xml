@@ -183,18 +183,21 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_alignParentBottom="true"
-    android:layout_alignParentRight="true"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
-    android:layout_marginRight="50dp">
+
+    android:layout_margin="10dp"
+
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:id="@+id/textCash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cash :"
             android:textColor="@color/white"
-            tools:layout_editor_absoluteX="283dp"
-            tools:layout_editor_absoluteY="557dp" />
+           android:layout_alignParentLeft="true" />
 
         <TextView
             android:id="@+id/textCard"
@@ -204,8 +207,12 @@
             android:text="Card :"
             android:textColor="@color/white"
             app:layout_constraintTop_toBottomOf="@+id/textCash"
-            tools:layout_editor_absoluteX="285dp" />
-
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:id="@+id/textVATAmount"
             android:layout_width="wrap_content"
@@ -213,8 +220,7 @@
             android:layout_marginTop="8dp"
             android:text="VAT Amount :"
             android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/textCard"
-            tools:layout_editor_absoluteX="234dp" />
+           android:layout_alignParentLeft="true" />
 
         <TextView
             android:id="@+id/textTotalAmount"
@@ -223,9 +229,8 @@
             android:layout_marginTop="8dp"
             android:text="Total Amount :"
             android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/textVATAmount"
-            tools:layout_editor_absoluteX="228dp" />
-
+        android:layout_alignParentRight="true" />
+    </RelativeLayout>
 </LinearLayout>
 
 

@@ -6,7 +6,7 @@
         android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/text_black"
+        android:background="@color/white"
         android:orientation="horizontal"
  
         android:padding="5dp"
@@ -21,7 +21,8 @@
 
             android:layout_weight="0.8"
             android:text="@string/slNo"
-            android:textColor="@color/white" />
+            android:textColor="@color/colorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         <TextView
             android:id="@+id/inv_no"
             android:layout_width="0dp"
@@ -30,7 +31,8 @@
 
             android:layout_weight="1"
             android:text="@string/invoive_no"
-            android:textColor="@color/white" />
+            android:textColor="@color/colorPrimary"
+android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         <TextView
             android:id="@+id/date"
             android:layout_width="0dp"
@@ -49,7 +51,8 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="Vatable Amt"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
+android:textAppearance="@style/TextAppearance.AppCompat.Large"
             />
 
         <TextView

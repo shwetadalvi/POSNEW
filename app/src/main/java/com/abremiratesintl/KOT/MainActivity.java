@@ -32,12 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mTitle;
     private ImageView imageAddItem;
-
+private Toolbar toolbar;
     @RequiresApi(api = Build.VERSION_CODES.M) @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar2);
+        toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         mTitle = findViewById(R.id.toolbar_title);
@@ -117,6 +117,10 @@ void permissionAlert() {
     public void addNewItem() {
 
         imageAddItem.setVisibility(View.VISIBLE);
+    }
+    public Toolbar getToolbar() {
+
+        return toolbar;
     }
 
 }

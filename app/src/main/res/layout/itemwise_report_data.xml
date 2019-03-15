@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#000000"
+    android:background="@color/white"
     android:id="@+id/itemlayout" >
 
     <TextView
@@ -37,7 +37,7 @@
 
             android:layout_weight="0.8"
             android:text="@string/slNo"
-            android:textColor="@color/white" />
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/chekoutItemName2"
@@ -47,7 +47,7 @@
             android:layout_weight="1.2"
             android:padding="5dp"
             android:text="@string/checkout_item"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/chekoutTotalItem2"
@@ -57,7 +57,7 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="@string/checkout_qty"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
             />
 
         <TextView
@@ -67,7 +67,7 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="@string/date"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/colorPrimary"
             />
 
         <TextView
@@ -78,7 +78,7 @@
 
             android:padding="5dp"
             android:text="@string/amount"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/colorPrimary"
             />
 
 
@@ -102,7 +102,7 @@
 
             android:padding="5dp"
             android:text="1"
-            android:textColor="@color/white" />
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/item"
@@ -112,7 +112,7 @@
             android:layout_weight="1.2"
             android:padding="5dp"
             android:text="@string/invoive_no"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/qty"
@@ -122,7 +122,7 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="2"
-            android:textColor="@color/white" />
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/date"
@@ -131,7 +131,7 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="CASH"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/amount"
@@ -141,7 +141,7 @@
 
             android:padding="5dp"
             android:text="@string/amount"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/colorPrimary" />
 
 
     </LinearLayout>

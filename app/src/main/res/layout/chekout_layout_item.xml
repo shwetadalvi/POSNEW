@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#000000">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/slNo"
@@ -16,9 +16,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:gravity="center"
         android:text="1"
-        android:textColor="@color/white"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline15"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +36,8 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/checkoutQty"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_arrow_down" />
+        app:srcCompat="@drawable/ic_arrow_down" 
+        android:tint="@color/colorPrimary"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline3"
@@ -57,7 +59,8 @@
         android:gravity="center"
         android:padding="5dp"
         android:text="TextView"
-        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="@+id/guideline15"
@@ -72,7 +75,8 @@
         android:gravity="center"
         android:padding="5dp"
         android:text="Qty"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/colorPrimary"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/checkout_qty_down"
         app:layout_constraintHorizontal_bias="0.5"
@@ -92,7 +96,9 @@
         app:layout_constraintStart_toEndOf="@+id/chekoutItemName"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_arrow_up" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:srcCompat="@drawable/ic_arrow_up"
+        android:tint="@color/colorPrimary"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline4"
@@ -113,8 +119,9 @@
         android:layout_marginBottom="8dp"
         android:gravity="center"
         android:padding="5dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:text="TextView"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline16"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
@@ -146,7 +153,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:buttonTint="@color/white"
+        android:buttonTint="@color/colorPrimary"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

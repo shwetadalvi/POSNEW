@@ -173,6 +173,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         mDatabase = AppDatabase.getInstance(getContext());
         mUnbinder = ButterKnife.bind(this, view);
         ((MainActivity) getActivity()).changeTitle("CHECKOUT");
+      //  ((MainActivity) getActivity()).getToolbar().setNavigationIcon(R.drawable.plus_icon);
+
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(((MainActivity) getActivity()), android.R.layout.simple_spinner_dropdown_item, items);
         mSpinner.setAdapter(adapter);
 
@@ -344,6 +347,17 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
  */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+      /*  ImageButton locButton = (ImageButton) menu.findItem(R.id.menu_find).getActionView();
+        locButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                createPopup();
+                mQuickAction.show(v);
+            }
+        });
+        return true;*/
         switch (item.getItemId()) {
             case R.id.menu_print:
 
@@ -358,8 +372,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 }
 
                 break;
-            case R.id.add_new:
-               // Navigation.findNavController(item.).navigate(R.id.action_checkoutFragment_to_addNewItem);
+            case android.R.id.home:
+              //  Navigation.findNavController(item.getActionView().findViewById(R.id.add_new)).navigate(R.id.action_checkoutFragment_to_addNewItem);
                 if (getFragmentManager() != null) {
                     getFragmentManager().popBackStack();
                 }
