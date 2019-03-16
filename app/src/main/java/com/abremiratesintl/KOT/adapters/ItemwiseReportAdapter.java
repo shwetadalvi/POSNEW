@@ -67,7 +67,7 @@ public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAd
             slNo.setText(String.valueOf(getAdapterPosition() + 1));
             item.setText(String.valueOf(Transaction.getTransactionId()));
             qty.setText(String.valueOf(Transaction.getQty()));
-            date.setText(String.valueOf(Transaction.getCreatedDate()));
+            date.setText(String.valueOf(Transaction.getInvoiceDate()));
             amount.setText(String.valueOf(Transaction.getPrice()));
             textTotal.setText("Total : "+String.valueOf(Transaction.getGrandTotal()));
             textCategory.setText(Transaction.getCategory());

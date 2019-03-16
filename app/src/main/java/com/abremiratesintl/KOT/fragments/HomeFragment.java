@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import androidx.navigation.Navigation;
 
 import com.abremiratesintl.KOT.BaseFragment;
+import com.abremiratesintl.KOT.MainActivity;
 import com.abremiratesintl.KOT.R;
 
 import butterknife.BindView;
@@ -48,7 +49,7 @@ public class HomeFragment extends BaseFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-
+        ((MainActivity) getActivity()).changeTitle("POS");
 
         return view;
     }

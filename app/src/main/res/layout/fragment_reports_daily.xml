@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="#000000"
+    android:background="@color/white"
     android:orientation="vertical">
 
 
@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
+            android:background="@color/colorAccent"
             android:layout_alignParentTop="true">
 
 
@@ -71,7 +72,7 @@
                 android:id="@+id/layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorAccent"
+                android:background="@color/brown"
                 android:orientation="horizontal"
                 android:padding="5dp"
                 android:weightSum="5"
@@ -82,7 +83,7 @@
                     android:id="@+id/textView16"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
 
                     android:layout_weight="0.8"
                     android:text="@string/slNo"
@@ -92,7 +93,7 @@
                     android:id="@+id/chekoutItemName2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:layout_weight="1.2"
                     android:padding="5dp"
                     android:text="@string/invoive_no"
@@ -102,7 +103,7 @@
                     android:id="@+id/chekoutTotalItem2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:layout_weight="1"
                     android:padding="5dp"
                     android:text="@string/total_item"
@@ -117,6 +118,7 @@
                     android:padding="5dp"
                     android:text="@string/payment"
                     android:textColor="#FFFFFF"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     />
 
                 <TextView
@@ -124,7 +126,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:padding="5dp"
                     android:text="@string/amount"
                     android:textColor="#FFFFFF"
@@ -170,7 +172,7 @@
                     android:layout_marginBottom="8dp"
                     android:text="@string/empty_reports"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -183,8 +185,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_alignParentBottom="true"
-
-    android:layout_margin="10dp"
+android:background="@color/colorPrimary"
+    android:padding="10dp"
 
     >
     <RelativeLayout
@@ -197,7 +199,8 @@
             android:layout_height="wrap_content"
             android:text="Cash :"
             android:textColor="@color/white"
-           android:layout_alignParentLeft="true" />
+           android:layout_alignParentLeft="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
         <TextView
             android:id="@+id/textCard"
@@ -207,7 +210,8 @@
             android:text="Card :"
             android:textColor="@color/white"
             app:layout_constraintTop_toBottomOf="@+id/textCash"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -220,7 +224,8 @@
             android:layout_marginTop="8dp"
             android:text="VAT Amount :"
             android:textColor="@color/white"
-           android:layout_alignParentLeft="true" />
+           android:layout_alignParentLeft="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
         <TextView
             android:id="@+id/textTotalAmount"
@@ -229,7 +234,8 @@
             android:layout_marginTop="8dp"
             android:text="Total Amount :"
             android:textColor="@color/white"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
     </RelativeLayout>
 </LinearLayout>
 

@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.arch.lifecycle.LiveData;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -23,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.abremiratesintl.KOT.BaseFragment;
 import com.abremiratesintl.KOT.MainActivity;
@@ -40,14 +42,22 @@ import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
 import com.abremiratesintl.KOT.views.CustomSpinner;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import jxl.Workbook;
+import jxl.WorkbookSettings;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,6 +87,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     View mSelectedDateView;
     private List<Items> mItemsList;
     private Items mSelectedItem;
+    private List<Transaction> mTransactionList;
     public ItemwiseReportFragment() {
         // Required empty public constructor
     }
@@ -117,12 +128,14 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         fetchTransactions();
     }
     private void fetchTransactions() {
+        Log.e("INSERTION MASTER1", "inside224"+mSelectedItem.getItemId());
         LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getItemsByItemId(mSelectedItem.getItemId());
 
         listLiveData.observe(this, this::setUpRecycler);
     }
 
     private void setUpRecycler(List<Transaction> transactionList){
+        mTransactionList = transactionList;
         Log.e("INSERTION MASTER1", "inside22"+transactionList.size());
         if(transactionList.size()==0){
             emptyView.setVisibility(View.VISIBLE);
@@ -164,7 +177,8 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
 
                 }
                 break;
-
+            case R.id.export:
+                exportFileToExcel();
         }
 
         return true;
@@ -177,7 +191,64 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
             filter.setVisibility(View.GONE);
         }
     }
+    private void exportFileToExcel() {
 
+        File sd = Environment.getExternalStorageDirectory();
+
+        String csvFile ="pos_item_report"+System.currentTimeMillis()+ ".xls";
+        File directory = new File(sd.getAbsolutePath()+"/new folder");
+        //create directory if not exist
+        if (!directory.isDirectory()) {
+            directory.mkdirs();
+        }
+        try {
+
+            //file path
+            File file = new File(directory, csvFile);
+            WorkbookSettings wbSettings = new WorkbookSettings();
+            wbSettings.setLocale(new Locale("en", "EN"));
+            WritableWorkbook workbook = null;
+            try {
+                workbook = Workbook.createWorkbook(file, wbSettings);
+
+                //Excel sheet name. 0 represents first sheet
+                WritableSheet sheet = workbook.createSheet("Item Report", 0);
+                // column and row
+
+                sheet.addCell(new Label(0, 0, Constants.COMPANY_SL_NO));
+                sheet.addCell(new Label(1, 0, Constants.COMPANY_ORDER_NO));
+                sheet.addCell(new Label(2, 0, Constants.COMPANY_ITEM_DESCRIPTION));
+                sheet.addCell(new Label(3, 0, Constants.CATEGORY));
+                sheet.addCell(new Label(4, 0, Constants.COMPANY_ITEM_QUANTITY));
+                sheet.addCell(new Label(5, 0, Constants.COMPANY_DATE));
+                sheet.addCell(new Label(6, 0, Constants.COMPANY_ITEM_AMOUNT));
+
+
+                int i = 0;
+
+                Log.e("Inside123","live data"+mTransactionList.size());
+                for (Transaction item : mTransactionList) {
+                    i = i + 1;
+                    sheet.addCell(new Label(0, i, String.valueOf(i)));
+                    sheet.addCell(new Label(1, i, String.valueOf(item.getTransactionId())));
+                    sheet.addCell(new Label(2, i, item.getItemName()));
+                    sheet.addCell(new Label(3, i, item.getCategory()));
+                    sheet.addCell(new Label(4, i, String.valueOf(item.getQty())));
+                    sheet.addCell(new Label(5, i, item.getInvoiceDate()));
+                    sheet.addCell(new Label(6, i, String.valueOf(item.getPrice())));
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            workbook.write();
+            workbook.close();
+            Toast.makeText(getContext(),"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
@@ -218,7 +289,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
             showSnackBar(getView(),getStringfromResource(R.string.present),1000);
             return;
         }
-        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByBetween(fromDate, toDate,mSelectedItem.getItemId());
+        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByItemIdBetween(fromDate, toDate,mSelectedItem.getItemId());
         listLiveData.observe(this, this::setUpRecycler);
     }
 
@@ -236,6 +307,8 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mSelectedItem = mItemsList.get(position);
+        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getItemsByItemId(mSelectedItem.getItemId());
+        listLiveData.observe(this, this::setUpRecycler);
     }
 
     @Override

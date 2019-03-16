@@ -5,32 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="#000000"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/layoutSpinner"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp">
+
+        android:layout_margin="20dp"
+>
 
         <com.abremiratesintl.KOT.views.CustomSpinner
             android:id="@+id/spinItem"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-
-            android:background="@null" />
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/spinner_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/spinItem"
-            app:srcCompat="@drawable/ic_arrow_down" />
-    </RelativeLayout>
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/spinItem"
+            app:layout_constraintEnd_toEndOf="@+id/spinItem"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/spinItem"
+            app:layout_constraintTop_toTopOf="@+id/spinItem"
+            app:srcCompat="@drawable/ic_arrow_down"/>
+    </android.support.constraint.ConstraintLayout>
+
+
 
 
     <LinearLayout
@@ -39,6 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/layoutSpinner"
         android:orientation="vertical"
+        android:background="@color/colorPrimary"
         android:visibility="gone">
 
         <LinearLayout
@@ -100,7 +114,7 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
+        android:background="@color/brown"
         android:orientation="horizontal"
         android:padding="5dp"
         android:weightSum="5"
@@ -112,7 +126,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
 
-
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:layout_weight="0.8"
             android:text="@string/slNo"
             android:textColor="@color/white" />
@@ -121,39 +135,38 @@
             android:id="@+id/chekoutItemName2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:layout_weight="1.2"
             android:padding="5dp"
             android:text="@string/invoive_no"
             android:textColor="#FFFFFF" />
-
-        <TextView
-            android:id="@+id/chekoutTotalItem2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:text="@string/total_item"
-            android:textColor="@color/white"
-            />
-
         <TextView
             android:id="@+id/checkoutQty2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="5dp"
-            android:text="@string/payment"
+            android:text="Item name"
             android:textColor="#FFFFFF"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        <TextView
+            android:id="@+id/chekoutTotalItem2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:text="@string/total_item"
+            android:textColor="@color/white"
             />
+
 
         <TextView
             android:id="@+id/chekoutPrice2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:padding="5dp"
             android:text="@string/amount"
             android:textColor="#FFFFFF"
@@ -199,7 +212,7 @@
             android:layout_marginBottom="8dp"
             android:text="@string/empty_reports"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

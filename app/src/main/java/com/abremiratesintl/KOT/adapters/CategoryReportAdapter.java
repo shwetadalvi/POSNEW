@@ -46,8 +46,8 @@ public class CategoryReportAdapter extends RecyclerView.Adapter<CategoryReportAd
         TextView invNo;
         @BindView(R.id.totalItem)
         TextView totalItem;
-        @BindView(R.id.payment)
-        TextView payment;
+        @BindView(R.id.item_name)
+        TextView item_name;
         @BindView(R.id.total)
         TextView total;
        // @BindView(R.id.itemlayout)
@@ -62,7 +62,7 @@ public class CategoryReportAdapter extends RecyclerView.Adapter<CategoryReportAd
             slNo.setText(String.valueOf(getAdapterPosition() + 1));
             invNo.setText(String.valueOf(Transaction.getTransactionId()));
             totalItem.setText(String.valueOf(Transaction.getQty()));
-            payment.setText(String.valueOf(Transaction.getCreatedDate()));
+            item_name.setText(Transaction.getItemName());
             total.setText(String.valueOf(Transaction.getPrice()));
            // textTotal.setText("Total : "+String.valueOf(Transaction.getGrandTotal()));
           //  textCategory.setText(Transaction.getCategory());

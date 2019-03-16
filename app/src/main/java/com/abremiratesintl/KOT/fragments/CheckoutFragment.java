@@ -2,6 +2,7 @@ package com.abremiratesintl.KOT.fragments;
 
 
 import android.app.AlertDialog;
+import android.arch.lifecycle.LiveData;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -45,6 +46,7 @@ import com.abremiratesintl.KOT.interfaces.ClickListeners.MarkItemListener;
 import com.abremiratesintl.KOT.models.BtDevice;
 import com.abremiratesintl.KOT.models.CartItems;
 import com.abremiratesintl.KOT.models.Items;
+import com.abremiratesintl.KOT.models.TempItems;
 import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
@@ -123,7 +125,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     private AppDatabase mDatabase;
     private PrefUtils mPrefUtils;
     private Unbinder mUnbinder;
-    private List<Items> mItemsList;
+    private List<TempItems> mItemsList;
     private CheckoutAdapter mCheckoutAdapter;
     private AddNewItem mAddNewItem;
     private CartItems mCart;
@@ -185,16 +187,18 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         disableDelete = false;
         mSpinner.setOnItemSelectedListener(this);
         setHasOptionsMenu(true);
-        CheckoutFragmentArgs args = CheckoutFragmentArgs.fromBundle(getArguments());
-        mCart = args.getCart();
-        mItemsList = mCart.getCartItems();
-        getArguments().remove("cart");
-        mFooterDiscount.addTextChangedListener(this);
+//        CheckoutFragmentArgs args = CheckoutFragmentArgs.fromBundle(getArguments());
+//        mCart = args.getCart();
+     //   mItemsList = mCart.getCartItems();
 
-        setUpRecyclerView();
+//        getArguments().remove("cart");
+        mFooterDiscount.addTextChangedListener(this);
+        LiveData<List<TempItems>> itemLiveList = mDatabase.mTempItemsDao().getAllItems();
+        itemLiveList.observe(this, this::setUpRecyclerView);
+
         calculateTotal();
 
-        mCard.addTextChangedListener(new TextWatcher() {
+        /*mCard.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -238,7 +242,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                     }
                 }
             }
-        });
+        });*/
 
         mCash.addTextChangedListener(new TextWatcher() {
             @Override
@@ -319,7 +323,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
 
 
-    void setUpRecyclerView() {
+    void setUpRecyclerView(List<TempItems> mItemsList) {
+        mItemsList = mItemsList;
         mCheckoutAdapter = new CheckoutAdapter(mItemsList, this, this);
         mCheckoutRecyclerView.setAdapter(mCheckoutAdapter);
     }
@@ -382,7 +387,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         return true;
     }
 
-    public void setItemsList(List<Items> itemsList) {
+    public void setItemsList(List<TempItems> itemsList) {
         mItemsList = itemsList;
         calculateTotal();
         if (mOnItemChangedListener != null)
@@ -405,6 +410,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             disableDelete = true;
             insertTransactions(mItemsList);
         }else {
+            disableDelete = false;
             String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "3");
             switch (printerCategory) {
                 case "1":
@@ -422,13 +428,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
     float getTotalItemAmount() {
         float total = 0;
-        for (Items item : mItemsList) {
+        for (TempItems item : mItemsList) {
             total = total + item.getTotalItemPrice();
         }
         return Constants.round(total, 2);
     }
 
-    private void insertTransactions(List<Items> itemsList) {
+    private void insertTransactions(List<TempItems> itemsList) {
         TransactionMaster transactionMaster = new TransactionMaster();
         float itemAmount = getTotalItemAmount();
         float grantTotal = Float.parseFloat(getString(mFooterTotal));
@@ -459,7 +465,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_ID_PREF, "SJ") + transactionMasterMaxId;
             transactionMaster.setInvoiceNo(newInvoiceNo);
             mDatabase.mTransactionMasterDao().insertNewItems(transactionMaster);
-            for (Items item : mItemsList) {//item.getItemName();
+            for (TempItems item : mItemsList) {item.getItemName();
 
                 insertTransactionMaster(true, item, transactionMasterMaxId);
 
@@ -558,7 +564,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-                for (Items order : mItemsList) {
+                for (TempItems order : mItemsList) {
                     String price = decimalAdjust(order.getPrice());
                     String totalprice = decimalAdjust(order.getTotalItemPrice());
                     if (price == null) price = String.valueOf(order.getPrice());
@@ -706,7 +712,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             posApiHelper.PrintStr("................................");
 
 
-            for (Items order : mItemsList) {
+            for (TempItems order : mItemsList) {
                 String price = decimalAdjust(order.getPrice());
                 String totalprice = decimalAdjust(order.getTotalItemPrice());
                 if (price == null) price = String.valueOf(order.getPrice());
@@ -794,13 +800,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
     int getTotalItemCount() {
         int totalCount = 0;
-        for (Items item : mItemsList) {
+        for (TempItems item : mItemsList) {
             totalCount = totalCount + item.getQty();
         }
         return totalCount;
     }
 
-    private void insertTransactionMaster(boolean b, Items item, Integer finalTransactionMasterMaxId) {
+    private void insertTransactionMaster(boolean b, TempItems item, Integer finalTransactionMasterMaxId) {
         if (b) {
             Transaction transaction = new Transaction();
             transaction.setTransMasterId(finalTransactionMasterMaxId);
@@ -809,8 +815,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             transaction.setQty(item.getQty());
             transaction.setPrice(item.getPrice());
             transaction.setItemName(item.getItemName());
-            transaction.setCreatedDate(Constants.getCurrentDateTime());
+            transaction.setInvoiceDate(Constants.getCurrentDate());
             transaction.setGrandTotal(item.getQty() * item.getPrice());
+
 
 
             String category = mDatabase.mCategoryDao().getCategoryById(item.getCategoryId());
@@ -831,7 +838,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
 
     @Override
-    public void onClickedPlus(Items item) {
+    public void onClickedPlus(TempItems item) {
         int qty = item.getQty();
         qty += 1;
         float price = item.getPrice() * qty;
@@ -847,7 +854,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
 
     @Override
-    public void onClickedMinus(Items item) {
+    public void onClickedMinus(TempItems item) {
         if (item.getQty() > 1) {
             int qty = item.getQty();
             qty -= 1;
@@ -869,7 +876,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     float calculateTotal() {
         float total = 0;
         float vat = 0;
-        for (Items items : mItemsList) {
+        for (TempItems items : mItemsList) {
             total = total + items.getTotalItemPrice();
             vat = vat + calculateVat(items.getVat(), items.getPrice(), items.getQty());
         }
@@ -901,8 +908,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
 
     void updateFooters(float vat, float discount, float total) {
-        String totalStirng = decimalAdjust(total);
-        String vatString = decimalAdjust(vat);
+        String totalStirng = String.valueOf(Constants.round(total,2));
+        String vatString = String.valueOf(Constants.round(vat,2));
         if (totalStirng == null) totalStirng = String.valueOf(total);
         if (vatString == null) vatString = String.valueOf(vat);
         mFooterTotal.setText(totalStirng);

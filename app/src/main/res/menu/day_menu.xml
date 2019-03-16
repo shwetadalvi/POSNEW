@@ -12,4 +12,10 @@
         android:icon="@drawable/ic_filter"
         android:title="Item"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/export"
+        android:icon="@drawable/ic_export"
+        android:title="Export"
+        app:showAsAction="always" />
 </menu>

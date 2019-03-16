@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.abremiratesintl.KOT.BaseFragment;
 import com.abremiratesintl.KOT.Dialog;
@@ -46,16 +48,24 @@ import com.mazenrashed.printooth.Printooth;
 import com.mazenrashed.printooth.data.DefaultPrinter;
 import com.mazenrashed.printooth.data.Printable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import jxl.Workbook;
+import jxl.WorkbookSettings;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 import vpos.apipackage.PosApiHelper;
 
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ADDRESS;
@@ -225,11 +235,67 @@ private List<TransactionMaster> mTransactionMasterList;
             case R.id.menu_print:
                 printDayReport();
                 break;
+            case R.id.export:
+                exportFileToExcel();
+                break;
         }
 
         return true;
     }
+    private void exportFileToExcel() {
 
+        File sd = Environment.getExternalStorageDirectory();
+
+        String csvFile ="pos_daily_report"+System.currentTimeMillis()+ ".xls";
+        File directory = new File(sd.getAbsolutePath()+"/new folder");
+        //create directory if not exist
+        if (!directory.isDirectory()) {
+            directory.mkdirs();
+        }
+        try {
+
+            //file path
+            File file = new File(directory, csvFile);
+            WorkbookSettings wbSettings = new WorkbookSettings();
+            wbSettings.setLocale(new Locale("en", "EN"));
+            WritableWorkbook workbook = null;
+            try {
+                workbook = Workbook.createWorkbook(file, wbSettings);
+
+                //Excel sheet name. 0 represents first sheet
+                WritableSheet sheet = workbook.createSheet("Daily Report", 0);
+                // column and row
+
+                sheet.addCell(new Label(0, 0, Constants.COMPANY_SL_NO));
+                sheet.addCell(new Label(1, 0, Constants.COMPANY_ORDER_NO));
+
+                sheet.addCell(new Label(2, 0, Constants.COMPANY_ITEM_QUANTITY));
+                sheet.addCell(new Label(3, 0, Constants.COMPANY_ITEM_PAYMENT));
+                sheet.addCell(new Label(4, 0, Constants.COMPANY_ITEM_AMOUNT));
+
+                int i = 0;
+
+                Log.e("Inside123","live data"+mTransactionMasterList.size());
+                for (TransactionMaster item : mTransactionMasterList) {
+                    i = i + 1;
+                    sheet.addCell(new Label(0, i, String.valueOf(i)));
+                    sheet.addCell(new Label(1, i, String.valueOf(item.getInvoiceNo())));
+                    sheet.addCell(new Label(2, i, String.valueOf(item.getTotalQty())));
+                    sheet.addCell(new Label(3, i,item.getType()));
+                    sheet.addCell(new Label(4, i, String.valueOf(item.getGrandTotal())));
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            workbook.write();
+            workbook.close();
+            Toast.makeText(getContext(),"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void printDayReport() {
         String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "3");
         switch (printerCategory) {
@@ -515,7 +581,25 @@ Log.e("Inside :","date :"+toDate);
                     getFragmentManager().popBackStack();
                 }*/
             }).start();
+        }else{
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+            builder1.setMessage("Select Printer from Settings");
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+
+                        }
+                    });
+
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
         }
+
     }
    /* private void printDayReportBuiltin() {
         Thread thread;

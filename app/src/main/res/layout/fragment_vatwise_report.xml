@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="#000000"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layoutSpinner"
+        android:background="@color/colorPrimary"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -89,7 +90,7 @@
             android:id="@+id/textView16"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
 
             android:layout_weight="0.8"
             android:text="@string/slNo"
@@ -98,7 +99,7 @@
             android:id="@+id/textView116"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
 
             android:layout_weight="1"
             android:text="@string/invoive_no"
@@ -107,7 +108,7 @@
             android:id="@+id/chekoutItemName2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:layout_weight="1.2"
             android:padding="5dp"
             android:text="@string/date"
@@ -117,7 +118,7 @@
             android:id="@+id/chekoutTotalItem2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:layout_weight="1"
             android:padding="5dp"
             android:text="Vatable Amt"
@@ -132,14 +133,14 @@
             android:padding="5dp"
             android:text="Vat Amt"
             android:textColor="#FFFFFF"
-            />
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
             android:id="@+id/chekoutPrice2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:padding="5dp"
             android:text="Net Amt"
             android:textColor="#FFFFFF"
@@ -182,7 +183,7 @@
             android:layout_marginBottom="8dp"
             android:text="@string/empty_reports"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
