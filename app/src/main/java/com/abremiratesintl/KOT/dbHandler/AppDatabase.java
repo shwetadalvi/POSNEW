@@ -8,12 +8,11 @@ import android.content.Context;
 import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.Company;
 import com.abremiratesintl.KOT.models.Items;
-import com.abremiratesintl.KOT.models.TempItems;
 import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.models.User;
 
-@Database(entities = {Category.class, Items.class, User.class, TransactionMaster.class, Transaction.class, Company.class,TempItems.class}, version = 1, exportSchema = false)
+@Database(entities = {Category.class, Items.class, User.class, TransactionMaster.class, Transaction.class, Company.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase mInstance;
@@ -35,5 +34,5 @@ public abstract class AppDatabase extends RoomDatabase {
    public abstract TransactionDao mTransactionDao();
    public abstract TransactionMasterDao mTransactionMasterDao();
    public abstract CompanyDao mCompanyDao();
-    public abstract TempItemsDao mTempItemsDao();
+
 }

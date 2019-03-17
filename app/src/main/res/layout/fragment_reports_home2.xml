@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-android:background="@color/text_black"
+    android:background="@color/text_black"
     android:orientation="vertical">
 
 
@@ -26,8 +26,8 @@ android:background="@color/text_black"
                 android:id="@+id/imageDailyReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                
-                android:src="@mipmap/daily"
+
+                android:background="@mipmap/daily"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -72,8 +72,8 @@ android:background="@color/text_black"
                 android:id="@+id/imageSalesReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                
-                android:src="@drawable/ic_new_item"
+
+                android:background="@drawable/ic_new_item"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -119,8 +119,8 @@ android:background="@color/text_black"
                 android:id="@+id/imageItemReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                
-                android:src="@mipmap/daily"
+
+                android:background="@mipmap/daily"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -165,8 +165,8 @@ android:background="@color/text_black"
                 android:id="@+id/imageVatReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                
-                android:src="@drawable/ic_new_item"
+
+                android:background="@drawable/ic_new_item"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -211,7 +211,7 @@ android:background="@color/text_black"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                android:src="@drawable/ic_new_item"
+                android:background="@drawable/ic_new_item"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 

@@ -17,7 +17,6 @@ import com.abremiratesintl.KOT.fragments.CheckoutFragment;
 import com.abremiratesintl.KOT.interfaces.ClickListeners.CheckoutCountClickListeners;
 import com.abremiratesintl.KOT.interfaces.ClickListeners.MarkItemListener;
 import com.abremiratesintl.KOT.models.Items;
-import com.abremiratesintl.KOT.models.TempItems;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +27,14 @@ import butterknife.OnCheckedChanged;
 
 public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.ViewHolder> {
 
-    List<TempItems> mItemsList = new ArrayList<>();
-    List<TempItems> selectedItemsList = new ArrayList<>();
+    List<Items> mItemsList = new ArrayList<>();
+    List<Items> selectedItemsList = new ArrayList<>();
     private CheckoutCountClickListeners mCheckoutCountClickListeners;
     private CheckoutFragment mCheckoutFragment;
     private MarkItemListener markItemListener;
     Context mContext;
 
-    public CheckoutAdapter(List<TempItems> itemsList, CheckoutCountClickListeners checkoutCountClickListeners, CheckoutFragment checkoutFragment) {
+    public CheckoutAdapter(List<Items> itemsList, CheckoutCountClickListeners checkoutCountClickListeners, CheckoutFragment checkoutFragment) {
         mItemsList = itemsList;
         mCheckoutCountClickListeners = checkoutCountClickListeners;
         mCheckoutFragment = checkoutFragment;
@@ -62,7 +61,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.ViewHo
     }
 
     private void delete() {
-        for (TempItems itemsToBeDeleted : selectedItemsList) {
+        for (Items itemsToBeDeleted : selectedItemsList) {
             mItemsList.remove(itemsToBeDeleted);
         }
         mCheckoutFragment.setItemsList(mItemsList);
@@ -91,7 +90,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.ViewHo
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(TempItems items) {
+        public void bind(Items items) {
             checkoutCheckBox.setChecked(false);
             slNo.setText(String.valueOf(getAdapterPosition() + 1));
             checkoutItemName.setText(items.getItemName());

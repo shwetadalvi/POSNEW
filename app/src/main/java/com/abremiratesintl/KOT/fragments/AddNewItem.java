@@ -31,7 +31,6 @@ import com.abremiratesintl.KOT.interfaces.ClickListeners;
 import com.abremiratesintl.KOT.models.CartItems;
 import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.Items;
-import com.abremiratesintl.KOT.models.TempItems;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
 import com.abremiratesintl.KOT.views.CustomSpinner;
@@ -44,9 +43,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -76,13 +72,13 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
     private List<Category> mCategoryList;
     private Category mSelectedCategory;
     private List<Items> mItemList;
-   // public List<Items> mCartItems = new ArrayList<>();
+    public List<Items> mCartItems = new ArrayList<>();
     private float currentVat = 0;
     private float currentTotal;
     int totalItemCount = 0,menuReturnClickCount = 0;
     float totalItemPrice = 0;
     CartItems cartItem = new CartItems();
-    List<TempItems> mCartItems;
+
     public AddNewItem() {
         // Required empty public constructor
     }
@@ -100,34 +96,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         setHasOptionsMenu(true);
         menuReturnClickCount = 0;
         getCategoryList();
-
-        LiveData<List<TempItems>> itemLiveList = mDatabase.mTempItemsDao().getAllItems();
-        itemLiveList.observe(this, items -> {
-            if (items == null || items.size() == 0) {
-                return;
-            }
-            mCartItems = items;
-
-            if (mCartItems != null && mCartItems.size() != 0) {
-                int qty = 0;
-                float price = 0;
-
-                for (TempItems item : mCartItems) {
-                    qty = qty + item.getQty();
-                    price = price + item.getTotalItemPrice();
-                    itemCount.setText(String.valueOf(qty));
-                    totalAmount.setText(String.valueOf(price));
-                }
-            } else if (mCartItems == null || mCartItems.size() == 0) {
-                itemCount.setText(String.valueOf(0));
-                totalAmount.setText(String.valueOf(0));
-            } else {
-                itemCount.setText(String.valueOf(totalItemCount));
-                totalAmount.setText(String.valueOf(totalItemPrice));
-            }
-
-        });
-       /* if (cartItem.getCartItems() != null && cartItem.getCartItems().size() != 0) {
+        if (cartItem.getCartItems() != null && cartItem.getCartItems().size() != 0) {
             int qty = 0;
             float price = 0;
             mCartItems = cartItem.getCartItems();
@@ -143,7 +112,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         } else {
             itemCount.setText(String.valueOf(totalItemCount));
             totalAmount.setText(String.valueOf(totalItemPrice));
-        }*/
+        }
         return view;
     }
 
@@ -205,25 +174,11 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         addNewItemSpinnerArrow.setImageDrawable(arrowDown);
     }
 
-    @Override public void onClickedItem(Items item1) {
-        TempItems item = new TempItems();
-        item.setCategoryId(item1.getCategoryId());
-        item.setCreatedDate(item1.getCreatedDate());
-        item.setCost(item1.getCost());
-        item.setDeleted(item1.isDeleted());
-        item.setChecked(item1.isChecked());
-        item.setImagePath(item1.getImagePath());
-        item.setItemId(item.getItemId());
-        item.setItemName(item1.getItemName());
-        item.setOpen(item1.isOpen());
-        item.setPrice(item1.getPrice());
-        item.setQty(item1.getQty());
-        item.setTotalItemPrice(item1.getTotalItemPrice());
-
+    @Override public void onClickedItem(Items item) {
         int mItemCountCount = 0;
         float mTotalItemAmount = 0;
         if(menuReturnClickCount == 1){
-           if(mCartItems.contains(item)) {
+        //    if(mCartItems.contains(item)) {
                 for (int i = 0; i < mCartItems.size(); i++) {
                     mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
                     mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;
@@ -241,7 +196,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
                 setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
 
                 menuReturnClickCount = 0;
-            }
+         /*   }
             else{
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
                 builder1.setMessage("Item is not added to Return");
@@ -260,24 +215,10 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
 
                 AlertDialog alert11 = builder1.create();
                 alert11.show();
-            }
+            }*/
         }else {
-           /* LiveData<List<TempItems>> itemLiveList = mDatabase.mTempItemsDao().getAllItems();
-            itemLiveList.observe(this, items -> {
-                if (items == null || items.size() == 0) {
-                    return;
-                }
-                mCartItems = items;
-            });*/
-            Completable.fromAction(() ->  mDatabase.mTempItemsDao().insertNewItems(item))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(() -> {
 
-                    });
-
-
-           /* for (int i = 0; i < mCartItems.size(); i++) {
+            for (int i = 0; i < mCartItems.size(); i++) {
                 mTotalItemAmount = Float.valueOf(getString(totalAmount)) + mCartItems.get(i).getPrice();
                 mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
                 if (item.getItemId() == mCartItems.get(i).getItemId()) {
@@ -290,12 +231,12 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
                 mItemCountCount = 1;
             }
             mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
-            insertToList(item);*/
-           // setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
+            insertToList(item);
+            setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
         }
     }
 
-    void setFooterAndVat(TempItems item, float mTotalItemAmount, int mItemCountCount) {
+    void setFooterAndVat(Items item, float mTotalItemAmount, int mItemCountCount) {
         calculateVat(item.getVat(), item.getPrice());
         currentItemAndCount.setText(item.getItemName() + " x " + item.getQty());
         totalAmount.setText(String.format("%.2f", mTotalItemAmount));
@@ -318,7 +259,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         super.onPause();
 
     }
-    void insertToList(TempItems item) {
+    void insertToList(Items item) {
         int qty = item.getQty();
         qty += 1;
         float price = item.getPrice() * qty;
@@ -332,18 +273,16 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
             }
             item.setQty(qty);
             item.setTotalItemPrice(price);
-         //   mCartItems.add(item);
-            mDatabase.mTempItemsDao().insertNewItems(item);
+            mCartItems.add(item);
         } else {
             item.setQty(item.getQty() + 1);
             item.setTotalItemPrice(price);
-          //  mCartItems.add(item);
-            mDatabase.mTempItemsDao().insertNewItems(item);
+            mCartItems.add(item);
         }
     }
-    void returnFromList(TempItems item) {
+    void returnFromList(Items item) {
         int qty = item.getQty();
-        qty -= 1;
+        qty = -1;
         float price = item.getPrice() * qty;
         if (mCartItems.size() != 0) {
             for (int i = 0; i < mCartItems.size(); i++) {
@@ -355,13 +294,11 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
             }
             item.setQty(qty);
             item.setTotalItemPrice(price);
-            //mCartItems.add(item);
-            mDatabase.mTempItemsDao().insertNewItems(item);
+            mCartItems.add(item);
         } else {
             item.setQty(item.getQty() + 1);
             item.setTotalItemPrice(price);
-            //mCartItems.add(item);
-            mDatabase.mTempItemsDao().insertNewItems(item);
+            mCartItems.add(item);
         }
     }
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -376,8 +313,8 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
 
             case R.id.sale_return:
                 menuReturnClickCount ++;
-               if(menuReturnClickCount > 1)
-                   menuReturnClickCount = 0;
+                if(menuReturnClickCount > 1)
+                    menuReturnClickCount = 0;
                 break;
         }
 
@@ -387,29 +324,19 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
     public void onClickedProceed(View view) {
         totalItemCount = Integer.valueOf(getString(itemCount));
         totalItemPrice = Float.valueOf(getString(totalAmount));
-       // cartItem.setCartItems(mCartItems);
-        LiveData<List<TempItems>> itemLiveList = mDatabase.mTempItemsDao().getAllItems();
-        itemLiveList.observe(this, items -> {
-                    if (items == null || items.size() == 0) {
-                        return;
-                    }
-                    mCartItems = items;
-                });
-
-        Navigation.findNavController(view).navigate(R.id.action_addNewItem_to_checkoutFragment);
+        cartItem.setCartItems(mCartItems);
+        Navigation.findNavController(view).navigate(AddNewItemDirections.actionAddNewItemToCheckoutFragment(cartItem));
     }
 
-
-
- @Override public void itemChanged(List<TempItems> list) {
-      /*  mItemList = list;
+    @Override public void itemChanged(List<Items> list) {
+        mItemList = list;
         int count = 0;
         float total = 0;
 
-        for (TempItems item : list) {
+        for (Items item : list) {
             count = count + item.getQty();
             total = total + item.getTotalItemPrice();
 //            setFooterAndVat(item, total, count);
-        }*/
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.abremiratesintl.KOT.interfaces;
 
 import com.abremiratesintl.KOT.models.BtDevice;
 import com.abremiratesintl.KOT.models.Items;
-import com.abremiratesintl.KOT.models.TempItems;
 
 import java.util.List;
 
@@ -18,9 +17,9 @@ public interface ClickListeners {
     }
 
     interface CheckoutCountClickListeners {
-        void onClickedPlus(TempItems items);
+        void onClickedPlus(Items items);
 
-        void onClickedMinus(TempItems items);
+        void onClickedMinus(Items items);
 
     }
 
@@ -29,7 +28,7 @@ public interface ClickListeners {
     }
 
     interface OnItemChangedListener{
-        void itemChanged(List<TempItems> list);
+        void itemChanged(List<Items> list);
     }
 
     interface BtResponseListener {
