@@ -81,7 +81,7 @@
     <string name="dayreport">Day Report</string>
     <string name="itemwise_report">Item Report</string>
     <string name="vat_report">VAT Report</string>
-
+    <string name="export_db">Export DB</string>
     <string name="category_report">Category Report</string>
     <string name="selectpayment">Select Payment</string>
 

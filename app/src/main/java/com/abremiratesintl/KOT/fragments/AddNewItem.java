@@ -175,9 +175,14 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
     }
 
     @Override public void onClickedItem(Items item) {
+
+
         int mItemCountCount = 0;
         float mTotalItemAmount = 0;
         if(menuReturnClickCount == 1){
+
+
+
         //    if(mCartItems.contains(item)) {
              /*   for (int i = 0; i < mCartItems.size(); i++) {
                     mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
@@ -261,6 +266,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
     }
     void insertToList(Items item) {
         int qty = item.getQty();
+
         qty += 1;
         float price = item.getPrice() * qty;
         if (mCartItems.size() != 0) {
@@ -281,8 +287,8 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         }
     }
     void returnFromList(Items item) {
-        int qty = item.getQty();
-        qty = -1;
+
+        int qty = -1;
         float price = item.getPrice() * qty;
         item.setQty(qty);
         item.setTotalItemPrice(price);

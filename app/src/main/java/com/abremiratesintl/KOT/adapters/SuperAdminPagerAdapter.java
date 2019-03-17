@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.fragments.super_user.CreateAdminFragment;
+import com.abremiratesintl.KOT.fragments.super_user.ExportDBFragment;
 import com.abremiratesintl.KOT.fragments.super_user.SuperAdminCompanyDetails;
 
 public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
@@ -25,6 +26,8 @@ public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
                 return new SuperAdminCompanyDetails();
             case 1:
                 return new CreateAdminFragment();
+            case 2:
+                return new ExportDBFragment();
         }
         return null;
     }
@@ -35,6 +38,8 @@ public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
                 return mContext.getResources().getString(R.string.company_details);
             case 1:
                 return mContext.getResources().getString(R.string.new_user);
+            case 2:
+                return mContext.getResources().getString(R.string.export_db);
         }
         return null;
     }

@@ -97,7 +97,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
     private Items mItems;
     private boolean isEditing;
     private Uri mSelectedImageUri;
-    private String mPath;
+    private String mPath="";
     private int itemId = 0;
 
     public ItemFragment() {
@@ -318,7 +318,8 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
                 if (requestCode == REQUEST_CODE_IMAGE) {
                     mSelectedImageUri = data.getData();
                     // Get the path from the Uri
-                    mPath = getPathFromURI(mSelectedImageUri);
+                   // mPath = getPathFromURI(mSelectedImageUri);
+                    mPath = mSelectedImageUri.getPath();
                     if (mPath != null) {
                         File f = new File(mPath);
                         mSelectedImageUri = Uri.fromFile(f);
