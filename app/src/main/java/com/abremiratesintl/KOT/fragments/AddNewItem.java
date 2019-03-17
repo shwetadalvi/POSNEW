@@ -179,7 +179,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         float mTotalItemAmount = 0;
         if(menuReturnClickCount == 1){
         //    if(mCartItems.contains(item)) {
-                for (int i = 0; i < mCartItems.size(); i++) {
+             /*   for (int i = 0; i < mCartItems.size(); i++) {
                     mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
                     mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;
                     if (item.getItemId() == mCartItems.get(i).getItemId()) {
@@ -191,7 +191,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
                     mTotalItemAmount = item.getPrice();
                     mItemCountCount = 1;
                 }
-                mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
+                mTotalItemAmount = Constants.round(mTotalItemAmount, 2);*/
                 returnFromList(item);
                 setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
 
@@ -284,22 +284,10 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         int qty = item.getQty();
         qty = -1;
         float price = item.getPrice() * qty;
-        if (mCartItems.size() != 0) {
-            for (int i = 0; i < mCartItems.size(); i++) {
-                if (item.getItemId() == mCartItems.get(i).getItemId()) {
-                    mCartItems.get(i).setTotalItemPrice(price);
-                    mCartItems.get(i).setQty(qty);
-                    return;
-                }
-            }
-            item.setQty(qty);
-            item.setTotalItemPrice(price);
-            mCartItems.add(item);
-        } else {
-            item.setQty(item.getQty() + 1);
-            item.setTotalItemPrice(price);
-            mCartItems.add(item);
-        }
+        item.setQty(qty);
+        item.setTotalItemPrice(price);
+        mCartItems.add(item);
+
     }
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
