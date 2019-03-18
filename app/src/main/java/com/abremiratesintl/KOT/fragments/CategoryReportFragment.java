@@ -116,7 +116,13 @@ private List<Transaction> mTransactionList;
                 return;
             }
             mItemsList = items;
-            mSelectedItem = items.get(0);
+            Category category = new Category();
+            category.setCategoryId(-1);
+            category.setCategoryName("All");
+            category.setCreatedDate(Constants.getCurrentDate());
+            category.setDeleted(false);
+            mItemsList.add(0,category);
+            mSelectedItem = mItemsList.get(0);
 
             setUpSpinner();
         });
@@ -130,7 +136,7 @@ private List<Transaction> mTransactionList;
     }
 
     private void fetchTransactions() {
-        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getAllItems();
+        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getTodaysAllItems(Constants.getCurrentDate());
 
         listLiveData.observe(this, this::setUpRecycler);
     }
@@ -318,8 +324,13 @@ private List<Transaction> mTransactionList;
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mSelectedItem = mItemsList.get(position);
-        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getAllItemsByCategoryName(mSelectedItem.getCategoryName());
-        listLiveData.observe(this, this::setUpRecycler);
+        if(mSelectedItem.getCategoryId() == -1) {
+            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getTodaysAllItems(Constants.getCurrentDate());
+            listLiveData.observe(this, this::setUpRecycler);
+        }else {
+            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getAllItemsByCategoryName(mSelectedItem.getCategoryName());
+            listLiveData.observe(this, this::setUpRecycler);
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.abremiratesintl.KOT.dbHandler;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
@@ -11,6 +12,8 @@ import java.util.List;
 
 @Dao
 public interface CategoryDao {
+    @Query("DELETE FROM Category") void deleteAll();
+
     @Query("SELECT * FROM Category WHERE isDeleted =0") LiveData<List<Category>> getAllCategory();
 
     @Query("SELECT * FROM Category WHERE categoryName=:categoryName") LiveData<Category> findCategoryByName(String categoryName);

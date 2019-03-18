@@ -11,7 +11,10 @@ import java.util.List;
 
 @Dao
 public interface TransactionDao {
+    @Query("DELETE FROM Transactions") void deleteAll();
+
     @Query("SELECT * FROM Transactions") LiveData<List<Transaction>> getAllItems ();
+    @Query("SELECT * FROM Transactions where invoiceDate =:date") LiveData<List<Transaction>> getTodaysAllItems (String date);
     @Query("SELECT * FROM Transactions") List<Transaction> getAllItemsforExport ();
 
     @Query("SELECT * FROM Transactions WHERE transMasterId = :trId") LiveData<List<Transaction>> findByTransactionMasterId(int trId);

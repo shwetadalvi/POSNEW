@@ -60,11 +60,12 @@ public class POSRecyclerAdapter extends RecyclerView.Adapter<POSRecyclerAdapter.
         public void bind(Items items) {
             Uri mSelectedImageUri = null;
             posItemName.setText(items.getItemName());
-            posItemPrice.setText(String.valueOf(items.getPrice()));
+            posItemPrice.setText(mContext.getResources().getString(R.string.currency)+" "+String.valueOf(items.getPrice()));
             String mPath = items.getImagePath();
             if (mPath != null) {
-                File f = new File(mPath);
-                 mSelectedImageUri = Uri.fromFile(f);
+            /*    File f = new File(mPath);
+                 mSelectedImageUri = Uri.fromFile(f);*/
+                mSelectedImageUri = Uri.parse(mPath);
             }
             GlideApp.with(itemView.getContext())
                     .load(mSelectedImageUri)

@@ -99,7 +99,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
             categoryLiveData.observe(mLifecycleOwner, category -> {
                 itemName.setText(items.getItemName());
                 itemCategory.setText(category.getCategoryName());
-                itemPrice.setText(String.format("%.2f", items.getPrice()));
+                itemPrice.setText(mContext.getResources().getString(R.string.currency)+" "+String.format("%.2f", items.getPrice()));
 
             });
             itemView.setOnClickListener(view -> mCategoryItemEvents.onClickedEdit(items));

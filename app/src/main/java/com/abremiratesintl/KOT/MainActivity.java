@@ -1,5 +1,6 @@
 package com.abremiratesintl.KOT;
 
+import android.arch.lifecycle.LiveData;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,9 @@ import android.widget.TextView;
 
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.dbHandler.DatabaseCopier;
+import com.abremiratesintl.KOT.models.Company;
+import com.abremiratesintl.KOT.utils.Constants;
+import com.abremiratesintl.KOT.utils.PrefUtils;
 
 import static com.abremiratesintl.KOT.utils.Constants.PERMISSION_STORAGE_READ;
 import static com.abremiratesintl.KOT.utils.Constants.PERMISSION_STORAGE_WRITE;
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTitle;
     private ImageView imageAddItem;
 private Toolbar toolbar;
+    private AppDatabase mDatabase;
+    private PrefUtils mPrefUtils;
     @RequiresApi(api = Build.VERSION_CODES.M) @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +51,14 @@ private Toolbar toolbar;
         imageAddItem = findViewById(R.id.imageAddItem);
         /*DatabaseCopier databaseCopier = new DatabaseCopier();
         AppDatabase appDatabase = databaseCopier.getRoomDatabase();*/
+        mPrefUtils = new PrefUtils(getApplicationContext());
+        mDatabase = AppDatabase.getInstance(getApplicationContext());
+        LiveData<Company> companyLiveData = mDatabase.mCompanyDao().getCompany();
+        companyLiveData.observe(this, company -> {
+            if (company != null) {
+                setConstants(company);
+            }
+        });
 
         imageAddItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +84,15 @@ private Toolbar toolbar;
             }
             requestPermissions(new String[]{PERMISSION_STORAGE_WRITE, PERMISSION_STORAGE_READ}, REQUEST_CODE_PERMISSION_STORAGE);
         }
+    }
+
+    private void setConstants(Company company) {
+        Constants.COMPANY_NAME = company.getCompanyName();
+        Constants.COMPANY_TELE = company.getCompanyTel();
+        Constants.COMPANY_ADDRESS = company.getCompanyAddress();
+        Constants.COMPANY_TRN = company.getCompanyTrn();
+        mPrefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.COMPANY_PREFIX, company.getCompanyPrefix());
+
     }
 
     private boolean hasPermission(String[] permission) {

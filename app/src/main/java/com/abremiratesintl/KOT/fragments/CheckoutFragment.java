@@ -81,8 +81,10 @@ import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_TOTAL;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_VAT;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_NAME;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ORDER_NO;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_PREFIX;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TAX;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TELE;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TRN;
 import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
 import static com.abremiratesintl.KOT.utils.Constants.REQUEST_CODE_ENABLE_BLUETOOTH;
 
@@ -406,8 +408,26 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             insertTransactions(mItemsList);
         }else {
             disableDelete = false;
-            String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "3");
+            String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "0");
             switch (printerCategory) {
+                case "0":
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                    builder1.setMessage("Select Printer from Settings");
+                    builder1.setCancelable(true);
+
+                    builder1.setPositiveButton(
+                            "Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+
+                                }
+                            });
+
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+                    break;
                 case "1":
                     printReciptBluetooth(newInvoiceNo);
                     break;
@@ -457,7 +477,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         new Thread(() -> {
             int transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
             transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
-            newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_ID_PREF, "SJ") + transactionMasterMaxId;
+            newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ") + transactionMasterMaxId;
             transactionMaster.setInvoiceNo(newInvoiceNo);
             mDatabase.mTransactionMasterDao().insertNewItems(transactionMaster);
             for (Items item : mItemsList) {item.getItemName();
@@ -515,7 +535,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText("TRN   : 1234567890")
+                        .setText("TRN   : "+COMPANY_TRN)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -616,6 +636,12 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText(COMPANY_ITEM_NET_AMOUNT + createSpace(COMPANY_ITEM_NET_AMOUNT.length(), String.valueOf(getString(mFooterTotal)).length()) + getString(mFooterTotal))
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText("................................................")
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -776,11 +802,11 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_PRICE:
-                total = !isBluetooth ? 7 : 7;
+                total = !isBluetooth ? 10 : 10;
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_AMOUNT:
-                total = !isBluetooth ? 10 : 7;
+                total = !isBluetooth ? 10 : 10;
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
         }

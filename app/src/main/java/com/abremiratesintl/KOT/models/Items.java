@@ -26,6 +26,7 @@ public class Items {
     private boolean isChecked;
     private boolean isOpen;
     public String createdDate;
+    private boolean isSaleReturned;
 
     public int getItemId() {
         return itemId;
@@ -128,5 +129,13 @@ public class Items {
 
     public void setOpen(boolean open) {
         isOpen = open;
+    }
+
+    public boolean isSaleReturned() {
+        return isSaleReturned;
+    }
+
+    public void setSaleReturned(boolean saleReturned) {
+        isSaleReturned = saleReturned;
     }
 }

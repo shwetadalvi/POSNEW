@@ -10,6 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.abremiratesintl.KOT.R;
@@ -29,6 +33,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.write.Label;
@@ -36,6 +45,8 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
+
+import static android.support.constraint.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,8 +56,21 @@ public class ExportDBFragment extends Fragment {
     Button mbtnExport;
     @BindView(R.id.deleteDB)
     Button mbtnDeleteDB;
+    @BindView(R.id.layoutCheckbox)
+    LinearLayout layoutCheckbox;
+    @BindView(R.id.checkBoxCategory)
+    CheckBox checkBoxCategory;
+    @BindView(R.id.checkTransaction)
+    CheckBox checkTransaction;
+    @BindView(R.id.checkTransactionMaster)
+    CheckBox checkTransactionMaster;
+    @BindView(R.id.checkCompany)
+    CheckBox checkCompany;
+    @BindView(R.id.progress)
+    ProgressBar progress;
     private Unbinder mUnbinder;
     private AppDatabase mDatabase;
+    int deleteDBCount = 0;
 
     public ExportDBFragment() {
         // Required empty public constructor
@@ -63,36 +87,170 @@ public class ExportDBFragment extends Fragment {
         mDatabase = AppDatabase.getInstance(getContext());
 
 
-
         mbtnExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                progress.setVisibility(View.VISIBLE);
                 getItems();
 
 
             }
         });
+        mbtnDeleteDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                deleteDBCount++;
+                if (deleteDBCount % 2 == 0) {
+                    layoutCheckbox.setVisibility(View.GONE);
+                } else {
+                    layoutCheckbox.setVisibility(View.VISIBLE);
+
+
+                }
+
+            }
+        });
+        checkBoxCategory.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                        @Override
+                                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                            if (isChecked) {
+                                                                Completable.fromAction(new Action() {
+                                                                    @Override
+                                                                    public void run() throws Exception {
+                                                                        mDatabase.mItemsDao().deleteAll();
+                                                                        mDatabase.mCategoryDao().deleteAll();
+                                                                    }
+                                                                }).subscribeOn(Schedulers.newThread())
+                                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                                        .subscribe(new Action() {
+                                                                            @Override
+                                                                            public void run() throws Exception {
+
+                                                                                Toast.makeText(getActivity(), "Category & Item tables deleted.", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        }, new Consumer<Throwable>() {
+                                                                            @Override
+                                                                            public void accept(Throwable throwable) throws Exception {
+
+                                                                                Log.d(TAG, "throwable.getMessage(): " + throwable.getMessage());
+
+
+                                                                            }
+                                                                        });
+
+
+                                                            }
+
+                                                        }
+                                                    }
+        );
+        checkTransaction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                        @Override
+                                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                            if (isChecked) {
+                                                                Completable.fromAction(new Action() {
+                                                                    @Override
+                                                                    public void run() throws Exception {
+                                                                        mDatabase.mTransactionDao().deleteAll();
+                                                                    }
+                                                                }).subscribeOn(Schedulers.newThread())
+                                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                                        .subscribe(new Action() {
+                                                                            @Override
+                                                                            public void run() throws Exception {
+
+
+                                                                                Toast.makeText(getActivity(), "Transaction table deleted.", Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        }, new Consumer<Throwable>() {
+                                                                            @Override
+                                                                            public void accept(Throwable throwable) throws Exception {
+
+                                                                                Log.d(TAG, "throwable.getMessage(): " + throwable.getMessage());
+
+
+                                                                            }
+                                                                        });
+
+
+                                                            }
+
+                                                        }
+                                                    }
+        );
+        checkTransactionMaster.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                              @Override
+                                                              public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                                  if (isChecked) {
+
+                                                                      Completable.fromAction(new Action() {
+                                                                          @Override
+                                                                          public void run() throws Exception {
+                                                                              mDatabase.mTransactionMasterDao().deleteAll();
+                                                                          }
+                                                                      }).subscribeOn(Schedulers.newThread())
+                                                                              .observeOn(AndroidSchedulers.mainThread())
+                                                                              .subscribe(new Action() {
+                                                                                  @Override
+                                                                                  public void run() throws Exception {
+
+                                                                                      Toast.makeText(getActivity(), "Transaction Master table deleted.", Toast.LENGTH_SHORT).show();
+                                                                                  }
+                                                                              }, new Consumer<Throwable>() {
+                                                                                  @Override
+                                                                                  public void accept(Throwable throwable) throws Exception {
+
+                                                                                      Log.d(TAG, "throwable.getMessage(): " + throwable.getMessage());
+
+
+                                                                                  }
+                                                                              });
+
+
+                                                                  }
+
+                                                              }
+                                                          }
+        );
+        checkCompany.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                    @Override
+                                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                        if (isChecked) {
+                                                            mDatabase.mCompanyDao().deleteAll();
+
+
+                                                            Toast.makeText(getActivity(), "Company table deleted.", Toast.LENGTH_SHORT).show();
+                                                        }
+
+                                                    }
+                                                }
+        );
 
         return view;
     }
+
     private void getItems() {
         LiveData<List<Items>> itemLiveList = mDatabase.mItemsDao().getAllItems();
         itemLiveList.observe(this, items -> {
             if (items == null || items.size() == 0) {
                 return;
             }
-            List<Items>  mItemsList = items;
+            List<Items> mItemsList = items;
             exportItems(mItemsList);
         });
     }
+
     private void exportItems(List<Items> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile ="pos_database_items"+System.currentTimeMillis()+ ".xls";
+        String csvFile = "pos_database_items" + System.currentTimeMillis() + ".xls";
 
-        File directory = new File(sd.getAbsolutePath()+"/Backup");
+        File directory = new File(sd.getAbsolutePath() + "/Backup");
         //create directory if not exist
         if (!directory.isDirectory()) {
             directory.mkdirs();
@@ -137,11 +295,11 @@ public class ExportDBFragment extends Fragment {
                 sheet.addCell(new Label(5, i, String.valueOf(item.getCost())));
                 sheet.addCell(new Label(6, i, String.valueOf(item.getVat())));
                 sheet.addCell(new Label(7, i, item.getImagePath()));
-                sheet.addCell(new Label(8, i,String.valueOf(item.isDeleted())));
+                sheet.addCell(new Label(8, i, String.valueOf(item.isDeleted())));
                 sheet.addCell(new Label(9, i, String.valueOf(item.getQty())));
                 sheet.addCell(new Label(10, i, String.valueOf(item.getTotalItemPrice())));
-                sheet.addCell(new Label(11, i,String.valueOf(item.isChecked())));
-                sheet.addCell(new Label(12, i,String.valueOf(item.isOpen())));
+                sheet.addCell(new Label(11, i, String.valueOf(item.isChecked())));
+                sheet.addCell(new Label(12, i, String.valueOf(item.isOpen())));
                 sheet.addCell(new Label(13, i, item.getCreatedDate()));
             }
 
@@ -155,22 +313,24 @@ public class ExportDBFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
     private void getCategories() {
         LiveData<List<Category>> itemLiveList = mDatabase.mCategoryDao().getAllCategory();
         itemLiveList.observe(this, items -> {
             if (items == null || items.size() == 0) {
                 return;
             }
-            List<Category>  mItemsList = items;
+            List<Category> mItemsList = items;
             exportCategory(mItemsList);
         });
     }
+
     private void exportCategory(List<Category> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile ="pos_database_category"+System.currentTimeMillis()+ ".xls";
+        String csvFile = "pos_database_category" + System.currentTimeMillis() + ".xls";
 
-        File directory = new File(sd.getAbsolutePath()+"/Backup");
+        File directory = new File(sd.getAbsolutePath() + "/Backup");
         //create directory if not exist
         if (!directory.isDirectory()) {
             directory.mkdirs();
@@ -201,7 +361,7 @@ public class ExportDBFragment extends Fragment {
                 sheet.addCell(new Label(0, i, String.valueOf(i)));
                 sheet.addCell(new Label(1, i, String.valueOf(item.getCategoryId())));
                 sheet.addCell(new Label(2, i, item.getCategoryName()));
-                sheet.addCell(new Label(3, i,String.valueOf(item.isDeleted())));
+                sheet.addCell(new Label(3, i, String.valueOf(item.isDeleted())));
                 sheet.addCell(new Label(4, i, item.getCreatedDate()));
             }
 
@@ -215,22 +375,24 @@ public class ExportDBFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
     private void getTransaction() {
         LiveData<List<Transaction>> itemLiveList = mDatabase.mTransactionDao().getAllItems();
         itemLiveList.observe(this, items -> {
             if (items == null || items.size() == 0) {
                 return;
             }
-            List<Transaction>  mItemsList = items;
+            List<Transaction> mItemsList = items;
             exportTransaction(mItemsList);
         });
     }
+
     private void exportTransaction(List<Transaction> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile ="pos_database_transaction"+System.currentTimeMillis()+ ".xls";
+        String csvFile = "pos_database_transaction" + System.currentTimeMillis() + ".xls";
 
-        File directory = new File(sd.getAbsolutePath()+"/Backup");
+        File directory = new File(sd.getAbsolutePath() + "/Backup");
         //create directory if not exist
         if (!directory.isDirectory()) {
             directory.mkdirs();
@@ -276,7 +438,7 @@ public class ExportDBFragment extends Fragment {
                 sheet.addCell(new Label(5, i, String.valueOf(item.getPrice())));
                 sheet.addCell(new Label(6, i, String.valueOf(item.getVatPercentage())));
                 sheet.addCell(new Label(7, i, String.valueOf(item.getVat())));
-                sheet.addCell(new Label(8, i,String.valueOf(item.getGrandTotal())));
+                sheet.addCell(new Label(8, i, String.valueOf(item.getGrandTotal())));
                 sheet.addCell(new Label(9, i, item.getCreatedDate()));
                 sheet.addCell(new Label(10, i, item.getItemName()));
                 sheet.addCell(new Label(11, i, String.valueOf(item.getCategory())));
@@ -295,22 +457,24 @@ public class ExportDBFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
     private void getTransactionMaster() {
         LiveData<List<TransactionMaster>> itemLiveList = mDatabase.mTransactionMasterDao().getAllItems();
         itemLiveList.observe(this, items -> {
             if (items == null || items.size() == 0) {
                 return;
             }
-            List<TransactionMaster>  mItemsList = items;
+            List<TransactionMaster> mItemsList = items;
             exportTransactionMaster(mItemsList);
         });
     }
+
     private void exportTransactionMaster(List<TransactionMaster> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile ="pos_database_transactionmaster"+System.currentTimeMillis()+ ".xls";
+        String csvFile = "pos_database_transactionmaster" + System.currentTimeMillis() + ".xls";
 
-        File directory = new File(sd.getAbsolutePath()+"/Backup");
+        File directory = new File(sd.getAbsolutePath() + "/Backup");
         //create directory if not exist
         if (!directory.isDirectory()) {
             directory.mkdirs();
@@ -356,7 +520,7 @@ public class ExportDBFragment extends Fragment {
                 sheet.addCell(new Label(3, i, String.valueOf(item.getVatAmount())));
                 sheet.addCell(new Label(4, i, String.valueOf(item.getDiscountAmount())));
                 sheet.addCell(new Label(5, i, String.valueOf(item.getTotalQty())));
-                sheet.addCell(new Label(6, i,String.valueOf(item.getGrandTotal())));
+                sheet.addCell(new Label(6, i, String.valueOf(item.getGrandTotal())));
                 sheet.addCell(new Label(7, i, item.getCreatedDate()));
                 sheet.addCell(new Label(8, i, String.valueOf(item.getInvoiceNo())));
                 sheet.addCell(new Label(9, i, String.valueOf(item.getInvoiceDate())));
@@ -366,12 +530,13 @@ public class ExportDBFragment extends Fragment {
                 sheet.addCell(new Label(12, i, String.valueOf(item.getShopId())));
                 sheet.addCell(new Label(13, i, String.valueOf(item.getCash())));
                 sheet.addCell(new Label(14, i, String.valueOf(item.getCard())));
-                sheet.addCell(new Label(15, i,String.valueOf(item.getType())));
+                sheet.addCell(new Label(15, i, String.valueOf(item.getType())));
             }
 
             workbook.write();
             workbook.close();
-            // Toast.makeText(getActivity(),"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
+            progress.setVisibility(View.GONE);
+             Toast.makeText(getActivity(),"ALL Tables Exported in a Excel Sheet to Backup folder", Toast.LENGTH_SHORT).show();
             getTransactionMaster();
         } catch (WriteException e) {
             e.printStackTrace();

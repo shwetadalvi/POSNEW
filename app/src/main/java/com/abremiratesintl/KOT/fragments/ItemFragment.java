@@ -97,7 +97,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
     private Items mItems;
     private boolean isEditing;
     private Uri mSelectedImageUri;
-    private String mPath="";
+    private String mPath = "";
     private int itemId = 0;
 
     public ItemFragment() {
@@ -231,7 +231,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
                 String itemCost = (getString(mItemCost).isEmpty()) ? "0" : getString(mItemCost);
 
                 mItems.setItemName(getString(mItemName));
-
+                mItems.setSaleReturned(false);
                 mItems.setVat(itemVat);
                 mItems.setItemId(itemId);
                 mItems.setPrice(Float.parseFloat(itemPrice));
@@ -318,11 +318,12 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
                 if (requestCode == REQUEST_CODE_IMAGE) {
                     mSelectedImageUri = data.getData();
                     // Get the path from the Uri
-                    mPath = getPathFromURI(mSelectedImageUri);
-                   // mPath = mSelectedImageUri.getPath();
+                   // mPath = getPathFromURI(mSelectedImageUri);
+                    mPath = mSelectedImageUri.toString();
                     if (mPath != null) {
-                        File f = new File(mPath);
-                        mSelectedImageUri = Uri.fromFile(f);
+                       // File f = new File(mPath);
+                      //  mSelectedImageUri = Uri.fromFile(f);
+                        mSelectedImageUri = Uri.parse(mPath);
                     }
                     Glide.with(getContext())
                             .load(mSelectedImageUri)

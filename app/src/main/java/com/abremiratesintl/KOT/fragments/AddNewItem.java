@@ -183,50 +183,30 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
 
 
 
-        //    if(mCartItems.contains(item)) {
-             /*   for (int i = 0; i < mCartItems.size(); i++) {
+               for (int i = 0; i < mCartItems.size(); i++) {
                     mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
                     mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;
-                    if (item.getItemId() == mCartItems.get(i).getItemId()) {
+                   /* if (item.getItemId() == mCartItems.get(i).getItemId()) {
                         item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
                         item.setQty(mCartItems.get(i).getQty());
-                    }
+                    }*/
                 }
                 if (mCartItems.size() == 0) {
                     mTotalItemAmount = item.getPrice();
                     mItemCountCount = 1;
                 }
-                mTotalItemAmount = Constants.round(mTotalItemAmount, 2);*/
+                mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
                 returnFromList(item);
                 setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
 
                 menuReturnClickCount = 0;
-         /*   }
-            else{
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
-                builder1.setMessage("Item is not added to Return");
-                builder1.setCancelable(true);
 
-                builder1.setPositiveButton(
-                        "Ok",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                menuReturnClickCount = 0;
-
-                            }
-                        });
-
-
-                AlertDialog alert11 = builder1.create();
-                alert11.show();
-            }*/
         }else {
 
             for (int i = 0; i < mCartItems.size(); i++) {
                 mTotalItemAmount = Float.valueOf(getString(totalAmount)) + mCartItems.get(i).getPrice();
                 mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
-                if (item.getItemId() == mCartItems.get(i).getItemId()) {
+                if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
                     item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
                     item.setQty(mCartItems.get(i).getQty());
                 }
@@ -271,7 +251,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         float price = item.getPrice() * qty;
         if (mCartItems.size() != 0) {
             for (int i = 0; i < mCartItems.size(); i++) {
-                if (item.getItemId() == mCartItems.get(i).getItemId()) {
+                if (item.getItemId() == mCartItems.get(i).getItemId() && !item.isSaleReturned()) {
                     mCartItems.get(i).setTotalItemPrice(price);
                     mCartItems.get(i).setQty(qty);
                     return;
@@ -292,6 +272,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         float price = item.getPrice() * qty;
         item.setQty(qty);
         item.setTotalItemPrice(price);
+        item.setSaleReturned(true);
         mCartItems.add(item);
 
     }

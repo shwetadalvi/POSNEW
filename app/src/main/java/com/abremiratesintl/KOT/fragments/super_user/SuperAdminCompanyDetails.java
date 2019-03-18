@@ -43,6 +43,7 @@ public class SuperAdminCompanyDetails extends BaseFragment {
 
     Company company = new Company();
 
+
     public SuperAdminCompanyDetails() {
         // Required empty public constructor
     }
@@ -91,6 +92,8 @@ public class SuperAdminCompanyDetails extends BaseFragment {
                 mDatabase.mCompanyDao().insertCompany(company);
             });
             t.start();
+
+            Toast.makeText(getActivity(),"Data Added Successfully !",Toast.LENGTH_SHORT).show();
         }
     }
 

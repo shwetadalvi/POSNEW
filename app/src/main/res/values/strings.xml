@@ -84,7 +84,8 @@
     <string name="export_db">Export DB</string>
     <string name="category_report">Category Report</string>
     <string name="selectpayment">Select Payment</string>
-
+    <string name="all">All</string>
+    <string name="currency">AED</string>
     <string-array name="printers">S
         <item>POS Bluetooth</item>
         <item>POS Built-In</item>

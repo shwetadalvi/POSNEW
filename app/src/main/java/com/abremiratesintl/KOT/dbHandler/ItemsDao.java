@@ -13,6 +13,8 @@ import java.util.List;
 
 @Dao
 public interface ItemsDao {
+    @Query("DELETE FROM Items") void deleteAll();
+
     @Query("SELECT * FROM Items WHERE isDeleted =0") LiveData<List<Items>> getAllItems ();
 
     @Query("SELECT * FROM Items WHERE itemName=:itemName and isDeleted =0") LiveData<Items> findItemsByName(String itemName);

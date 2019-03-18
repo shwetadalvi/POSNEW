@@ -16,4 +16,6 @@ public interface CompanyDao {
 
     @Query("SELECT * FROM Company")
     LiveData<Company> getCompany();
+
+    @Query("DELETE FROM Company") void deleteAll();
 }

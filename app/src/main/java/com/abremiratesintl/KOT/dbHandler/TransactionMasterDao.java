@@ -11,6 +11,8 @@ import java.util.List;
 
 @Dao
 public interface TransactionMasterDao {
+    @Query("DELETE FROM TransactionMaster") void deleteAll();
+
     @Query("SELECT * FROM TransactionMaster") LiveData<List<TransactionMaster>> getAllItems();
 
     @Query("SELECT * FROM  TransactionMaster WHERE invoiceNo=:invNo") LiveData<TransactionMaster> findByInvNo(String invNo) ;

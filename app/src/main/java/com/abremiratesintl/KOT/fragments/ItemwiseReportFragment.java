@@ -116,7 +116,13 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 return;
             }
             mItemsList = items;
-            mSelectedItem = items.get(0);
+            Items temp = new Items();
+            temp.setItemId(-1);
+            temp.setItemName("All");
+            
+
+            mItemsList.add(0,temp);
+            mSelectedItem = mItemsList.get(0);
 
             setUpSpinner();
         });
@@ -128,8 +134,8 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         fetchTransactions();
     }
     private void fetchTransactions() {
-        Log.e("INSERTION MASTER1", "inside224"+mSelectedItem.getItemId());
-        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getItemsByItemId(mSelectedItem.getItemId());
+
+        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getTodaysAllItems(Constants.getCurrentDate());
 
         listLiveData.observe(this, this::setUpRecycler);
     }
@@ -307,8 +313,13 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mSelectedItem = mItemsList.get(position);
-        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getItemsByItemId(mSelectedItem.getItemId());
-        listLiveData.observe(this, this::setUpRecycler);
+        if(mSelectedItem.getItemId() == -1){
+            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getTodaysAllItems(Constants.getCurrentDate());
+            listLiveData.observe(this, this::setUpRecycler);
+        }else {
+            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getItemsByItemId(mSelectedItem.getItemId());
+            listLiveData.observe(this, this::setUpRecycler);
+        }
     }
 
     @Override
