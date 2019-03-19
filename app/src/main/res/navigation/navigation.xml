@@ -56,6 +56,9 @@
         <action
             android:id="@+id/action_homeFragment2_to_preferencesFragment"
             app:destination="@id/preferencesFragment" />
+        <action
+            android:id="@+id/action_homeFragment2_to_inventoryFragment"
+            app:destination="@id/inventoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/addNewItem"
@@ -126,7 +129,11 @@
     <fragment
         android:id="@+id/preferencesFragment"
         android:name="com.abremiratesintl.KOT.fragments.PreferencesFragment"
-        android:label="PreferencesFragment" />
+        android:label="PreferencesFragment" >
+        <action
+            android:id="@+id/action_preferencesFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
     <fragment
         android:id="@+id/superAdminHome"
         android:name="com.abremiratesintl.KOT.fragments.super_user.SuperAdminHome"
@@ -154,4 +161,8 @@
         android:name="com.abremiratesintl.KOT.fragments.CategoryReportFragment"
         android:label="fragment_category_report"
         tools:layout="@layout/fragment_category_report" />
+    <fragment
+        android:id="@+id/inventoryFragment"
+        android:name="com.abremiratesintl.KOT.fragments.InventoryFragment"
+        android:label="InventoryFragment" />
 </navigation>

@@ -34,8 +34,8 @@ public class HomeFragment extends BaseFragment {
     CardView mSettings;
     @BindView(R.id.reports)
     CardView mReports;
-    @BindView(R.id.userManagement)
-    CardView mUserManagement;
+//    @BindView(R.id.userManagement)
+//    CardView mUserManagement;
     private Unbinder mUnbinder;
 
     public HomeFragment() {
@@ -79,15 +79,17 @@ public class HomeFragment extends BaseFragment {
 
     @OnClick(R.id.reports) public void OnClickedReports(View view) {
         Navigation.findNavController(view).navigate(R.id.action_homeFragment2_to_reportsFragmentHome);
-       //
-        //action_homeFragment2_to_reportsFragment2
-    }
 
-    @OnClick(R.id.userManagement) public void OnClickedUserManagement(View view) {
+    }
+    @OnClick(R.id.inventory) public void OnClickedInventory(View view) {
+        Navigation.findNavController(view).navigate(R.id.action_homeFragment2_to_inventoryFragment);
+
+    }
+   /* @OnClick(R.id.userManagement) public void OnClickedUserManagement(View view) {
 //        showSnackBar(getView(), "This feature will added soon", 1000);
         Bundle bundle = new Bundle();
         bundle.putInt("from_fragment", 2);
         Navigation.findNavController(getView()).navigate(R.id.action_homeFragment2_to_loginFragment4, bundle);
-    }
+    }*/
 
 }

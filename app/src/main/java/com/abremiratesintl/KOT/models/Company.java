@@ -12,6 +12,7 @@ public class Company {
     private String mCompanyAddress;
     private String mCompanyTrn;
     private String mCompanyPrefix;
+    private String mCompanyVat;
 
     public String getCompanyName() {
         return mCompanyName;
@@ -60,4 +61,13 @@ public class Company {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String getCompanyVat() {
+        return mCompanyVat;
+    }
+
+    public void setCompanyVat(String CompanyVat) {
+        this.mCompanyVat = mCompanyVat;
+    }
+
 }

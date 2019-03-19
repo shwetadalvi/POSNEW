@@ -17,6 +17,7 @@ public class Constants {
     public static String COMPANY_ADDRESS = "Sharjah";
     public static String COMPANY_TRN = "1234567890";
     public static String COMPANY_PREFIX = "SJ";
+    public static String COMPANY_VAT = "";
     public static final String COMPANY_TAX = "TAX Invoice";
     public static final String COMPANY_ORDER_NO = "Invoice No.  ";
     public static final String COMPANY_DATE = "Invoice Date  ";

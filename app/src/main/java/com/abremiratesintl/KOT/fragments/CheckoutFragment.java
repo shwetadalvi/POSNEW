@@ -976,15 +976,21 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
         if (selectedItem == "CASH") {
             mCash.setText(total);
+            mCash.setEnabled(false);
+            mCard.setEnabled(false);
             mCard.setText("");
 
         }
         if (selectedItem == "CARD") {
             mCard.setText(total);
+            mCash.setEnabled(false);
+            mCard.setEnabled(false);
             mCash.setText("");
         }
         if (selectedItem == "CASH+CARD") {
             mCash.requestFocus();
+            mCash.setEnabled(true);
+            mCard.setEnabled(true);
             InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.showSoftInput(getView(), InputMethodManager.SHOW_IMPLICIT);
 

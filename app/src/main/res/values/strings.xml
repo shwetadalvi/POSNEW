@@ -86,6 +86,7 @@
     <string name="selectpayment">Select Payment</string>
     <string name="all">All</string>
     <string name="currency">AED</string>
+    <string name="inventory">Inventory</string>
     <string-array name="printers">S
         <item>POS Bluetooth</item>
         <item>POS Built-In</item>

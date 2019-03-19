@@ -115,6 +115,8 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
 //        setHasOptionsMenu(true);
         mItemCategory.setOnItemSelectedListener(this);
         mItemCategory.setSpinnerEventsListener(this);
+
+        mItemVat.setText(Constants.COMPANY_VAT);
         getCategoryList();
         return view;
     }

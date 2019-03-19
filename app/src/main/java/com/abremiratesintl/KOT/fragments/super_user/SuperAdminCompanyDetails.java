@@ -36,6 +36,8 @@ public class SuperAdminCompanyDetails extends BaseFragment {
     EditText mCompanyTrn;
     @BindView(R.id.company_prefix)
     EditText mCompanyPrefix;
+    @BindView(R.id.company_vat)
+    EditText mCompanyVat;
     @BindView(R.id.admin_company_save)
     Button mCompanySave;
     private Unbinder mUnbinder;
@@ -70,6 +72,7 @@ public class SuperAdminCompanyDetails extends BaseFragment {
         mCompanyTel.setText(company.getCompanyTel());
         mCompanyTrn.setText(company.getCompanyTrn());
         mCompanyPrefix.setText(company.getCompanyPrefix());
+        mCompanyVat.setText(company.getCompanyVat());
     }
 
     @OnClick(R.id.admin_company_save)
@@ -79,6 +82,7 @@ public class SuperAdminCompanyDetails extends BaseFragment {
         String companyAddress = getString(mCompanyAddress);
         String companyTrn = getString(mCompanyTrn);
         String companyPrefix = getString(mCompanyPrefix);
+        String companyVat = getString(mCompanyVat);
         if (isEmpty(companyName) && isEmpty(companyTel) && isEmpty(companyAddress) && isEmpty(companyTrn) && isEmpty(companyPrefix)) {
             showSnackBar(getView(), getStringfromResource(R.string.every_fields_are_mandatory), 1500);
             return;
@@ -88,6 +92,7 @@ public class SuperAdminCompanyDetails extends BaseFragment {
             company.setCompanyTel(companyTel);
             company.setCompanyTrn(companyTrn);
             company.setCompanyPrefix(companyPrefix);
+            company.setCompanyVat(companyVat);
             Thread t = new Thread(() -> {
                 mDatabase.mCompanyDao().insertCompany(company);
             });

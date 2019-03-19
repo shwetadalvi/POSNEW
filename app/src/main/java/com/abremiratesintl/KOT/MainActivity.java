@@ -91,6 +91,7 @@ private Toolbar toolbar;
         Constants.COMPANY_TELE = company.getCompanyTel();
         Constants.COMPANY_ADDRESS = company.getCompanyAddress();
         Constants.COMPANY_TRN = company.getCompanyTrn();
+        Constants.COMPANY_VAT = company.getCompanyVat();
         mPrefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.COMPANY_PREFIX, company.getCompanyPrefix());
 
     }

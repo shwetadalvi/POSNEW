@@ -71,10 +71,7 @@ import vpos.apipackage.PosApiHelper;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ADDRESS;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_DATE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_AMOUNT;
-import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_DESCRIPTION;
-import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_DISCOUNT;
-import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_GROSS_AMOUNT;
-import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_NET_AMOUNT;
+
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_PAYMENT;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_PRICE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_QUANTITY;
