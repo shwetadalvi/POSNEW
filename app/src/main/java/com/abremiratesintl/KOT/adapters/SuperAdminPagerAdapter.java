@@ -10,6 +10,7 @@ import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.fragments.super_user.CreateAdminFragment;
 import com.abremiratesintl.KOT.fragments.super_user.ExportDBFragment;
 import com.abremiratesintl.KOT.fragments.super_user.SuperAdminCompanyDetails;
+import com.abremiratesintl.KOT.fragments.super_user.VatSettingsFragment;
 
 public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
 
@@ -28,6 +29,8 @@ public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
                 return new CreateAdminFragment();
             case 2:
                 return new ExportDBFragment();
+            case 3:
+                return new VatSettingsFragment();
         }
         return null;
     }
@@ -40,11 +43,13 @@ public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
                 return mContext.getResources().getString(R.string.new_user);
             case 2:
                 return mContext.getResources().getString(R.string.export_db);
+            case 3:
+                return mContext.getResources().getString(R.string.vat_settings);
         }
         return null;
     }
 
     @Override public int getCount() {
-        return 3;
+        return 4;
     }
 }

@@ -920,10 +920,16 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
     float calculateVat(float vat, float price, int qty) {
         if (qty == 0) {
+            if(mPrefUtils.getBooleanPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, true))
             price = price * vat / 100;
+            else
+                price = price * vat/(100 + vat);
             return Constants.round(price, 2);
         } else {
+            if(mPrefUtils.getBooleanPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, true))
             price = (qty * price) * vat / 100;
+            else
+                price = (qty * price) * vat/(100 + vat);
             return Constants.round(price, 2);
         }
     }

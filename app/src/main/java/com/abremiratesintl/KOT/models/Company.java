@@ -1,7 +1,10 @@
 package com.abremiratesintl.KOT.models;
 
+
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+
 
 @Entity
 public class Company {
@@ -13,6 +16,7 @@ public class Company {
     private String mCompanyTrn;
     private String mCompanyPrefix;
     private String mCompanyVat;
+
 
     public String getCompanyName() {
         return mCompanyName;
@@ -69,5 +73,6 @@ public class Company {
     public void setCompanyVat(String CompanyVat) {
         this.mCompanyVat = mCompanyVat;
     }
+
 
 }

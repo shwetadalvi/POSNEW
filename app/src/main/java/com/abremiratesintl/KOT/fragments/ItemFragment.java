@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -86,6 +87,8 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
     Drawable icUp;
     @BindView(R.id.saveItem)
     LinearLayout saveItem;
+    @BindView(R.id.checkBox)
+    CheckBox checkBox;
     private Unbinder mUnbinder;
 
     private List<Category> mCategoryList;
@@ -240,6 +243,11 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
                 mItems.setCost(Float.parseFloat(itemCost));
                 mItems.setCreatedDate(Constants.getCurrentDateTime());
                 mItems.setImagePath(mPath);
+
+                if(checkBox.isChecked())
+                    mItems.setOpen(true);
+                else
+                    mItems.setOpen(false);
                 if (isEditing)
 
                     updateItem(mItems);

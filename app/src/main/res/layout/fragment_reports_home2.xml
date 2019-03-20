@@ -22,12 +22,12 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            <ImageView
                 android:id="@+id/imageDailyReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                android:background="@mipmap/daily"
+                app:srcCompat="@drawable/ic_settings"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -68,12 +68,12 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            <ImageView
                 android:id="@+id/imageSalesReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                android:background="@drawable/ic_new_item"
+                app:srcCompat="@drawable/ic_settings"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -115,12 +115,12 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            <ImageView
                 android:id="@+id/imageItemReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                android:background="@mipmap/daily"
+                app:srcCompat="@drawable/ic_settings"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -161,12 +161,12 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            <ImageView
                 android:id="@+id/imageVatReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                android:background="@drawable/ic_new_item"
+                app:srcCompat="@drawable/ic_settings"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -206,12 +206,12 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            <ImageView
                 android:id="@+id/imageategoryReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                android:background="@drawable/ic_new_item"
+                app:srcCompat="@drawable/ic_settings"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 

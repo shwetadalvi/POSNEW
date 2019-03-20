@@ -16,7 +16,7 @@ import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.models.User;
 
-@Database(entities = {Category.class, Items.class, User.class, TransactionMaster.class, Transaction.class, Company.class, InventoryMaster.class, InventoryTransaction.class}, version = 3,exportSchema = false)
+@Database(entities = {Category.class, Items.class, User.class, TransactionMaster.class, Transaction.class, Company.class, InventoryMaster.class, InventoryTransaction.class}, version =1 ,exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase mInstance;
@@ -24,9 +24,10 @@ public abstract class AppDatabase extends RoomDatabase {
     public static AppDatabase getInstance(Context context) {
         if (mInstance == null) {
             mInstance = Room.databaseBuilder(context, AppDatabase.class, "KOT")
-                    .fallbackToDestructiveMigration()
+                    //.fallbackToDestructiveMigration()
                     //.addMigrations(MIGRATION_1_2)
-                   .addMigrations(MIGRATION_1_2,MIGRATION_2_3)
+                    //.allowMainThreadQueries()
+                   //.addMigrations(MIGRATION_1_2,MIGRATION_2_3)
                     .build();
         }
         return mInstance;
@@ -37,20 +38,19 @@ public abstract class AppDatabase extends RoomDatabase {
             mInstance.close();
         }
     }
-  static final Migration MIGRATION_1_2 = new Migration(1, 2) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
+    /*static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+            @Override
+            public void migrate(SupportSQLiteDatabase database) {
+               database.execSQL("ALTER TABLE Company ADD COLUMN  shweta INTEGER NOT NULL DEFAULT 0");
+            }
+        };*/
+    /*  static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+          @Override
+          public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE 'Company' ADD COLUMN  'shweta' INTEGER");
 
-        }
-    };
-      static final Migration MIGRATION_2_3 = new Migration(2, 3) {
-         @Override
-         public void migrate(SupportSQLiteDatabase database) {
-          //  database.execSQL("ALTER TABLE Company ADD COLUMN  gst INTEGER");
-
-         }
-     };
-
+          }
+      };*/
    public abstract CategoryDao mCategoryDao();
    public abstract ItemsDao mItemsDao();
    public abstract TransactionDao mTransactionDao();

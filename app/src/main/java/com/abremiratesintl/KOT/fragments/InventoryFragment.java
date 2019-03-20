@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,6 +53,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -95,10 +99,12 @@ public class  InventoryFragment extends BaseFragment implements AdapterView.OnIt
     private float currentTotal;
     int totalItemCount = 0;
     float totalItemPrice = 0;
-    CartItems cartItem = new CartItems();
-private int transactionMasterMaxId;
+private int transactionMasterMaxId ;
     View mSelectedDateView;
     private String mSelectedDate = Constants.getCurrentDate();
+
+    List<InventoryMaster> mItemsList = new ArrayList<>();
+    List<InventoryTransaction> mItemsList1 = new ArrayList<>();
     public InventoryFragment() {
         // Required empty public constructor
     }
@@ -108,47 +114,41 @@ private int transactionMasterMaxId;
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_inventory, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        mDatabase = AppDatabase.getInstance(getContext());
+        mDatabase = AppDatabase.getInstance(getActivity());
         addNewItemSpinnerCategory.setOnItemSelectedListener(this);
         addNewItemSpinnerCategory.setSpinnerEventsListener(this);
-        Thread t1 = new Thread(() -> {
+
         ((MainActivity) getActivity()).changeTitle("Inventory");
-        });
-        t1.start();
-        Thread t = new Thread(() -> {
-            transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
-        });
-        t.start();
 
 
-        transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
-
-        editInvoice.setText("Invoice No : "+String.valueOf(transactionMasterMaxId));
         editInvoice.setEnabled(false);
 
-        getCategoryList();
-        if (cartItem.getCartItems() != null && cartItem.getCartItems().size() != 0) {
-            int qty = 0;
-            float price = 0;
 
-            mCartItems = cartItem.getCartItems();
-            for (Items item : cartItem.getCartItems()) {
-                qty = qty + item.getQty();
-                price = price + item.getTotalItemPrice();
-                itemCount.setText(String.valueOf(qty));
-                totalAmount.setText(String.valueOf(price));
+        LiveData<List<InventoryMaster>> itemLiveList = mDatabase.mInventoryMasterDao().getAllItems();
+        itemLiveList.observe(this, items -> {
+            if (items == null || items.size() == 0) {
+                return;
             }
-        } else if (cartItem.getCartItems() == null || cartItem.getCartItems().size() == 0) {
+            mItemsList = items;
+
+        });
+        Log.d("Inventory 1","size"+mItemsList.size());
+        getCategoryList();
+
             itemCount.setText(String.valueOf(0));
             totalAmount.setText(String.valueOf(0));
-        } else {
-            itemCount.setText(String.valueOf(totalItemCount));
-            totalAmount.setText(String.valueOf(totalItemPrice));
-        }
+
         return view;
     }
 
     private void getCategoryList() {
+        Thread t = new Thread(() -> {
+            transactionMasterMaxId = (mDatabase.mInventoryMasterDao().findTransMasterOfMaxId());
+        });
+        t.start();
+        transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
+        editInvoice.setText("Invoice No : "+String.valueOf(transactionMasterMaxId));
+
         LiveData<List<Category>> categoryLiveList = mDatabase.mCategoryDao().getAllCategory();
         categoryLiveList.observe(this, categories -> {
             if (categories==null||categories.size()==0){
@@ -304,37 +304,89 @@ private int transactionMasterMaxId;
         InventoryMaster inventoryMaster = new InventoryMaster();
 
         float grantTotal = Float.parseFloat(getString(totalAmount));
-
         String invoiceDate = Constants.getCurrentDate();
-
+//inventoryMaster.setTransMasterId(transactionMasterMaxId);
         inventoryMaster.setInvoiceNo(String.valueOf(transactionMasterMaxId));
         inventoryMaster.setItemTotalAmount(grantTotal);
         inventoryMaster.setCreatedDate(Constants.getCurrentDateTime());
+        inventoryMaster.setPurchaseDate(mSelectedDate);
         inventoryMaster.setRefference(editRef.getText().toString());
         inventoryMaster.setSupplier(editSupplier.getText().toString());
-       // inventoryMaster.
+
 
         new Thread(() -> {
 
 
             mDatabase.mInventoryMasterDao().insertNewItems(inventoryMaster);
-            for (Items item : mCartItems) {item.getItemName();
+
+            for (Items item : itemsList) {
 
                 insertInventoryTransaction(true, item, transactionMasterMaxId);
 
             }
-            Toast.makeText(getActivity(),"Data Inserted Successfully",Toast.LENGTH_SHORT).show();
+
 
         }).start();
+
+
+        LiveData<List<InventoryMaster>> itemLiveList = mDatabase.mInventoryMasterDao().getAllItems();
+        itemLiveList.observe(this, items -> {
+            if (items == null || items.size() == 0) {
+                return;
+            }
+            mItemsList = items;
+
+        });
+        Log.d("Inventory 2","size"+mItemsList.size());
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+        builder1.setMessage("Inventory Added Successfully");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        resetFields();
+
+                    }
+                });
+
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+
+
     }
+
+    private void resetFields() {
+        Thread t = new Thread(() -> {
+            transactionMasterMaxId = (mDatabase.mInventoryMasterDao().findTransMasterOfMaxId());
+        });
+        t.start();
+        transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
+        editInvoice.setText("Invoice No : "+String.valueOf(transactionMasterMaxId));
+        editDate.setText("Present");
+        mSelectedDate = Constants.getCurrentDate();
+        editSupplier.setText("");
+        editRef.setText("");
+        mCartItems.clear();
+        itemCount.setText(String.valueOf(0));
+        totalAmount.setText(String.valueOf(0));
+        currentItemAndCount.setText("");
+
+    }
+
     private void insertInventoryTransaction(boolean b, Items item, Integer finalTransactionMasterMaxId) {
         if (b) {
+
             InventoryTransaction transaction = new InventoryTransaction();
             transaction.setTransMasterId(finalTransactionMasterMaxId);
             transaction.setVat(item.getVat());
             transaction.setItemId(item.getItemId());
             transaction.setQty(item.getQty());
             transaction.setPrice(item.getPrice());
+            transaction.setCreatedDate(Constants.getCurrentDate());
             transaction.setItemName(item.getItemName());
             transaction.setInvoiceDate(Constants.getCurrentDate());
             transaction.setGrandTotal(item.getQty() * item.getPrice());
@@ -345,24 +397,55 @@ private int transactionMasterMaxId;
             transaction.setCategory(category);
 
 
-           /* Completable.fromAction(() -> mDatabase.mTransactionDao().insertNewItems(transaction))
+            Completable.fromAction(() -> mDatabase.mInventoryTransactionDao().insertNewItems(transaction))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
                     }, throwable -> Log.e("INSERTION MASTER2", "Count   "));
+
+            LiveData<List<InventoryTransaction>> itemLiveList = mDatabase.mInventoryTransactionDao().getAllItems();
+            itemLiveList.observe(this, items -> {
+                if (items == null || items.size() == 0) {
+                    return;
+                }
+                mItemsList1 = items;
+
+            });
+            Log.d("Inventory 3","size"+mItemsList1.size());
         } else {
 
-        }*/
-            mDatabase.mInventoryTransactionDao().insertNewItems(transaction);
-
         }
+           // mDatabase.mInventoryTransactionDao().insertNewItems(transaction);
+
+
     }
     @OnClick(R.id.addNewItemProceed)
     public void onClickedProceed(View view) {
         totalItemCount = Integer.valueOf(getString(itemCount));
         totalItemPrice = Float.valueOf(getString(totalAmount));
-        cartItem.setCartItems(mCartItems);
+        Log.d("Inventory 4","size"+mCartItems.size());
+        if (mCartItems.size() != 0)
         insertTransactions(mCartItems);
+        else{
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+            builder1.setMessage("No Item is Added");
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+
+
+                        }
+                    });
+
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+        }
+
     }
 
     @Override public void itemChanged(List<Items> list) {

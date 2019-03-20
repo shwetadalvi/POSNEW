@@ -33,6 +33,7 @@ public class Constants {
     public static final String COMPANY_ITEM_PAYMENT = "Payment";
     public static final String COMPANY_TOTAL_ITEM = "Total Item";
     public static final String CATEGORY = "Categort";
+    public static final String VAT_EXCLUSIVE = "";
 
         public static final String COMPANY_SL_NO = "Sl No.";
     public static final String PERMISSION_STORAGE_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;

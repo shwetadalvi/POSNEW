@@ -2,6 +2,7 @@ package com.abremiratesintl.KOT.fragments;
 
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
@@ -15,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,7 +50,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelectedListener, CustomSpinner.OnSpinnerEventsListener, ClickListeners.ItemClick<Items>, ClickListeners.OnItemChangedListener {
+public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelectedListener, CustomSpinner.OnSpinnerEventsListener, ClickListeners.ItemClick<Items>, ClickListeners.OnItemChangedListener {
 
     @BindView(R.id.addNewItemspinnerCategory)
     CustomSpinner addNewItemSpinnerCategory;
@@ -75,10 +78,10 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
     public List<Items> mCartItems = new ArrayList<>();
     private float currentVat = 0;
     private float currentTotal;
-    int totalItemCount = 0,menuReturnClickCount = 0;
+    int totalItemCount = 0, menuReturnClickCount = 0;
     float totalItemPrice = 0;
     CartItems cartItem = new CartItems();
-
+    POSRecyclerAdapter mItemsAdapter;
     public AddNewItem() {
         // Required empty public constructor
     }
@@ -119,7 +122,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
     private void getCategoryList() {
         LiveData<List<Category>> categoryLiveList = mDatabase.mCategoryDao().getAllCategory();
         categoryLiveList.observe(this, categories -> {
-            if (categories==null||categories.size()==0){
+            if (categories == null || categories.size() == 0) {
                 return;
             }
             mCategoryList = categories;
@@ -140,7 +143,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
     private void setUpRecyclerViews() {
         if (mItemList != null || mItemList.size() > 0) {
             int selectedCategoryId = mSelectedCategory.getCategoryId();
-            POSRecyclerAdapter mItemsAdapter = new POSRecyclerAdapter(mItemList, this);
+             mItemsAdapter = new POSRecyclerAdapter(mItemList, this);
             addNewItemRecyclerView.setAdapter(mItemsAdapter);
         }
     }
@@ -152,75 +155,114 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         }
     }
 
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
     }
 
-    @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mSelectedCategory = mCategoryList.get(position);
         getItemsOfSelectedCategory();
     }
 
-    @Override public void onNothingSelected(AdapterView<?> parent) {
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 
-    @Override public void onSpinnerOpened(Spinner spinner) {
+    @Override
+    public void onSpinnerOpened(Spinner spinner) {
         addNewItemSpinnerArrow.setImageDrawable(arrowUp);
     }
 
-    @Override public void onSpinnerClosed(Spinner spinner) {
+    @Override
+    public void onSpinnerClosed(Spinner spinner) {
         addNewItemSpinnerArrow.setImageDrawable(arrowDown);
     }
 
-    @Override public void onClickedItem(Items item) {
+    @Override
+    public void onClickedItem(Items item) {
 
 
         int mItemCountCount = 0;
         float mTotalItemAmount = 0;
-        if(menuReturnClickCount == 1){
+        if (menuReturnClickCount == 1) {
 
 
-
-               for (int i = 0; i < mCartItems.size(); i++) {
-                    mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
-                    mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;
+            for (int i = 0; i < mCartItems.size(); i++) {
+                mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
+                mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;
                    /* if (item.getItemId() == mCartItems.get(i).getItemId()) {
                         item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
                         item.setQty(mCartItems.get(i).getQty());
                     }*/
-                }
-                if (mCartItems.size() == 0) {
-                    mTotalItemAmount = item.getPrice();
-                    mItemCountCount = 1;
-                }
-                mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
-                returnFromList(item);
-                setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
-
-                menuReturnClickCount = 0;
-
-        }else {
-
-            for (int i = 0; i < mCartItems.size(); i++) {
-                mTotalItemAmount = Float.valueOf(getString(totalAmount)) + mCartItems.get(i).getPrice();
-                mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
-                if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
-                    item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
-                    item.setQty(mCartItems.get(i).getQty());
-                }
             }
             if (mCartItems.size() == 0) {
                 mTotalItemAmount = item.getPrice();
                 mItemCountCount = 1;
             }
             mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
-            insertToList(item);
+            returnFromList(item);
             setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
+
+            menuReturnClickCount = 0;
+
+        } else {
+            if (item.isOpen()) {
+                final Dialog dialog = new Dialog(getActivity());
+                dialog.setContentView(R.layout.dialog_layout);
+               // dialog.setTitle("Title...");
+
+
+                EditText editOpenPrice = (EditText) dialog.findViewById(R.id.editOpenPrice);
+                //text.setText("Android custom dialog example!");
+                editOpenPrice.setText(String.valueOf(item.getPrice()));
+
+                Button dialogButton = (Button) dialog.findViewById(R.id.buttonSave);
+                // if button is clicked, close the custom dialog
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (getString(editOpenPrice) != null)
+                            item.setPrice(Float.parseFloat(getString(editOpenPrice)));
+                        mItemsAdapter.notifyDataSetChanged();
+                        Thread t = new Thread(() -> {
+                            mDatabase.mItemsDao().insertNewItems(item);
+                        });
+                        t.start();
+
+                        dialog.dismiss();
+                       addItem(item);
+                    }
+                });
+
+                dialog.show();
+            }else {
+                addItem(item);
+            }
         }
     }
-
+void addItem(Items item){
+    int mItemCountCount = 0;
+    float mTotalItemAmount = 0;
+    for (int i = 0; i < mCartItems.size(); i++) {
+        mTotalItemAmount = Float.valueOf(getString(totalAmount)) + mCartItems.get(i).getPrice();
+        mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
+        if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
+            item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
+            item.setQty(mCartItems.get(i).getQty());
+        }
+    }
+    if (mCartItems.size() == 0) {
+        mTotalItemAmount = item.getPrice();
+        mItemCountCount = 1;
+    }
+    mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
+    insertToList(item);
+    setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
+}
     void setFooterAndVat(Items item, float mTotalItemAmount, int mItemCountCount) {
         calculateVat(item.getVat(), item.getPrice());
         currentItemAndCount.setText(item.getItemName() + " x " + item.getQty());
@@ -236,14 +278,17 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         currentTotal = Constants.round(currentTotal, 2);
     }
 
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
     }
 
-    @Override public void onPause() {
+    @Override
+    public void onPause() {
         super.onPause();
 
     }
+
     void insertToList(Items item) {
         int qty = item.getQty();
 
@@ -266,6 +311,7 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
             mCartItems.add(item);
         }
     }
+
     void returnFromList(Items item) {
 
         int qty = -1;
@@ -276,25 +322,29 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         mCartItems.add(item);
 
     }
-    @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_new_item, menu);
     }
 
     int menuClickCount = 0;
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
 
             case R.id.sale_return:
-                menuReturnClickCount ++;
-                if(menuReturnClickCount > 1)
+                menuReturnClickCount++;
+                if (menuReturnClickCount > 1)
                     menuReturnClickCount = 0;
                 break;
         }
 
         return true;
     }
+
     @OnClick(R.id.addNewItemProceed)
     public void onClickedProceed(View view) {
         totalItemCount = Integer.valueOf(getString(itemCount));
@@ -303,7 +353,8 @@ public class  AddNewItem extends BaseFragment implements AdapterView.OnItemSelec
         Navigation.findNavController(view).navigate(AddNewItemDirections.actionAddNewItemToCheckoutFragment(cartItem));
     }
 
-    @Override public void itemChanged(List<Items> list) {
+    @Override
+    public void itemChanged(List<Items> list) {
         mItemList = list;
         int count = 0;
         float total = 0;

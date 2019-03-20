@@ -3,6 +3,7 @@ package com.abremiratesintl.KOT.adapters;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,11 +50,13 @@ public class POSRecyclerAdapter extends RecyclerView.Adapter<POSRecyclerAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView posItemName, posItemPrice;
         ImageView iv;
+        ImageView imgFlag;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             posItemName = itemView.findViewById(R.id.pos_item_name);
             posItemPrice = itemView.findViewById(R.id.pos_item_price);
+            imgFlag = itemView.findViewById(R.id.imgFlag);
             iv = itemView.findViewById(R.id.thumb);
         }
 
@@ -73,6 +76,10 @@ public class POSRecyclerAdapter extends RecyclerView.Adapter<POSRecyclerAdapter.
                     .placeholder(R.drawable.thumb)
                     .into(iv);
 
+            if(items.isOpen())
+                imgFlag.setVisibility(View.VISIBLE);
+            else
+                imgFlag.setVisibility(View.GONE);
             itemView.setOnClickListener(view -> mItemClickListener.onClickedItem(items));
         }
     }

@@ -82,11 +82,14 @@
     <string name="itemwise_report">Item Report</string>
     <string name="vat_report">VAT Report</string>
     <string name="export_db">Export DB</string>
+    <string name="vat_settings">Vat Settings</string>
     <string name="category_report">Category Report</string>
     <string name="selectpayment">Select Payment</string>
     <string name="all">All</string>
     <string name="currency">AED</string>
     <string name="inventory">Inventory</string>
+    <string name="vat_exclusive">Vat Exclusive</string>
+    <string name="vat_inclusive">Vat Inclusive</string>
     <string-array name="printers">S
         <item>POS Bluetooth</item>
         <item>POS Built-In</item>
