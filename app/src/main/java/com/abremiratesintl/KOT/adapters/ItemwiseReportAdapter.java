@@ -65,7 +65,7 @@ public class ItemwiseReportAdapter extends RecyclerView.Adapter<ItemwiseReportAd
 
         void bind(Transaction Transaction) {
             slNo.setText(String.valueOf(getAdapterPosition() + 1));
-            item.setText(String.valueOf(Transaction.getTransactionId()));
+            item.setText(String.valueOf(Transaction.getItemName()));
             qty.setText(String.valueOf(Transaction.getQty()));
             date.setText(String.valueOf(Transaction.getInvoiceDate()));
             amount.setText(String.valueOf(Transaction.getPrice()));

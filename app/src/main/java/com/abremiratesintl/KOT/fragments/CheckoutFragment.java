@@ -366,16 +366,19 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 saveCart();
                 break;
             case R.id.delete:
-                if (btnCounter == 1)
+             //   if (btnCounter == 1)
                     mCheckoutAdapter.deleteCheck();
-                else{
+             /*   else{
                     item.setEnabled(false);
                     item.getIcon().setAlpha(130);
-                }
+                }*/
 
                 break;
-            case android.R.id.home:
+            case R.id.add_new:
                 //  Navigation.findNavController(item.getActionView().findViewById(R.id.add_new)).navigate(R.id.action_checkoutFragment_to_addNewItem);
+                mItemsList.clear();
+                setUpRecyclerView();
+                calculateTotal();
                 if (getFragmentManager() != null) {
                     getFragmentManager().popBackStack();
                 }
@@ -642,7 +645,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText("................................................")
-                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                       // .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 Printooth.INSTANCE.printer().print(printables);
@@ -890,7 +893,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 }
             }
         } else {
-            showSnackBar(getView(), "cannot be empty", 1000);
+            showSnackBar(getView(), "Cannot be empty", 1000);
         }
     }
 

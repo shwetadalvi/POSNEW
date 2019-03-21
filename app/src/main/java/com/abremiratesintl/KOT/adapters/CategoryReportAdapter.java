@@ -60,7 +60,7 @@ public class CategoryReportAdapter extends RecyclerView.Adapter<CategoryReportAd
 
         void bind(Transaction Transaction) {
             slNo.setText(String.valueOf(getAdapterPosition() + 1));
-            invNo.setText(String.valueOf(Transaction.getTransactionId()));
+            invNo.setText(String.valueOf(Transaction.getTransMasterId()));
             totalItem.setText(String.valueOf(Transaction.getQty()));
             item_name.setText(Transaction.getItemName());
             total.setText(String.valueOf(Transaction.getPrice()));

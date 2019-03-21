@@ -78,6 +78,7 @@
             android:padding="5dp"
             android:singleLine="true"
             android:textColor="#FFFFFF"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColorHint="@color/grey"
             android:theme="@style/AppTheme.EditText" />
 
@@ -105,13 +106,14 @@
             android:singleLine="true"
             android:text="@string/present"
             android:textColor="#FFFFFF"
-            android:theme="@style/AppTheme.EditText"  />
+            android:theme="@style/AppTheme.EditText"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
     </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layout1"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/brown"
@@ -185,14 +187,15 @@
         android:id="@+id/reportRecyclerViewReport"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layout1"
+        android:layout_below="@+id/header"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical"
         android:visibility="visible"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@+id/layout"
-        tools:listitem="@layout/itemwise_report_data" />
+        tools:listitem="@layout/itemwise_report_data"
+        android:layout_above="@+id/footer"/>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/emptyReportView"
@@ -223,5 +226,31 @@
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary"
+        android:padding="10dp"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:id="@+id/textCash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total :"
+            android:textColor="@color/white"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
+        <TextView
+            android:id="@+id/textTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Card :"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/textCash"
+            android:layout_alignParentRight="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+    </RelativeLayout>
 </RelativeLayout>

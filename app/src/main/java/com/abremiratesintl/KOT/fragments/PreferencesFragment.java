@@ -1,6 +1,7 @@
 package com.abremiratesintl.KOT.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.DropDownPreference;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.utils.Constants;
@@ -42,9 +44,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             prefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, entryValue.toString());
             return true;
         });
-    //  Button btnUser = getFragmentManager().findFragmentById(R.id.btnUser);
+
 
         Preference button = (Preference)getPreferenceManager().findPreference("button_preference");
+
+        button.setLayoutResource(R.layout.button_layout);
+
+
         if (button != null) {
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
@@ -56,6 +62,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 }
             });
         }
+
+
+
             return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

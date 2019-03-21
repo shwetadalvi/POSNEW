@@ -29,7 +29,7 @@ public interface TransactionDao {
 //    @Query("UPDATE Transactions SET itemName = :itemName WHERE itemId = :itemId") void editItemsNameById(String itemName, int itemId);
 //
 //    @Query("UPDATE Transactions SET isDeleted = :isDelete WHERE itemId = :itemId") void editItemsDeleteById(boolean isDelete, int itemId);
-@Query("SELECT * FROM Transactions WHERE category=:category AND invoiceDate BETWEEN date(:from) AND date(:to)") LiveData<List<Transaction>> findItemsByCategoryBetween(String from, String to,String category );
+@Query("SELECT * FROM Transactions WHERE (category=:category) AND (invoiceDate BETWEEN date(:from) AND date(:to))") LiveData<List<Transaction>> findItemsByCategoryBetween(String from, String to,String category );
 
     @Query("SELECT * FROM Transactions WHERE category=:category") LiveData<List<Transaction>> getAllItemsByCategoryName (String category);
 }

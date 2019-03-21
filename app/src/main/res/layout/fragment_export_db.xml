@@ -57,15 +57,6 @@
         android:textColor="@color/brown"
         android:buttonTint="@color/brown"/>
         <CheckBox
-            android:id="@+id/checkTransaction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Transaction"
-            android:textSize="20dp"
-            android:layout_margin="10dp"
-            android:textColor="@color/brown"
-            android:buttonTint="@color/brown"/>
-        <CheckBox
             android:id="@+id/checkTransactionMaster"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -74,6 +65,17 @@
             android:layout_margin="10dp"
             android:textColor="@color/brown"
             android:buttonTint="@color/brown"/>
+
+        <CheckBox
+            android:id="@+id/checkTransaction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Transaction"
+            android:textSize="20dp"
+            android:layout_margin="10dp"
+            android:textColor="@color/brown"
+            android:buttonTint="@color/brown"/>
+
         <CheckBox
             android:id="@+id/checkCompany"
             android:layout_width="match_parent"
@@ -83,7 +85,24 @@
             android:layout_margin="10dp"
             android:textColor="@color/brown"
             android:buttonTint="@color/brown"/>
-
+        <CheckBox
+            android:id="@+id/checkInventoryMaster"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Inventory Master"
+            android:textSize="20dp"
+            android:layout_margin="10dp"
+            android:textColor="@color/brown"
+            android:buttonTint="@color/brown"/>
+        <CheckBox
+            android:id="@+id/checkInventoryTrans"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Inventory Transaction"
+            android:textSize="20dp"
+            android:layout_margin="10dp"
+            android:textColor="@color/brown"
+            android:buttonTint="@color/brown"/>
     </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>

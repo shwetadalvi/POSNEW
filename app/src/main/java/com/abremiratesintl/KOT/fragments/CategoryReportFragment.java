@@ -1,8 +1,11 @@
 package com.abremiratesintl.KOT.fragments;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,7 +27,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.abremiratesintl.KOT.BaseFragment;
@@ -62,7 +67,12 @@ import jxl.write.WritableWorkbook;
 
 
 public class CategoryReportFragment extends BaseFragment implements ClickListeners.ItemClick<Transaction>, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener, CustomSpinner.OnSpinnerEventsListener {
-
+    @BindView(R.id.footer)
+    RelativeLayout footer;
+    @BindView(R.id.header)
+    LinearLayout header;
+    @BindView(R.id.textTotal)
+    TextView textTotal;
     @BindView(R.id.spinItem)
     CustomSpinner spinItem;
     @BindView(R.id.spinner_arrow)
@@ -147,14 +157,29 @@ private List<Transaction> mTransactionList;
         if (transactionList.size() == 0) {
             emptyView.setVisibility(View.VISIBLE);
             reportRecyclerview.setVisibility(View.GONE);
+            footer.setVisibility(View.GONE);
+            header.setVisibility(View.GONE);
             return;
         }
+        footer.setVisibility(View.VISIBLE);
+        header.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
         reportRecyclerview.setVisibility(View.VISIBLE);
         CategoryReportAdapter adapter = new CategoryReportAdapter(transactionList, this);
         reportRecyclerview.setAdapter(adapter);
+        setFooterValues(transactionList);
     }
+    private void setFooterValues(List<Transaction> transactionList) {
 
+        float total = 0;
+        for (Transaction items : transactionList) {
+
+            total = total + items.getGrandTotal();
+        }
+
+        textTotal.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(total,2)));
+
+    }
     @OnClick(R.id.fromDate)
     public void onClickedFromDate() {
         mSelectedDateView = fromDate;
@@ -201,7 +226,7 @@ private List<Transaction> mTransactionList;
         File sd = Environment.getExternalStorageDirectory();
 
         String csvFile ="pos_category_report"+System.currentTimeMillis()+ ".xls";
-        File directory = new File(sd.getAbsolutePath()+"/new folder");
+        File directory = new File(sd.getAbsolutePath()+"/Reports");
         //create directory if not exist
         if (!directory.isDirectory()) {
             directory.mkdirs();
@@ -246,7 +271,33 @@ private List<Transaction> mTransactionList;
 
             workbook.write();
             workbook.close();
-            Toast.makeText(getContext(),"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("Data Exported in a Excel Sheet");
+            builder.setCancelable(true);
+
+            builder.setPositiveButton(
+                    "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                            {
+                                Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
+                                Uri uri = Uri.parse (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
+                                intent.setDataAndType (uri, "resource/folder");
+                                startActivity (Intent.createChooser (intent, "Open folder"));
+                                /*
+                                Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(selectedUri, "resource/folder");
+                                startActivity(intent);*/
+                            }
+                        }
+                    });
+
+
+            AlertDialog alert11 = builder.create();
+            alert11.show();
+            // Toast.makeText(getContext(),"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -300,10 +351,10 @@ private List<Transaction> mTransactionList;
         if (toDate.equals(getStringfromResource(R.string.present))) {
             toDate = Constants.getCurrentDate();
         }
-        if (fromDate.equals("")) {
+       /* if (fromDate.equals("")) {
             showSnackBar(getView(), getStringfromResource(R.string.present), 1000);
             return;
-        }
+        }*/
         LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByCategoryBetween(fromDate, toDate, mSelectedItem.getCategoryName());
         listLiveData.observe(this, this::setUpRecycler);
     }

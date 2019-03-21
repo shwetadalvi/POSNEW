@@ -5,12 +5,12 @@
     <item
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter"
-        android:title="Item"
+        android:title="Filter"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_all"
         android:icon="@drawable/ic_all"
-        android:title="Item"
+        android:title="All"
         app:showAsAction="always" />
     <item
         android:id="@+id/export"

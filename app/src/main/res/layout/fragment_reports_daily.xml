@@ -45,6 +45,7 @@
                     android:padding="5dp"
                     android:singleLine="true"
                     android:text="present"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="#FFFFFF"
                     android:theme="@style/AppTheme.EditText" />
 

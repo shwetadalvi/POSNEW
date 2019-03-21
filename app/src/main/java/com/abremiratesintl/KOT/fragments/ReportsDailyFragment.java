@@ -8,6 +8,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -15,6 +17,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -247,7 +250,7 @@ private List<TransactionMaster> mTransactionMasterList;
         File sd = Environment.getExternalStorageDirectory();
 
         String csvFile ="pos_daily_report"+System.currentTimeMillis()+ ".xls";
-        File directory = new File(sd.getAbsolutePath()+"/new folder");
+        File directory = new File(sd.getAbsolutePath()+"/Reports");
         //create directory if not exist
         if (!directory.isDirectory()) {
             directory.mkdirs();
@@ -291,7 +294,34 @@ private List<TransactionMaster> mTransactionMasterList;
 
             workbook.write();
             workbook.close();
-            Toast.makeText(getContext(),"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("Data Exported in a Excel Sheet");
+            builder.setCancelable(true);
+
+            builder.setPositiveButton(
+                    "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                            {
+                                Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
+                                Uri uri = Uri.parse (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
+                                intent.setDataAndType (uri, "resource/folder");
+                                startActivity (Intent.createChooser (intent, "Open folder"));
+                                /*
+                                Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(selectedUri, "resource/folder");
+                                startActivity(intent);*/
+                            }
+                        }
+                    });
+
+
+            AlertDialog alert11 = builder.create();
+            alert11.show();
+           // Toast.makeText(getContext(),"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -330,12 +360,14 @@ private List<TransactionMaster> mTransactionMasterList;
         }
     }
     private void printReciptBluetooth() {
+        if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) return;
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothChecking()) {
             printViaBluetoothPrinter();
+
+
         }
     }
-
 
 
 

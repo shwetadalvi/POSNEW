@@ -45,7 +45,8 @@
                     android:padding="5dp"
                     android:singleLine="true"
                     android:textColor="#FFFFFF"
-                    android:textColorHint="@color/grey" />
+                    android:textColorHint="@color/grey"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
                 <TextView
                     android:id="@+id/textView7"
@@ -70,6 +71,7 @@
                     android:inputType="textPersonName"
                     android:padding="5dp"
                     android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:text="@string/present"
                     android:textColor="#FFFFFF" />
 

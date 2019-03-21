@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -41,6 +41,7 @@
                 android:padding="5dp"
                 android:singleLine="true"
                 android:textColor="#FFFFFF"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColorHint="@color/grey"
                  />
 
@@ -67,6 +68,7 @@
                 android:padding="5dp"
                 android:singleLine="true"
                 android:text="@string/present"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#FFFFFF"
                  />
         </LinearLayout>
@@ -75,10 +77,10 @@
 
 
     <LinearLayout
-        android:id="@+id/layout1"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
+        android:background="@color/brown"
         android:orientation="horizontal"
         android:layout_below="@+id/filter"
         android:padding="5dp"
@@ -152,13 +154,13 @@
         android:id="@+id/reportRecyclerViewReport"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/filter"
+        android:layout_below="@+id/header"
+        android:layout_above="@+id/footer"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical"
         android:visibility="visible"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/layout"
         tools:listitem="@layout/vatwise_report_data" />
 
     <android.support.constraint.ConstraintLayout
@@ -189,6 +191,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary"
+        android:padding="10dp"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:id="@+id/textCash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total :"
+            android:textColor="@color/white"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
+        <TextView
+            android:id="@+id/textTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Card :"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/textCash"
+            android:layout_alignParentRight="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

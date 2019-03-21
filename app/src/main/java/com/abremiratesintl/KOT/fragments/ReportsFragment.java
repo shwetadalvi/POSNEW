@@ -1,8 +1,12 @@
 package com.abremiratesintl.KOT.fragments;
 
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.LiveData;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -96,6 +100,7 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
             reportRecyclerview.setVisibility(View.GONE);
             return;
         }
+        reportRecyclerview.setVisibility(View.VISIBLE);
         ReportAdapter adapter = new ReportAdapter(transactionMasterList, this);
         reportRecyclerview.setAdapter(adapter);
     }
@@ -109,7 +114,6 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
         mSelectedDateView = toDate;
         showDatePicker();
     }
-
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_filter, menu);
@@ -130,6 +134,8 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
                 }
                 break;
             case R.id.menu_all:
+                onClickedFilter(false);
+                menuClickCount = 0;
                 LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionMasterDao().getAllItems();
                 listLiveData.observe(this, this::setUpRecycler);
                 break;
@@ -145,7 +151,7 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
         File sd = Environment.getExternalStorageDirectory();
 
         String csvFile ="pos_report"+System.currentTimeMillis()+ ".xls";
-        File directory = new File(sd.getAbsolutePath()+"/new folder");
+        File directory = new File(sd.getAbsolutePath()+"/Reports");
         //create directory if not exist
         if (!directory.isDirectory()) {
             directory.mkdirs();
@@ -190,7 +196,33 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
 
             workbook.write();
             workbook.close();
-            Toast.makeText(getContext(),"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("Data Exported in a Excel Sheet");
+            builder.setCancelable(true);
+
+            builder.setPositiveButton(
+                    "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                            {
+                                Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
+                                Uri uri = Uri.parse (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
+                                intent.setDataAndType (uri, "resource/folder");
+                                startActivity (Intent.createChooser (intent, "Open folder"));
+                                /*
+                                Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(selectedUri, "resource/folder");
+                                startActivity(intent);*/
+                            }
+                        }
+                    });
+
+
+            AlertDialog alert11 = builder.create();
+            alert11.show();
+            // Toast.makeText(getContext(),"Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -239,13 +271,14 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
         if (toDate.equals(getStringfromResource(R.string.present))) {
             toDate = Constants.getCurrentDate();
         }
-        if (fromDate.equals("")){
+     /*   if (fromDate.equals("")){
             showSnackBar(getView(),getStringfromResource(R.string.present),1000);
             return;
-        }
+        }*/
         LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionMasterDao().findItemsByBetween(fromDate, toDate);
         listLiveData.observe(this, this::setUpRecycler);
     }
+
 
     private String getProperDate(int dayOrMonth) {
         if (dayOrMonth < 10) {
