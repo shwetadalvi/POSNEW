@@ -524,7 +524,7 @@ private List<TransactionMaster> mTransactionMasterList;
 
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_DATE + mSelectedDate)
+                        .setText("Daily Report of " + mSelectedDate)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -554,6 +554,7 @@ private List<TransactionMaster> mTransactionMasterList;
                 float total = 0;
                 for (TransactionMaster order : mTransactionMasterList) {
                     total = total+ order.getGrandTotal();
+
                     String price = decimalAdjust(order.getGrandTotal());
                     String totalprice = decimalAdjust(order.getItemTotalAmount());
                     if (price == null) price = String.valueOf(order.getGrandTotal());
@@ -570,6 +571,7 @@ private List<TransactionMaster> mTransactionMasterList;
                             .setNewLinesAfter(2)
                             .build());
                 }
+                String str_total = decimalAdjust(total);
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText("................................................")
@@ -578,7 +580,7 @@ private List<TransactionMaster> mTransactionMasterList;
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_TOTAL +"             "+ String.valueOf(total))
+                        .setText(       COMPANY_ITEM_TOTAL +"                                    "+ String.valueOf(total))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());

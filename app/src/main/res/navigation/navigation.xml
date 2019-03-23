@@ -114,6 +114,9 @@
         <action
             android:id="@+id/action_reportsHomeFragment_to_categoryReport2"
             app:destination="@id/categoryReport2" />
+        <action
+            android:id="@+id/action_reportsHomeFragment_to_inventoryReportFragment"
+            app:destination="@id/inventoryReportFragment" />
     </fragment>
 
     <fragment
@@ -164,5 +167,19 @@
     <fragment
         android:id="@+id/inventoryFragment"
         android:name="com.abremiratesintl.KOT.fragments.InventoryFragment"
-        android:label="InventoryFragment" />
+        android:label="InventoryFragment" >
+        <action
+            android:id="@+id/action_inventoryFragment_to_inventoryDetailsFragment"
+            app:destination="@id/inventoryDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inventoryReportFragment"
+        android:name="com.abremiratesintl.KOT.fragments.InventoryReportFragment"
+        android:label="InventoryReportFragment" />
+    <fragment
+        android:id="@+id/inventoryDetailsFragment"
+        android:name="com.abremiratesintl.KOT.fragments.InventoryDetailsFragment"
+        android:label="InventoryDetailsFragment" >
+
+    </fragment>
 </navigation>

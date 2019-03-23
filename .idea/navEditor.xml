@@ -142,6 +142,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="inventoryDetailsFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-1023" />
+                            <option name="y" value="367" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="inventoryFragment">
                     <value>
                       <LayoutPositions>
@@ -149,6 +161,27 @@
                           <Point>
                             <option name="x" value="-287" />
                             <option name="y" value="188" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_inventoryFragment_to_inventoryDetailsFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="inventoryReportFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-414" />
+                            <option name="y" value="886" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -259,7 +292,7 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="256" />
+                            <option name="x" value="250" />
                             <option name="y" value="1749" />
                           </Point>
                         </option>
@@ -271,6 +304,11 @@
                               </value>
                             </entry>
                             <entry key="action_reportsHomeFragment_to_categoryReport2">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_reportsHomeFragment_to_inventoryReportFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

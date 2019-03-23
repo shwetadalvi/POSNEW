@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -92,6 +93,8 @@ private Toolbar toolbar;
         Constants.COMPANY_ADDRESS = company.getCompanyAddress();
         Constants.COMPANY_TRN = company.getCompanyTrn();
         Constants.COMPANY_VAT = company.getCompanyVat();
+
+        Log.e("Company ","vat :"+company.getCompanyVat());
         mPrefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.COMPANY_PREFIX, company.getCompanyPrefix());
 
     }

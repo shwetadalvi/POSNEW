@@ -16,16 +16,16 @@ public interface CategoryDao {
 
     @Query("SELECT * FROM Category WHERE isDeleted =0") LiveData<List<Category>> getAllCategory();
 
-    @Query("SELECT * FROM Category WHERE categoryName=:categoryName") LiveData<Category> findCategoryByName(String categoryName);
+    @Query("SELECT * FROM Category WHERE categoryName=:categoryName ") LiveData<Category> findCategoryByName(String categoryName);
 
-    @Query("SELECT * FROM Category WHERE categoryId=:categoryId") LiveData<Category> findCategoryById(int categoryId);
+    @Query("SELECT * FROM Category WHERE categoryId=:categoryId ") LiveData<Category> findCategoryById(int categoryId);
 
     @Insert() void insertNewCategory(Category category);
 
-    @Query("UPDATE Category SET categoryName = :categoryName WHERE categoryId = :categoryId") void editCategoryNameById(String categoryName, int categoryId);
+    @Query("UPDATE Category SET categoryName = :categoryName WHERE categoryId = :categoryId ") void editCategoryNameById(String categoryName, int categoryId);
 
-    @Query("UPDATE Category SET isDeleted = :isDelete WHERE categoryId = :categoryId") void editCategoryDeleteById(boolean isDelete, int categoryId);
+    @Query("UPDATE Category SET isDeleted = :isDelete WHERE categoryId = :categoryId ") void editCategoryDeleteById(boolean isDelete, int categoryId);
 
-    @Query("SELECT  categoryName FROM Category WHERE categoryId=:categoryId") String getCategoryById(int categoryId);
+    @Query("SELECT  categoryName FROM Category WHERE categoryId=:categoryId AND isDeleted =0") String getCategoryById(int categoryId);
 
 }

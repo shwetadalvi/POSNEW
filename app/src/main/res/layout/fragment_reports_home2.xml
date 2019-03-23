@@ -27,7 +27,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_settings"
+                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -73,7 +73,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_settings"
+                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -120,7 +120,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_settings"
+                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -166,7 +166,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_settings"
+                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -207,11 +207,11 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:id="@+id/imageategoryReport"
+                android:id="@+id/imagCategoryReport"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_settings"
+                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"/>
 
@@ -221,7 +221,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/imageategoryReport"
+                android:layout_toRightOf="@+id/imagCategoryReport"
                 android:fontFamily="@font/baloo"
                 android:text="@string/category_report"
                 android:textColor="@color/white"
@@ -240,11 +240,56 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/white"
-                android:layout_below="@+id/imageategoryReport"
+                android:layout_below="@+id/imagCategoryReport"
                 android:layout_marginTop="10dp"/>
 
         </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/inventoryReport"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:visibility="gone">
 
+            <ImageView
+                android:id="@+id/imagInventoryReport"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+
+                app:srcCompat="@drawable/ic_sale_report"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"/>
+
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/imagInventoryReport"
+                android:fontFamily="@font/baloo"
+                android:text="@string/inventory_report"
+                android:textColor="@color/white"
+                android:layout_marginLeft="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/right_arrow"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                android:layout_below="@+id/imagInventoryReport"
+                android:layout_marginTop="10dp"/>
+
+        </RelativeLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
 

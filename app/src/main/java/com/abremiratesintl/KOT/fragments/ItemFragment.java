@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.abremiratesintl.KOT.BaseFragment;
+import com.abremiratesintl.KOT.GlideApp;
 import com.abremiratesintl.KOT.MainActivity;
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.adapters.CategorySpinnerAdapter;
@@ -180,7 +181,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
 
     private void updateItem(Items items) {
 
-        Completable.fromAction(() -> mDatabase.mItemsDao().updateItem(items.getItemId(), items.getItemName(), items.getPrice(), items.getCost(), items.getVat(), items.getCategoryId()))
+        Completable.fromAction(() -> mDatabase.mItemsDao().updateItem(items))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
@@ -189,6 +190,16 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
                     resetFeilds();
 
                 }, throwable -> inserted(false, items));
+
+      /*  Completable.fromAction(() -> mDatabase.mItemsDao().updateItem(items.getItemId(), items.getItemName(), items.getPrice(), items.getCost(), items.getVat(), items.getCategoryId()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+
+                    inserted(false, items);
+                    resetFeilds();
+
+                }, throwable -> inserted(false, items));*/
     }
 
     private void inserted(boolean inserted, Items items) {
@@ -271,6 +282,10 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
         mItemPrice.setText("");
         mItemCost.setText("");
         mItemVat.setText("");
+        checkBox.setChecked(false);
+
+        mPath ="";
+        thumbImageVIew.setImageResource(R.drawable.thumb);
     }
 
     void getItemsFromDb() {
@@ -292,6 +307,19 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
         itemId = items.getItemId();
         isEditing = true;
 
+        String mPath = items.getImagePath();
+        if (mPath != null) {
+            mSelectedImageUri = Uri.parse(mPath);
+        }
+        if(items.isOpen())
+            checkBox.setChecked(true);
+        else
+            checkBox.setChecked(false);
+        GlideApp.with(getActivity())
+                .load(mSelectedImageUri)
+                .override(600,600)
+                .placeholder(R.drawable.thumb)
+                .into(thumbImageVIew);
         LiveData<Category> categoryLiveData = mDatabase.mCategoryDao().findCategoryById(items.getCategoryId());
         categoryLiveData.observe(this, category -> {
             mItemName.setText(items.getItemName());
@@ -301,6 +329,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
             mItemBarcode.setText(items.getItemName());
             mItemVat.setText(String.format("%.2f", items.getVat()));
         });
+
     }
 
     @OnClick(R.id.thumbImage)

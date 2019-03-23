@@ -1,5 +1,7 @@
 package com.abremiratesintl.KOT.interfaces;
 
+import android.view.View;
+
 import com.abremiratesintl.KOT.models.BtDevice;
 import com.abremiratesintl.KOT.models.Items;
 
@@ -16,6 +18,9 @@ public interface ClickListeners {
         void onClickedItem(T item);
     }
 
+    interface ItemClickWithView<T>{
+        void onClickedItem(View view,T item);
+    }
     interface CheckoutCountClickListeners {
         void onClickedPlus(Items items);
 

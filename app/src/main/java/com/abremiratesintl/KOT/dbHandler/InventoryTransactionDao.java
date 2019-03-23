@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query;
 
 import com.abremiratesintl.KOT.models.InventoryTransaction;
 import com.abremiratesintl.KOT.models.Transaction;
+import com.abremiratesintl.KOT.models.TransactionMaster;
 
 import java.util.List;
 
@@ -41,4 +42,11 @@ public interface InventoryTransactionDao {
 
     @Query("SELECT * FROM InventoryTransaction WHERE category=:category")
     LiveData<List<InventoryTransaction>> getAllItemsByCategoryName(String category);
+
+    @Query("SELECT * FROM InventoryTransaction WHERE invoiceDate BETWEEN date(:from) AND date(:to)") LiveData<List<InventoryTransaction>> findItemsByBetween(String from, String to);
+
+
+
+
+
 }

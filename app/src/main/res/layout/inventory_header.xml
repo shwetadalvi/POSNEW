@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:layout_height="wrap_content"
+    android:background="#DAF7A6  ">
 
 
     <EditText
@@ -17,16 +17,20 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_rectangle"
+        android:padding="10dp"
         android:ems="10"
         android:hint="Refference"
         android:inputType="textPersonName"
-        android:textColor="@color/white"
+
+        android:textColor="@color/colorPrimary"
         android:textColorHint="@color/grey"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editSupplier"
-       />
+        app:layout_constraintTop_toBottomOf="@+id/editSupplier" />
 
     <EditText
         android:id="@+id/editSupplier"
@@ -39,8 +43,10 @@
         android:layout_marginRight="32dp"
         android:ems="10"
         android:hint="Supplier"
+        android:background="@drawable/bg_rectangle"
+        android:padding="10dp"
         android:inputType="textPersonName"
-        android:textColor="@color/white"
+        android:textColor="@color/colorPrimary"
         android:textColorHint="@color/grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -58,12 +64,14 @@
         android:layout_marginRight="32dp"
         android:ems="10"
         android:focusable="false"
+        android:background="@drawable/bg_rectangle"
+        android:padding="10dp"
         android:inputType="textPersonName"
         android:textAlignment="center"
         android:text="Present"
         android:hint="@string/choose_date"
         android:textColorHint="@color/grey"
-        android:textColor="@color/white"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,13 +84,14 @@
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="16dp"
-android:textColor="@color/white"
+android:textColor="@color/colorPrimary"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-
+        android:background="@drawable/bg_rectangle"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

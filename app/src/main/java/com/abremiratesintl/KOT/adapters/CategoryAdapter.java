@@ -51,7 +51,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         mCategoryItemEvents.onDeletedItem(mRecentlyDeletedItem);
         showUndoSnackbar();
     }
+    public int getCategoryId(int position) {
 
+        return categoryList.get(position).getCategoryId();
+    }
     private void showUndoSnackbar() {
 //        View view = mActivity.findViewById(R.id.coordinator_layout);
 //        Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_text,

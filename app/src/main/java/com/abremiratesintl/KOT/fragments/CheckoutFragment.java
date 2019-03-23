@@ -23,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -409,7 +410,38 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         if (btnCounter == 1) {
             disableDelete = true;
             insertTransactions(mItemsList);
-        }else {
+            String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "0");
+            switch (printerCategory) {
+                case "0":
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                    builder1.setMessage("Select Printer from Settings");
+                    builder1.setCancelable(true);
+
+                    builder1.setPositiveButton(
+                            "Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+
+                                }
+                            });
+
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+                    break;
+                case "1":
+                    printReciptBluetooth(newInvoiceNo);
+                    break;
+                case "2":
+                    printReciptBuiltin(newInvoiceNo);
+                    break;
+                case "3":
+                    showRecipt(newInvoiceNo);
+                    break;
+            }
+        }
+        else {
             disableDelete = false;
             String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "0");
             switch (printerCategory) {
@@ -997,11 +1029,11 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             mCash.setText("");
         }
         if (selectedItem == "CASH+CARD") {
-            mCash.requestFocus();
+           mCash.requestFocus();
+            //getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             mCash.setEnabled(true);
             mCard.setEnabled(true);
-            InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.showSoftInput(getView(), InputMethodManager.SHOW_IMPLICIT);
+
 
             mCard.setText("");
             mCash.setText("");

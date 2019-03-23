@@ -1,6 +1,7 @@
 package com.abremiratesintl.KOT.adapters;
 
 import android.app.AlertDialog;
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
@@ -14,20 +15,28 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
 import com.abremiratesintl.KOT.R;
+import com.abremiratesintl.KOT.dbHandler.AppDatabase;
+import com.abremiratesintl.KOT.models.Items;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SwipeToDeleteCallback<T> extends ItemTouchHelper.SimpleCallback {
-
+    private AppDatabase mDatabase;
     private final ColorDrawable background;
     CategoryAdapter mCategoryAdapter;
     ItemsAdapter mItemsAdapter;
     private Drawable icon;
     Context mContext;
+    List<Items> mItemList = new ArrayList<>();
     public SwipeToDeleteCallback(Context context, T adapter) {
         super(0, ItemTouchHelper.LEFT);
 
         this.mContext = context;
+        mDatabase = AppDatabase.getInstance(mContext);
         if (adapter instanceof CategoryAdapter) {
             mCategoryAdapter = (CategoryAdapter) adapter;
+
         }else {
             mItemsAdapter = (ItemsAdapter) adapter;
         }
@@ -41,6 +50,21 @@ public class SwipeToDeleteCallback<T> extends ItemTouchHelper.SimpleCallback {
     }
 
     @Override public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+        int position = viewHolder.getAdapterPosition();
+     /*   if (mCategoryAdapter instanceof CategoryAdapter) {
+
+            int catId = mCategoryAdapter.getCategoryId(position);
+
+            LiveData<List<Items>> listLiveData = mDatabase.mItemsDao().findItemsByCategoryId(catId);
+            listLiveData.observe(viewHolder.getC, items -> {
+                mItemList = items;
+
+            });
+            if (mItemList != null || mItemList.size() > 0) {
+
+            }
+        }*/
+
         AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
         builder1.setMessage("Are you sure want to Delete ?");
         builder1.setCancelable(false);
@@ -50,7 +74,7 @@ public class SwipeToDeleteCallback<T> extends ItemTouchHelper.SimpleCallback {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
-        int position = viewHolder.getAdapterPosition();
+
         if (mCategoryAdapter instanceof CategoryAdapter) {
             mCategoryAdapter.deleteItem(position);
         }else {

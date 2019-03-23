@@ -379,7 +379,7 @@ public class ExportDBFragment extends Fragment {
     private void exportItems(List<Items> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile = "pos_database_items" + System.currentTimeMillis() + ".xls";
+        String csvFile = "items" + System.currentTimeMillis() + ".xls";
 
         File directory = new File(sd.getAbsolutePath() + "/POS Backup");
         //create directory if not exist
@@ -454,7 +454,7 @@ public class ExportDBFragment extends Fragment {
     private void exportCategory(List<Category> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile = "pos_database_category" + System.currentTimeMillis() + ".xls";
+        String csvFile = "category" + System.currentTimeMillis() + ".xls";
 
         File directory = new File(sd.getAbsolutePath() + "/POS Backup");
         //create directory if not exist
@@ -511,7 +511,7 @@ public class ExportDBFragment extends Fragment {
     private void exportTransaction(List<Transaction> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile = "pos_database_transaction" + System.currentTimeMillis() + ".xls";
+        String csvFile = "transaction" + System.currentTimeMillis() + ".xls";
 
         File directory = new File(sd.getAbsolutePath() + "/POS Backup");
         //create directory if not exist
@@ -588,7 +588,7 @@ public class ExportDBFragment extends Fragment {
     private void exportTransactionMaster(List<TransactionMaster> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile = "pos_database_transactionmaster" + System.currentTimeMillis() + ".xls";
+        String csvFile = "transactionmaster" + System.currentTimeMillis() + ".xls";
 
         File directory = new File(sd.getAbsolutePath() + "/POS Backup");
         //create directory if not exist
@@ -669,7 +669,7 @@ public class ExportDBFragment extends Fragment {
     private void exportInventoryMaster(List<InventoryMaster> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile = "pos_database_inventorynmaster" + System.currentTimeMillis() + ".xls";
+        String csvFile = "inventorynmaster" + System.currentTimeMillis() + ".xls";
 
         File directory = new File(sd.getAbsolutePath() + "/POS Backup");
         //create directory if not exist
@@ -731,7 +731,7 @@ public class ExportDBFragment extends Fragment {
     private void exportInventoryTransaction(List<InventoryTransaction> mTransactionList) {
         File sd = Environment.getExternalStorageDirectory();
 
-        String csvFile = "pos_database_inventoryntransaction" + System.currentTimeMillis() + ".xls";
+        String csvFile = "inventoryntransaction" + System.currentTimeMillis() + ".xls";
 
         File directory = new File(sd.getAbsolutePath() + "/POS Backup");
         //create directory if not exist
