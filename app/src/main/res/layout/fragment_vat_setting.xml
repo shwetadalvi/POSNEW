@@ -37,6 +37,15 @@ android:layout_marginTop="40dp"
             android:buttonTint="@color/brown"
             android:layout_margin="10dp"/>
 
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/without_vat"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/brown"
+            android:buttonTint="@color/brown"
+            android:layout_margin="10dp"/>
 
     </RadioGroup>
 </RelativeLayout>

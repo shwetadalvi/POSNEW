@@ -22,7 +22,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="Transaction No"
+        android:text="Invoice No"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/brown"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-
+android:visibility="gone"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -184,6 +184,7 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/invoiceDate3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/guideline6" />
 
 </android.support.constraint.ConstraintLayout>

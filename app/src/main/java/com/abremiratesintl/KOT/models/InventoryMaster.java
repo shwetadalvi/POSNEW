@@ -16,6 +16,7 @@ public class InventoryMaster {
     private String refference;
     private String invoiceNo;
     private String purchaseDate;
+    private String vat;
 
     public int getTransMasterId() {
         return transMasterId;
@@ -73,5 +74,13 @@ public class InventoryMaster {
 
     public void setPurchaseDate(String purchaseDate) {
         this.purchaseDate = purchaseDate;
+    }
+
+    public String getVat() {
+        return vat;
+    }
+
+    public void setVat(String vat) {
+        this.vat = vat;
     }
 }

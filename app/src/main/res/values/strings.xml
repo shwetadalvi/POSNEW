@@ -91,6 +91,7 @@
     <string name="inventory">Inventory</string>
     <string name="vat_exclusive">Vat Exclusive</string>
     <string name="vat_inclusive">Vat Inclusive</string>
+    <string name="without_vat">Without Vat</string>
     <string-array name="printers">S
         <item>POS Bluetooth</item>
         <item>POS Built-In</item>

@@ -1,10 +1,13 @@
 package com.abremiratesintl.KOT.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -17,10 +20,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +39,7 @@ import com.abremiratesintl.KOT.MainActivity;
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.adapters.CategorySpinnerAdapter;
 import com.abremiratesintl.KOT.adapters.POSRecyclerAdapter;
+import com.abremiratesintl.KOT.adapters.SupplierSpinnerAdapter;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
 import com.abremiratesintl.KOT.models.CartItems;
@@ -39,6 +47,7 @@ import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.InventoryMaster;
 import com.abremiratesintl.KOT.models.InventoryTransaction;
 import com.abremiratesintl.KOT.models.Items;
+import com.abremiratesintl.KOT.models.Supplier;
 import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
@@ -57,11 +66,22 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class  InventoryFragment extends BaseFragment implements AdapterView.OnItemSelectedListener, CustomSpinner.OnSpinnerEventsListener, ClickListeners.ItemClick<Items>, ClickListeners.OnItemChangedListener,DatePickerDialog.OnDateSetListener {
-
+public class InventoryFragment extends BaseFragment implements AdapterView.OnItemSelectedListener, CustomSpinner.OnSpinnerEventsListener, ClickListeners.ItemClick<Items>, ClickListeners.OnItemChangedListener, DatePickerDialog.OnDateSetListener {
+    @BindView(R.id.radioGroup)
+    RadioGroup radioGroup;
+    @BindView(R.id.spinItem)
+    CustomSpinner spinItem;
+    @BindView(R.id.spinner_arrow)
+    ImageView mSpinnerArrow;
+    @BindDrawable(R.drawable.ic_arrow_down)
+    Drawable icDown;
+    @BindDrawable(R.drawable.ic_arrow_up)
+    Drawable icUp;
     @BindView(R.id.addNewItemspinnerCategory)
     CustomSpinner addNewItemSpinnerCategory;
     @BindView(R.id.addNewItemRecyclerView)
@@ -74,13 +94,12 @@ public class  InventoryFragment extends BaseFragment implements AdapterView.OnIt
     TextView itemCount;
     @BindView(R.id.current_item_and_count)
     TextView currentItemAndCount;
-
+    @BindView(R.id.buttonAdd)
+    Button buttonAdd;
     @BindView(R.id.editInvoice)
     EditText editInvoice;
     @BindView(R.id.editDate)
     EditText editDate;
-    @BindView(R.id.editSupplier)
-    EditText editSupplier;
     @BindView(R.id.editRef)
     EditText editRef;
     @BindView(R.id.addNewItemSpinnerArrow)
@@ -91,20 +110,24 @@ public class  InventoryFragment extends BaseFragment implements AdapterView.OnIt
     Drawable arrowUp;
     private Unbinder mUnbinder;
     private AppDatabase mDatabase;
-    private List<Category> mCategoryList;
+    private List<Category> mCategoryList = new ArrayList<>();
     private Category mSelectedCategory;
+    private List<Supplier> mSupplierList = new ArrayList<>();
+    private Supplier mSelectedSupplier;
     private List<Items> mItemList;
     public List<Items> mCartItems = new ArrayList<>();
     private float currentVat = 0;
     private float currentTotal;
     int totalItemCount = 0;
     float totalItemPrice = 0;
-private int transactionMasterMaxId ;
+    private int transactionMasterMaxId;
     View mSelectedDateView;
+    private String str_vat;
     private String mSelectedDate = Constants.getCurrentDate();
-
+    CartItems cartItem = new CartItems();
     List<InventoryMaster> mItemsList = new ArrayList<>();
     List<InventoryTransaction> mItemsList1 = new ArrayList<>();
+
     public InventoryFragment() {
         // Required empty public constructor
     }
@@ -117,14 +140,79 @@ private int transactionMasterMaxId ;
         mDatabase = AppDatabase.getInstance(getActivity());
         addNewItemSpinnerCategory.setOnItemSelectedListener(this);
         addNewItemSpinnerCategory.setSpinnerEventsListener(this);
+        spinItem.setOnItemSelectedListener(this);
+        spinItem.setSpinnerEventsListener(this);
 
         ((MainActivity) getActivity()).changeTitle("Inventory");
-
+        editDate.setText(Constants.getCurrentDate());
+        str_vat = getActivity().getResources().getString(R.string.vat_exclusive);
 
         editInvoice.setEnabled(false);
+        getSupplierList();
+        getCategoryList();
+
+        if (cartItem.getCartItems() != null && cartItem.getCartItems().size() != 0) {
+            int qty = 0;
+            float price = 0;
+            mCartItems = cartItem.getCartItems();
+            for (Items item : cartItem.getCartItems()) {
+                qty = qty + item.getQty();
+                price = price + item.getTotalItemPrice();
+                itemCount.setText(String.valueOf(qty));
+                totalAmount.setText(String.valueOf(price));
+            }
+        } else if (cartItem.getCartItems() == null || cartItem.getCartItems().size() == 0) {
+            itemCount.setText(String.valueOf(0));
+            totalAmount.setText(String.valueOf(0));
+        } else {
+            itemCount.setText(String.valueOf(totalItemCount));
+            totalAmount.setText(String.valueOf(totalItemPrice));
+        }
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // checkedId is the RadioButton selected
+                RadioButton rb = (RadioButton) group.findViewById(checkedId);
+                str_vat = rb.getText().toString();
+
+               /* if(rb.getText().toString().equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+                    //mPrefUtils.putBooleanPreference(Constants.DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, true);
+                else
+                   // mPrefUtils.putBooleanPreference(Constants.DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, false);
+                Toast.makeText(getActivity(), rb.getText(), Toast.LENGTH_SHORT).show();*/
+            }
+        });
+
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(getActivity());
+                dialog.setContentView(R.layout.dialog_layout_inventory);
+                // dialog.setTitle("Title...");
+
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                EditText editSupplier = (EditText) dialog.findViewById(R.id.editSupplier);
+                //text.setText("Android custom dialog example!");
 
 
-        LiveData<List<InventoryMaster>> itemLiveList = mDatabase.mInventoryMasterDao().getAllItems();
+                Button dialogButton = (Button) dialog.findViewById(R.id.buttonSave);
+                // if button is clicked, close the custom dialog
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                 if(!getString(editSupplier).isEmpty()) {
+
+
+                     insertSupplier(getString(editSupplier));
+                     dialog.dismiss();
+                 }
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+               /* LiveData<List<InventoryMaster>> itemLiveList = mDatabase.mInventoryMasterDao().getAllItems();
         itemLiveList.observe(this, items -> {
             if (items == null || items.size() == 0) {
                 return;
@@ -132,13 +220,45 @@ private int transactionMasterMaxId ;
             mItemsList = items;
 
         });
-        Log.d("Inventory 1","size"+mItemsList.size());
-        getCategoryList();
+        Log.d("Inventory 1", "size" + mItemsList.size());*/
 
-            itemCount.setText(String.valueOf(0));
-            totalAmount.setText(String.valueOf(0));
+        itemCount.setText(String.valueOf(0));
+        totalAmount.setText(String.valueOf(0));
+
 
         return view;
+    }
+
+    private void getSupplierList() {
+        Thread t = new Thread(() -> {
+            transactionMasterMaxId = (mDatabase.mInventoryMasterDao().findTransMasterOfMaxId());
+        });
+        t.start();
+        transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
+        editInvoice.setText("Invoice No : " + String.valueOf(transactionMasterMaxId));
+
+        LiveData<List<Supplier>> supplierLiveList = mDatabase.mSupplierDao().getAllSupplier();
+        supplierLiveList.observe(this, suppliers -> {
+            if (suppliers == null || suppliers.size() == 0) {
+                return;
+            }
+            mSupplierList = suppliers;
+            mSelectedSupplier = suppliers.get(0);
+
+            setUpSpinnerSupplier();
+        });
+
+
+    }
+
+    private void setUpSpinnerSupplier() {
+
+
+        if (mSupplierList != null || mSupplierList.size() > 0) {
+            SupplierSpinnerAdapter<Supplier> SupplierSpinnerAdapter = new SupplierSpinnerAdapter<>(getContext(), R.id.categoryListItem, mSupplierList);
+            spinItem.setAdapter(SupplierSpinnerAdapter);
+        }
+
     }
 
     private void getCategoryList() {
@@ -147,11 +267,11 @@ private int transactionMasterMaxId ;
         });
         t.start();
         transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
-        editInvoice.setText("Invoice No : "+String.valueOf(transactionMasterMaxId));
+        editInvoice.setText("Invoice No : " + String.valueOf(transactionMasterMaxId));
 
         LiveData<List<Category>> categoryLiveList = mDatabase.mCategoryDao().getAllCategory();
         categoryLiveList.observe(this, categories -> {
-            if (categories==null||categories.size()==0){
+            if (categories == null || categories.size() == 0) {
                 return;
             }
             mCategoryList = categories;
@@ -160,7 +280,12 @@ private int transactionMasterMaxId ;
             setUpSpinner();
         });
     }
-
+    private void setUpSpinner() {
+        if (mCategoryList != null || mCategoryList.size() > 0) {
+            CategorySpinnerAdapter<Category> itemSpinnerAdapter = new CategorySpinnerAdapter<>(getContext(), R.id.categoryListItem, mCategoryList);
+            addNewItemSpinnerCategory.setAdapter(itemSpinnerAdapter);
+        }
+    }
     private void getItemsOfSelectedCategory() {
         LiveData<List<Items>> listLiveData = mDatabase.mItemsDao().findItemsByCategoryId(mSelectedCategory.getCategoryId());
         listLiveData.observe(this, items -> {
@@ -177,27 +302,41 @@ private int transactionMasterMaxId ;
         }
     }
 
-    private void setUpSpinner() {
-        if (mCategoryList != null || mCategoryList.size() > 0) {
-            CategorySpinnerAdapter<Category> itemSpinnerAdapter = new CategorySpinnerAdapter<>(getContext(), R.id.categoryListItem, mCategoryList);
-            addNewItemSpinnerCategory.setAdapter(itemSpinnerAdapter);
+
+    private void insertSupplier(String supplier_name) {
+        Supplier supplier = new Supplier();
+        supplier.setSupplierName(supplier_name);
+        supplier.setCreatedDate(Constants.getCurrentDateTime());
+        supplier.setDeleted(false);
+        Completable.fromAction(() -> mDatabase.mSupplierDao().insertNewSupplier(supplier))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(()-> isInserted(true,supplier), throwable ->  isInserted(false, supplier));
+    }
+    private void isInserted(boolean inserted, Supplier supplier) {
+        if (inserted) {
+            getSupplierList();
         }
     }
-
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
     }
-    @OnClick(R.id.editDate) public void onClickedToDate() {
+
+    @OnClick(R.id.editDate)
+    public void onClickedToDate() {
         mSelectedDateView = editDate;
         showDatePicker();
     }
+
     public void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
-        new DatePickerDialog(getContext(), this,calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(getContext(), this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    @Override public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         mSelectedDate = year + "-" + getProperDate(++month) + "-" + getProperDate(dayOfMonth);
         switch (mSelectedDateView.getId()) {
 
@@ -207,51 +346,69 @@ private int transactionMasterMaxId ;
                 break;
         }
     }
+
     private String getProperDate(int dayOrMonth) {
         if (dayOrMonth < 10) {
             return "0" + dayOrMonth;
         }
         return String.valueOf(dayOrMonth);
     }
-    @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        mSelectedCategory = mCategoryList.get(position);
-        getItemsOfSelectedCategory();
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (parent.getId() == R.id.spinItem) {
+            mSelectedSupplier = mSupplierList.get(position);
+        } else {
+            mSelectedCategory = mCategoryList.get(position);
+            getItemsOfSelectedCategory();
+        }
     }
 
-    @Override public void onNothingSelected(AdapterView<?> parent) {
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 
-    @Override public void onSpinnerOpened(Spinner spinner) {
-        addNewItemSpinnerArrow.setImageDrawable(arrowUp);
+    @Override
+    public void onSpinnerOpened(Spinner spinner) {
+        if (spinner.getId() == R.id.spinItem)
+            mSpinnerArrow.setImageDrawable(icUp);
+        else
+            addNewItemSpinnerArrow.setImageDrawable(arrowUp);
     }
 
-    @Override public void onSpinnerClosed(Spinner spinner) {
-        addNewItemSpinnerArrow.setImageDrawable(arrowDown);
+    @Override
+    public void onSpinnerClosed(Spinner spinner) {
+        if (spinner.getId() == R.id.spinItem)
+            mSpinnerArrow.setImageDrawable(icDown);
+        else
+            addNewItemSpinnerArrow.setImageDrawable(arrowDown);
+
     }
 
-    @Override public void onClickedItem(Items item) {
+    @Override
+    public void onClickedItem(Items item) {
 
 
         int mItemCountCount = 0;
         float mTotalItemAmount = 0;
 
 
-            for (int i = 0; i < mCartItems.size(); i++) {
-                mTotalItemAmount = Float.valueOf(getString(totalAmount)) + mCartItems.get(i).getPrice();
-                mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
-                if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
-                    item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
-                    item.setQty(mCartItems.get(i).getQty());
-                }
+        for (int i = 0; i < mCartItems.size(); i++) {
+            mTotalItemAmount = Float.valueOf(getString(totalAmount)) + mCartItems.get(i).getPrice();
+            mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
+            if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
+                item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
+                item.setQty(mCartItems.get(i).getQty());
             }
-            if (mCartItems.size() == 0) {
-                mTotalItemAmount = item.getPrice();
-                mItemCountCount = 1;
-            }
-            mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
-            insertToList(item);
-            setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
+        }
+        if (mCartItems.size() == 0) {
+            mTotalItemAmount = item.getPrice();
+            mItemCountCount = 1;
+        }
+        mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
+        insertToList(item);
+        setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
 
     }
 
@@ -270,14 +427,23 @@ private int transactionMasterMaxId ;
         currentTotal = Constants.round(currentTotal, 2);
     }
 
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
+        Thread t = new Thread(() -> {
+            transactionMasterMaxId = (mDatabase.mInventoryMasterDao().findTransMasterOfMaxId());
+        });
+        t.start();
+        transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
+        editInvoice.setText("Invoice No : " + String.valueOf(transactionMasterMaxId));
     }
 
-    @Override public void onPause() {
+    @Override
+    public void onPause() {
         super.onPause();
 
     }
+
     void insertToList(Items item) {
         int qty = item.getQty();
 
@@ -300,6 +466,7 @@ private int transactionMasterMaxId ;
             mCartItems.add(item);
         }
     }
+
     private void insertTransactions(List<Items> itemsList) {
         InventoryMaster inventoryMaster = new InventoryMaster();
 
@@ -311,8 +478,8 @@ private int transactionMasterMaxId ;
         inventoryMaster.setCreatedDate(Constants.getCurrentDateTime());
         inventoryMaster.setPurchaseDate(mSelectedDate);
         inventoryMaster.setRefference(editRef.getText().toString());
-        inventoryMaster.setSupplier(editSupplier.getText().toString());
-
+        inventoryMaster.setSupplier(mSelectedSupplier.getSupplierName());
+        inventoryMaster.setVat(str_vat);
 
         new Thread(() -> {
 
@@ -337,7 +504,7 @@ private int transactionMasterMaxId ;
             mItemsList = items;
 
         });
-        Log.d("Inventory 2","size"+mItemsList.size());
+        Log.d("Inventory 2", "size" + mItemsList.size());
         AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
         builder1.setMessage("Inventory Added Successfully");
         builder1.setCancelable(true);
@@ -365,10 +532,9 @@ private int transactionMasterMaxId ;
         });
         t.start();
         transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
-        editInvoice.setText("Invoice No : "+String.valueOf(transactionMasterMaxId));
-        editDate.setText("Present");
+        editInvoice.setText("Invoice No : " + String.valueOf(transactionMasterMaxId));
+        editDate.setText(Constants.getCurrentDate());
         mSelectedDate = Constants.getCurrentDate();
-        editSupplier.setText("");
         editRef.setText("");
         mCartItems.clear();
         itemCount.setText(String.valueOf(0));
@@ -392,7 +558,6 @@ private int transactionMasterMaxId ;
             transaction.setGrandTotal(item.getQty() * item.getPrice());
 
 
-
             String category = mDatabase.mCategoryDao().getCategoryById(item.getCategoryId());
             transaction.setCategory(category);
 
@@ -411,22 +576,38 @@ private int transactionMasterMaxId ;
                 mItemsList1 = items;
 
             });
-            Log.d("Inventory 3","size"+mItemsList1.size());
+            Log.d("Inventory 3", "size" + mItemsList1.size());
         } else {
 
         }
-           // mDatabase.mInventoryTransactionDao().insertNewItems(transaction);
+        // mDatabase.mInventoryTransactionDao().insertNewItems(transaction);
 
 
     }
+
     @OnClick(R.id.addNewItemProceed)
     public void onClickedProceed(View view) {
         totalItemCount = Integer.valueOf(getString(itemCount));
         totalItemPrice = Float.valueOf(getString(totalAmount));
-        Log.d("Inventory 4","size"+mCartItems.size());
-        if (mCartItems.size() != 0)
-        insertTransactions(mCartItems);
-        else{
+        cartItem.setCartItems(mCartItems);
+        Log.d("Inventory 4", "size" + mCartItems.size());
+
+
+
+
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("inventory", MODE_PRIVATE).edit();
+        editor.putString("supplier", mSelectedSupplier.getSupplierName());
+        editor.putString("date", mSelectedDate);
+        editor.putString("id", String.valueOf(transactionMasterMaxId));
+        editor.putString("refference", (editRef.getText().toString()));
+        editor.putString("vat", str_vat);
+        editor.apply();
+
+        if (mCartItems.size() != 0 ){
+
+            Navigation.findNavController(view).navigate(InventoryFragmentDirections.actionInventoryFragmentToInventoryCheckoutFragment(cartItem));
+
+        } else {
             AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
             builder1.setMessage("No Item is Added");
             builder1.setCancelable(true);
@@ -448,7 +629,8 @@ private int transactionMasterMaxId ;
 
     }
 
-    @Override public void itemChanged(List<Items> list) {
+    @Override
+    public void itemChanged(List<Items> list) {
         mItemList = list;
         int count = 0;
         float total = 0;

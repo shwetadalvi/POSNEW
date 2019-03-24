@@ -31,8 +31,8 @@ public interface InventoryTransactionDao {
        @Insert()
     void insertNewItems(InventoryTransaction category);
 
-    @Query("SELECT * FROM InventoryTransaction  WHERE itemId=:itemId")
-    LiveData<List<InventoryTransaction>> getItemsByItemId(int itemId);
+    @Query("SELECT * FROM InventoryTransaction  WHERE transMasterId=:itemId")
+    LiveData<List<InventoryTransaction>> getItemsByTransId(int itemId);
 
     @Query("SELECT * FROM InventoryTransaction WHERE (itemId=:itemId) AND invoiceDate BETWEEN date(:from) AND date(:to)")
     LiveData<List<InventoryTransaction>> findItemsByItemIdBetween(String from, String to, int itemId);

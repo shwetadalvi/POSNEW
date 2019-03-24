@@ -142,6 +142,27 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="inventoryCheckoutFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-1148" />
+                            <option name="y" value="-79" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_inventoryCheckoutFragment_to_inventoryFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="inventoryDetailsFragment">
                     <value>
                       <LayoutPositions>
@@ -165,7 +186,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_inventoryFragment_to_inventoryDetailsFragment">
+                            <entry key="action_inventoryFragment_to_inventoryCheckoutFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -183,6 +204,15 @@
                             <option name="x" value="-414" />
                             <option name="y" value="886" />
                           </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_inventoryReportFragment_to_inventoryDetailsFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>

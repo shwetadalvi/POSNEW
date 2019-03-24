@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
+import com.abremiratesintl.KOT.models.InventoryMaster;
 import com.abremiratesintl.KOT.models.InventoryTransaction;
 import com.abremiratesintl.KOT.models.Transaction;
 
@@ -22,10 +23,10 @@ import butterknife.ButterKnife;
 
 public class InventoryReportAdapter extends RecyclerView.Adapter<InventoryReportAdapter.ViewHolder> {
 
-    List<InventoryTransaction> mTransactionList = new ArrayList<>() ;
-    private ClickListeners.ItemClickWithView<InventoryTransaction> mTransactionItemClick;
+    List<InventoryMaster> mTransactionList = new ArrayList<>() ;
+    private ClickListeners.ItemClickWithView<InventoryMaster> mTransactionItemClick;
 
-    public InventoryReportAdapter(List<InventoryTransaction> TransactionList, ClickListeners.ItemClickWithView<InventoryTransaction> TransactionItemClick) {
+    public InventoryReportAdapter(List<InventoryMaster> TransactionList, ClickListeners.ItemClickWithView<InventoryMaster> TransactionItemClick) {
         mTransactionList = TransactionList;
         mTransactionItemClick = TransactionItemClick;
     }
@@ -43,37 +44,29 @@ public class InventoryReportAdapter extends RecyclerView.Adapter<InventoryReport
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.slNo)
-        TextView slNo;
-        @BindView(R.id.item)
-        TextView item;
-        @BindView(R.id.qty)
-        TextView qty;
-        @BindView(R.id.date)
-        TextView date;
-        @BindView(R.id.amount)
-        TextView amount;
-        @BindView(R.id.textTotal)
-        TextView textTotal;
-        @BindView(R.id.textCategory)
-        TextView textCategory;
-       @BindView(R.id.itemlayout)
-       ConstraintLayout itemlayout;
+        @BindView(R.id.invoiceNo)
+        TextView invoiceNo;
+        @BindView(R.id.invoiceDate)
+        TextView invoiceDate;
+        @BindView(R.id.report_vat)
+        TextView invoiceVat;
+        @BindView(R.id.total)
+        TextView total;
+        @BindView(R.id.total_no_items)
+        TextView totalNoItems;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
         }
 
-        void bind(InventoryTransaction Transaction) {
-            slNo.setText(String.valueOf(getAdapterPosition() + 1));
-            item.setText(String.valueOf(Transaction.getItemName()));
-            qty.setText(String.valueOf(Transaction.getQty()));
-            date.setText(String.valueOf(Transaction.getInvoiceDate()));
-            amount.setText(String.valueOf(Transaction.getPrice()));
-            textTotal.setText("Total : "+String.valueOf(Transaction.getGrandTotal()));
-            textCategory.setText(Transaction.getCategory());
-            itemlayout.setOnClickListener(view -> mTransactionItemClick.onClickedItem(view,Transaction));
+        void bind(InventoryMaster transactionMaster) {
+            invoiceNo.setText(transactionMaster.getInvoiceNo());
+            invoiceDate.setText(transactionMaster.getPurchaseDate());
+            invoiceVat.setText(transactionMaster.getVat());
+            total.setText(String.valueOf(transactionMaster.getItemTotalAmount()));
+         //   totalNoItems.setText(String.valueOf(transactionMaster.getTotalQty()));
+            itemView.setOnClickListener(view -> mTransactionItemClick.onClickedItem(itemView,transactionMaster));
         }
     }
 }

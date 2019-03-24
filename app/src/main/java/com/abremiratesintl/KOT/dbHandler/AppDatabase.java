@@ -12,11 +12,12 @@ import com.abremiratesintl.KOT.models.Company;
 import com.abremiratesintl.KOT.models.InventoryMaster;
 import com.abremiratesintl.KOT.models.InventoryTransaction;
 import com.abremiratesintl.KOT.models.Items;
+import com.abremiratesintl.KOT.models.Supplier;
 import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.models.User;
 
-@Database(entities = {Category.class, Items.class, User.class, TransactionMaster.class, Transaction.class, Company.class, InventoryMaster.class, InventoryTransaction.class}, version =1 ,exportSchema = false)
+@Database(entities = {Category.class, Items.class, User.class, TransactionMaster.class, Transaction.class, Company.class, InventoryMaster.class, InventoryTransaction.class, Supplier.class}, version =1 ,exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase mInstance;
@@ -58,5 +59,6 @@ public abstract class AppDatabase extends RoomDatabase {
    public abstract CompanyDao mCompanyDao();
    public abstract InventoryMasterDao mInventoryMasterDao();
    public abstract InventoryTransactionDao mInventoryTransactionDao();
+   public abstract SupplierDao mSupplierDao();
 
 }

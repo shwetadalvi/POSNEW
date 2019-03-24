@@ -69,6 +69,6 @@ public class ReportsHomeFragment extends BaseFragment  {
     }
     @OnClick(R.id.inventoryReport) public void OnClickedInventoryReport(View view) {
 
-        Navigation.findNavController(view).navigate(R.id.action_homeFragment2_to_inventoryFragment);
+        Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_inventoryReportFragment);
     }
 }

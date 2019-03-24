@@ -69,6 +69,7 @@
             android:id="@+id/action_addNewItem_to_checkoutFragment"
             app:destination="@id/checkoutFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/checkoutFragment"
         android:name="com.abremiratesintl.KOT.fragments.CheckoutFragment"
@@ -169,17 +170,38 @@
         android:name="com.abremiratesintl.KOT.fragments.InventoryFragment"
         android:label="InventoryFragment" >
         <action
-            android:id="@+id/action_inventoryFragment_to_inventoryDetailsFragment"
-            app:destination="@id/inventoryDetailsFragment" />
+            android:id="@+id/action_inventoryFragment_to_inventoryCheckoutFragment"
+            app:destination="@id/inventoryCheckoutFragment" />
     </fragment>
     <fragment
         android:id="@+id/inventoryReportFragment"
         android:name="com.abremiratesintl.KOT.fragments.InventoryReportFragment"
-        android:label="InventoryReportFragment" />
+        android:label="InventoryReportFragment" >
+        <action
+            android:id="@+id/action_inventoryReportFragment_to_inventoryDetailsFragment"
+            app:destination="@id/inventoryDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/inventoryDetailsFragment"
         android:name="com.abremiratesintl.KOT.fragments.InventoryDetailsFragment"
         android:label="InventoryDetailsFragment" >
 
+        <argument
+            android:name="id"
+            app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/inventoryCheckoutFragment"
+        android:name="com.abremiratesintl.KOT.fragments.InventoryCheckoutFragment"
+        android:label="InventoryCheckoutFragment"
+        tools:layout="@layout/fragment_inventory_checkout">
+        <argument
+            android:name="inventory_cart"
+            app:argType="com.abremiratesintl.KOT.models.CartItems" />
+        <action
+            android:id="@+id/action_inventoryCheckoutFragment_to_inventoryFragment"
+            app:destination="@id/inventoryFragment" />
+    </fragment>
+
+
 </navigation>

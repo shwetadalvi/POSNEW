@@ -8,6 +8,11 @@
     android:background="@color/white"
     android:orientation="vertical">
 
+
+
+
+
+
     <LinearLayout
         android:id="@+id/filter"
         android:layout_width="match_parent"
@@ -29,7 +34,7 @@
             android:orientation="horizontal"
             android:visibility="visible">
 
-            <TextView
+            <EditText
                 android:id="@+id/fromDate"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
@@ -43,7 +48,7 @@
                 android:textColor="#FFFFFF"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColorHint="@color/grey"
-                 />
+                android:theme="@style/AppTheme.EditText" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -56,7 +61,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@color/grey" />
 
-            <TextView
+            <EditText
                 android:id="@+id/toDate"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
@@ -68,13 +73,12 @@
                 android:padding="5dp"
                 android:singleLine="true"
                 android:text="@string/present"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#FFFFFF"
-                 />
+                android:theme="@style/AppTheme.EditText"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
         </LinearLayout>
 
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/header"
@@ -84,7 +88,7 @@
         android:orientation="horizontal"
         android:layout_below="@+id/filter"
         android:padding="5dp"
-        android:weightSum="6"
+        android:weightSum="5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -92,39 +96,34 @@
             android:id="@+id/textView16"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+
 
             android:layout_weight="0.8"
             android:text="@string/slNo"
-            android:textColor="@color/white" />
-        <TextView
-            android:id="@+id/textView116"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
-            android:layout_weight="1"
-            android:text="@string/invoive_no"
-            android:textColor="@color/white" />
         <TextView
             android:id="@+id/chekoutItemName2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+
             android:layout_weight="1.2"
             android:padding="5dp"
-            android:text="@string/date"
-            android:textColor="#FFFFFF" />
+            android:text="@string/checkout_item"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
             android:id="@+id/chekoutTotalItem2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+
             android:layout_weight="1"
             android:padding="5dp"
-            android:text="Vatable Amt"
+            android:text="@string/checkout_qty"
             android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             />
 
         <TextView
@@ -133,19 +132,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="5dp"
-            android:text="Vat Amt"
-            android:textColor="#FFFFFF"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:text="@string/date"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            />
 
         <TextView
             android:id="@+id/chekoutPrice2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+
             android:padding="5dp"
-            android:text="Net Amt"
-            android:textColor="#FFFFFF"
+            android:text="@string/amount"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             />
 
 
@@ -155,13 +156,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/header"
-        android:layout_above="@+id/footer"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical"
         android:visibility="visible"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        tools:listitem="@layout/vatwise_report_data" />
+        app:layout_constraintTop_toBottomOf="@+id/layout"
+        tools:listitem="@layout/itemwise_report_data"
+        android:layout_above="@+id/footer"/>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/emptyReportView"
@@ -191,6 +193,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
+
     <RelativeLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
@@ -218,5 +221,4 @@
             android:layout_alignParentRight="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
     </RelativeLayout>
-
 </RelativeLayout>

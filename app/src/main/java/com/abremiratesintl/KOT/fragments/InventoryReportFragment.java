@@ -42,6 +42,7 @@ import com.abremiratesintl.KOT.adapters.ReportAdapter;
 import com.abremiratesintl.KOT.adapters.VATwiseReportAdapter;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
+import com.abremiratesintl.KOT.models.InventoryMaster;
 import com.abremiratesintl.KOT.models.InventoryTransaction;
 import com.abremiratesintl.KOT.models.Items;
 import com.abremiratesintl.KOT.models.Transaction;
@@ -70,27 +71,27 @@ import jxl.write.WritableWorkbook;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InventoryReportFragment extends BaseFragment implements ClickListeners.ItemClickWithView<InventoryTransaction>, DatePickerDialog.OnDateSetListener {
-    @BindView(R.id.footer)
+public class InventoryReportFragment extends BaseFragment implements ClickListeners.ItemClickWithView<InventoryMaster> {
+  /*  @BindView(R.id.footer)
     RelativeLayout footer;
     @BindView(R.id.header)
     LinearLayout header;
     @BindView(R.id.textTotal)
-    TextView textTotal;
-    @BindView(R.id.reportRecyclerViewReport)
+    TextView textTotal;*/
+    @BindView(R.id.reportRecyclerView)
     RecyclerView reportRecyclerview;
-    @BindView(R.id.filter)
+    /*@BindView(R.id.filter)
     LinearLayout filter;
     @BindView(R.id.fromDate)
     TextView fromDate;
     @BindView(R.id.toDate)
-    TextView toDate;
+    TextView toDate;*/
     @BindView(R.id.emptyReportView)
     ConstraintLayout emptyView;
     private Unbinder mUnbinder;
     private AppDatabase mDatabase;
     View mSelectedDateView;
-    private List<InventoryTransaction> mTransactionMasterList;
+    private List<InventoryMaster> mTransactionMasterList;
 
     public InventoryReportFragment() {
         // Required empty public constructor
@@ -111,54 +112,43 @@ public class InventoryReportFragment extends BaseFragment implements ClickListen
     }
 
     private void fetchTransactions() {
-        LiveData<List<InventoryTransaction>> listLiveData = mDatabase.mInventoryTransactionDao().getAllItems();
+        LiveData<List<InventoryMaster>> listLiveData = mDatabase.mInventoryMasterDao().getAllItems();
         listLiveData.observe(this, this::setUpRecycler);
     }
 
-    private void setUpRecycler(List<InventoryTransaction> transactionMasterList) {
+    private void setUpRecycler(List<InventoryMaster> transactionMasterList) {
         mTransactionMasterList = transactionMasterList;
         if (transactionMasterList.size() == 0) {
             emptyView.setVisibility(View.VISIBLE);
             reportRecyclerview.setVisibility(View.GONE);
-            footer.setVisibility(View.GONE);
-            header.setVisibility(View.GONE);
+         //   footer.setVisibility(View.GONE);
+           // header.setVisibility(View.GONE);
             return;
         }
-        footer.setVisibility(View.VISIBLE);
-        header.setVisibility(View.VISIBLE);
+       // footer.setVisibility(View.VISIBLE);
+      //  header.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
         reportRecyclerview.setVisibility(View.VISIBLE);
         InventoryReportAdapter adapter = new InventoryReportAdapter(transactionMasterList, this);
         reportRecyclerview.setAdapter(adapter);
-        setFooterValues(transactionMasterList);
+      //  setFooterValues(transactionMasterList);
     }
 
 
-    private void setFooterValues(List<InventoryTransaction> transactionMasterList) {
+    private void setFooterValues(List<InventoryMaster> transactionMasterList) {
 
         float total = 0;
-        for (InventoryTransaction items : transactionMasterList) {
+        for (InventoryMaster items : transactionMasterList) {
 
-            total = total + items.getGrandTotal();
+            total = total + items.getItemTotalAmount();
         }
 
-        textTotal.setText(getResources().getString(R.string.currency) + " " + String.valueOf(Constants.round(total, 2)));
+      //  textTotal.setText(getResources().getString(R.string.currency) + " " + String.valueOf(Constants.round(total, 2)));
 
     }
 
-    @OnClick(R.id.fromDate)
-    public void onClickedFromDate() {
-        mSelectedDateView = fromDate;
-        showDatePicker();
-    }
 
-    @OnClick(R.id.toDate)
-    public void onClickedToDate() {
-        mSelectedDateView = toDate;
-        showDatePicker();
-    }
-
-    @Override
+   /* @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_filter, menu);
@@ -182,7 +172,7 @@ public class InventoryReportFragment extends BaseFragment implements ClickListen
             case R.id.menu_all:
                 onClickedFilter(false);
                 menuClickCount = 0;
-                LiveData<List<InventoryTransaction>> listLiveData = mDatabase.mInventoryTransactionDao().getAllItems();
+                LiveData<List<InventoryMaster>> listLiveData = mDatabase.mInventoryMasterDao().getAllItems();
                 listLiveData.observe(this, this::setUpRecycler);
                 break;
             case R.id.export:
@@ -192,7 +182,7 @@ public class InventoryReportFragment extends BaseFragment implements ClickListen
 
         return true;
     }
-
+*/
     private void exportFileToExcel() {
 
         File sd = Environment.getExternalStorageDirectory();
@@ -227,7 +217,7 @@ public class InventoryReportFragment extends BaseFragment implements ClickListen
                 int i = 0;
 
                 Log.e("Inside123", " data" + mTransactionMasterList.size());
-                for (InventoryTransaction item : mTransactionMasterList) {
+                for (InventoryMaster item : mTransactionMasterList) {
                     i = i + 1;
                   /*  sheet.addCell(new Label(0, i, String.valueOf(i)));
                     sheet.addCell(new Label(1, i, String.valueOf(item.getInvoiceNo())));
@@ -275,13 +265,13 @@ public class InventoryReportFragment extends BaseFragment implements ClickListen
         }
     }
 
-    private void onClickedFilter(boolean b) {
+ /*   private void onClickedFilter(boolean b) {
         if (b) {
             filter.setVisibility(View.VISIBLE);
         } else {
             filter.setVisibility(View.GONE);
         }
-    }
+    }*/
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -295,25 +285,7 @@ public class InventoryReportFragment extends BaseFragment implements ClickListen
     }
 
 
-    public void showDatePicker() {
-        Calendar calendar = Calendar.getInstance();
-        new DatePickerDialog(getContext(), this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
-    }
 
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        String date = year + "-" + getProperDate(++month) + "-" + getProperDate(dayOfMonth);
-        switch (mSelectedDateView.getId()) {
-            case R.id.fromDate:
-                fromDate.setText(date);
-                sortedItem(getString(fromDate), getString(toDate));
-                break;
-            case R.id.toDate:
-                toDate.setText(date);
-                sortedItem(getString(fromDate), getString(toDate));
-                break;
-        }
-    }
 
     private void sortedItem(String fromDate, String toDate) {
         if (toDate.equals(getStringfromResource(R.string.present))) {
@@ -323,7 +295,7 @@ public class InventoryReportFragment extends BaseFragment implements ClickListen
             showSnackBar(getView(),getStringfromResource(R.string.present),1000);
             return;
         }*/
-        LiveData<List<InventoryTransaction>> listLiveData = mDatabase.mInventoryTransactionDao().findItemsByBetween(fromDate, toDate);
+        LiveData<List<InventoryMaster>> listLiveData = mDatabase.mInventoryMasterDao().findItemsByBetween(fromDate, toDate);
         listLiveData.observe(this, this::setUpRecycler);
     }
 
@@ -341,10 +313,10 @@ public class InventoryReportFragment extends BaseFragment implements ClickListen
     }
 
     @Override
-    public void onClickedItem(View view,InventoryTransaction item) {
+    public void onClickedItem(View view,InventoryMaster item) {
       //  Navigation.findNavController(view).navigate(InventoryReportFragmen.actionAddNewItemToCheckoutFragment(item));
         Bundle bundle = new Bundle();
-        bundle.putInt("id", item.getTransactionId());
-        Navigation.findNavController(getView()).navigate(R.id.action_inventoryFragment_to_inventoryDetailsFragment, bundle);
+        bundle.putInt("id", Integer.parseInt(item.getInvoiceNo()));
+        Navigation.findNavController(getView()).navigate(R.id.action_inventoryReportFragment_to_inventoryDetailsFragment, bundle);
     }
 }
