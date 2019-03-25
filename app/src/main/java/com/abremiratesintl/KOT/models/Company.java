@@ -66,13 +66,12 @@ public class Company {
         this.id = id;
     }
 
+
     public String getCompanyVat() {
         return mCompanyVat;
     }
 
-    public void setCompanyVat(String CompanyVat) {
+    public void setCompanyVat(String mCompanyVat) {
         this.mCompanyVat = mCompanyVat;
     }
-
-
 }

@@ -117,7 +117,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     EditText edtChange;
     @BindView(R.id.edtBalance)
     EditText edtBalance;
-
+    @BindView(R.id.textTotal)
+    TextView textTotal;
     @BindView(R.id.cash)
     EditText mCash;
     @BindView(R.id.card)
@@ -936,6 +937,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             total = total + items.getTotalItemPrice();
             vat = vat + calculateVat(items.getVat(), items.getPrice(), items.getQty());
         }
+        textTotal.setText("Total Item Price : "+String.valueOf(Constants.round(total,2)));
         String disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
         float discount = 0;
         if (!mIsPercentage) {

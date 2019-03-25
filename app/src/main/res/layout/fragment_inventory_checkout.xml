@@ -145,7 +145,7 @@
 
     <include
         android:id="@+id/include"
-        layout="@layout/checkout_footer"
+        layout="@layout/inventory_checkout_footer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/payment"

@@ -4,6 +4,7 @@ package com.abremiratesintl.KOT.fragments.super_user;
 import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.abremiratesintl.KOT.BaseFragment;
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.models.Company;
+import com.abremiratesintl.KOT.utils.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,7 +85,9 @@ public class SuperAdminCompanyDetails extends BaseFragment {
         String companyTrn = getString(mCompanyTrn);
         String companyPrefix = getString(mCompanyPrefix);
         String companyVat = getString(mCompanyVat);
-        if (isEmpty(companyName) && isEmpty(companyTel) && isEmpty(companyAddress) && isEmpty(companyTrn) && isEmpty(companyPrefix)) {
+
+
+        if (isEmpty(companyName) && isEmpty(companyTel) && isEmpty(companyAddress) && isEmpty(companyTrn) && isEmpty(companyPrefix) && isEmpty(companyVat)) {
             showSnackBar(getView(), getStringfromResource(R.string.every_fields_are_mandatory), 1500);
             return;
         } else {
@@ -93,6 +97,8 @@ public class SuperAdminCompanyDetails extends BaseFragment {
             company.setCompanyTrn(companyTrn);
             company.setCompanyPrefix(companyPrefix);
             company.setCompanyVat(companyVat);
+
+            Constants.COMPANY_VAT = companyVat;
             Thread t = new Thread(() -> {
                 mDatabase.mCompanyDao().insertCompany(company);
             });

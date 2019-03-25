@@ -6,9 +6,11 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -120,14 +123,14 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
     private float currentTotal;
     int totalItemCount = 0;
     float totalItemPrice = 0;
-    private int transactionMasterMaxId;
+    private int transactionMasterMaxId,id;
     View mSelectedDateView;
     private String str_vat;
     private String mSelectedDate = Constants.getCurrentDate();
     CartItems cartItem = new CartItems();
     List<InventoryMaster> mItemsList = new ArrayList<>();
     List<InventoryTransaction> mItemsList1 = new ArrayList<>();
-
+    private  AudioManager audioManager;
     public InventoryFragment() {
         // Required empty public constructor
     }
@@ -138,6 +141,7 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
         View view = inflater.inflate(R.layout.fragment_inventory, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mDatabase = AppDatabase.getInstance(getActivity());
+        audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
         addNewItemSpinnerCategory.setOnItemSelectedListener(this);
         addNewItemSpinnerCategory.setSpinnerEventsListener(this);
         spinItem.setOnItemSelectedListener(this);
@@ -262,12 +266,12 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
     }
 
     private void getCategoryList() {
-        Thread t = new Thread(() -> {
+       /* Thread t = new Thread(() -> {
             transactionMasterMaxId = (mDatabase.mInventoryMasterDao().findTransMasterOfMaxId());
         });
         t.start();
         transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
-        editInvoice.setText("Invoice No : " + String.valueOf(transactionMasterMaxId));
+        editInvoice.setText("Invoice No : " + String.valueOf(transactionMasterMaxId));*/
 
         LiveData<List<Category>> categoryLiveList = mDatabase.mCategoryDao().getAllCategory();
         categoryLiveList.observe(this, categories -> {
@@ -388,7 +392,8 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
 
     @Override
     public void onClickedItem(Items item) {
-
+        audioManager.playSoundEffect(SoundEffectConstants.CLICK);
+        audioManager.playSoundEffect(SoundEffectConstants.CLICK, 0.5F);
 
         int mItemCountCount = 0;
         float mTotalItemAmount = 0;
@@ -435,7 +440,11 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
         });
         t.start();
         transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
+
+        id = transactionMasterMaxId;
         editInvoice.setText("Invoice No : " + String.valueOf(transactionMasterMaxId));
+
+        Log.e("TransId in resume :","Id "+id);
     }
 
     @Override
@@ -594,15 +603,15 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
 
 
 
-
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("inventory", MODE_PRIVATE).edit();
         editor.putString("supplier", mSelectedSupplier.getSupplierName());
         editor.putString("date", mSelectedDate);
-        editor.putString("id", String.valueOf(transactionMasterMaxId));
+        editor.putString("id", String.valueOf(id));
         editor.putString("refference", (editRef.getText().toString()));
         editor.putString("vat", str_vat);
         editor.apply();
 
+        Log.e("TransId in proceed :","Id "+String.valueOf(id));
         if (mCartItems.size() != 0 ){
 
             Navigation.findNavController(view).navigate(InventoryFragmentDirections.actionInventoryFragmentToInventoryCheckoutFragment(cartItem));

@@ -52,8 +52,8 @@ public class InventoryReportAdapter extends RecyclerView.Adapter<InventoryReport
         TextView invoiceVat;
         @BindView(R.id.total)
         TextView total;
-        @BindView(R.id.total_no_items)
-        TextView totalNoItems;
+        @BindView(R.id.report_supplier)
+        TextView report_supplier;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -65,7 +65,7 @@ public class InventoryReportAdapter extends RecyclerView.Adapter<InventoryReport
             invoiceDate.setText(transactionMaster.getPurchaseDate());
             invoiceVat.setText(transactionMaster.getVat());
             total.setText(String.valueOf(transactionMaster.getItemTotalAmount()));
-         //   totalNoItems.setText(String.valueOf(transactionMaster.getTotalQty()));
+          report_supplier.setText(transactionMaster.getSupplier());
             itemView.setOnClickListener(view -> mTransactionItemClick.onClickedItem(itemView,transactionMaster));
         }
     }

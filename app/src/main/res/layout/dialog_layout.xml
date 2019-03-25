@@ -58,6 +58,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="32dp"
         android:ems="10"
+        android:selectAllOnFocus="true"
         android:inputType="numberDecimal"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toStartOf="@+id/guideline20"

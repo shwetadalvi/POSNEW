@@ -2,6 +2,7 @@ package com.abremiratesintl.KOT.dbHandler;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
@@ -33,6 +34,9 @@ public interface ItemsDao {
 
     @Update() void updateItem(Items item);
 
+    @Delete() void deleteItem(Items item);
+
+    @Query("SELECT * FROM Items WHERE categoryId=:categoryId ") List<Items> findItemsByCategoryId1(int categoryId);
  // @Query("UPDATE Items SET itemName = :itemName ,price=:price,cost=:cost,vat=:vat ,categoryId=:categoryId WHERE itemId = :itemId") void updateItem( int itemId,String itemName,float price,float cost,float vat,int categoryId);
 
 }

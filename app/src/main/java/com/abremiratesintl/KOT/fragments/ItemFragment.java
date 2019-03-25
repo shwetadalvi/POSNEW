@@ -121,6 +121,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
         mItemCategory.setSpinnerEventsListener(this);
 
         mItemVat.setText(Constants.COMPANY_VAT);
+
         getCategoryList();
         return view;
     }
@@ -396,7 +397,14 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
     @Override
     public void onDeletedItem(Items items) {
         showSnackBar(getView(), getStringfromResource(R.string.deleted), 1000);
-        Completable.fromAction(() -> mDatabase.mItemsDao().editItemsDeleteById(true, items.getItemId()))
+      /*  Completable.fromAction(() -> mDatabase.mItemsDao().editItemsDeleteById(true, items.getItemId()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() ->
+                                mItemsAdapter.notifyDataSetChanged(),
+                        throwable ->
+                                showSnackBar(getView(), getStringfromResource(R.string.category_update_failed), 1000));*/
+        Completable.fromAction(() -> mDatabase.mItemsDao().deleteItem(items))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() ->

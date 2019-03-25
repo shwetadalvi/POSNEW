@@ -403,11 +403,12 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
         inventoryMaster.setVat(preferences.getString("vat", ""));
         newInvoiceNo = preferences.getString("id", "");
 //        LiveData<Integer> t.ransactionMasterLiveData = mDatabase.mTransactionMasterDao().findTransMasterOfMaxId();
+        Log.e("TransId in shared :","Id "+newInvoiceNo);
         new Thread(() -> {
             int transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
             transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
            // newInvoiceNo = String.valueOf(transactionMasterMaxId);
-
+            Log.e("TransId in insert :","Id "+newInvoiceNo);
             inventoryMaster.setInvoiceNo(newInvoiceNo);
             mDatabase.mInventoryMasterDao().insertNewItems(inventoryMaster);
             for (Items item : mItemsList) {
@@ -765,7 +766,8 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
                 total = !isBluetooth ? 10 : 10;
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
-        }
+
+    }
         return null;
     }
 

@@ -4,8 +4,10 @@ package com.abremiratesintl.KOT.fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -83,6 +86,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
     float totalItemPrice = 0;
     CartItems cartItem = new CartItems();
     POSRecyclerAdapter mItemsAdapter;
+    private  AudioManager audioManager;
     public AddNewItem() {
         // Required empty public constructor
     }
@@ -93,6 +97,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
         View view = inflater.inflate(R.layout.fragment_add_new_item, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mDatabase = AppDatabase.getInstance(getContext());
+        audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
         addNewItemSpinnerCategory.setOnItemSelectedListener(this);
         addNewItemSpinnerCategory.setSpinnerEventsListener(this);
         ((MainActivity) getActivity()).changeTitle("SHOPPING");
@@ -185,6 +190,10 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
 
     @Override
     public void onClickedItem(Items item) {
+
+        audioManager.playSoundEffect(SoundEffectConstants.CLICK);
+        audioManager.playSoundEffect(SoundEffectConstants.CLICK, 0.5F);
+
 
 
         int mItemCountCount = 0;

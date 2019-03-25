@@ -1,1 +1,2 @@
-make: `E:/Android/POSNEW/app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libkeys.so' is up to date.
+[armeabi-v7a] Compile thumb  : keys <= keys.c
+[armeabi-v7a] SharedLibrary  : libkeys.so

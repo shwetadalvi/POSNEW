@@ -94,7 +94,6 @@ private Toolbar toolbar;
         Constants.COMPANY_TRN = company.getCompanyTrn();
         Constants.COMPANY_VAT = company.getCompanyVat();
 
-        Log.e("Company ","vat :"+company.getCompanyVat());
         mPrefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.COMPANY_PREFIX, company.getCompanyPrefix());
 
     }

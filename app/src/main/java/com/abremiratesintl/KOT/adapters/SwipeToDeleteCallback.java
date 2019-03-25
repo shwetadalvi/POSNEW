@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 
 import com.abremiratesintl.KOT.R;
@@ -51,20 +52,75 @@ public class SwipeToDeleteCallback<T> extends ItemTouchHelper.SimpleCallback {
 
     @Override public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         int position = viewHolder.getAdapterPosition();
-     /*   if (mCategoryAdapter instanceof CategoryAdapter) {
+   /* if (mCategoryAdapter instanceof CategoryAdapter) {
 
             int catId = mCategoryAdapter.getCategoryId(position);
+        Thread t = new Thread(() -> {
+        mItemList = mDatabase.mItemsDao().findItemsByCategoryId1(catId);
+        });
+        t.start();
 
-            LiveData<List<Items>> listLiveData = mDatabase.mItemsDao().findItemsByCategoryId(catId);
-            listLiveData.observe(viewHolder.getC, items -> {
-                mItemList = items;
+        Log.e("Cat delete :","size "+mItemList.size()+"  Id :"+catId);
+            if (mItemList != null && mItemList.size() > 0) {
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
+                builder1.setMessage("Can not delete category having Items");
+                builder1.setCancelable(false);
 
-            });
-            if (mItemList != null || mItemList.size() > 0) {
+                builder1.setPositiveButton(
+                        "Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
 
+                                mCategoryAdapter.notifyDataSetChanged();
+                            }
+                        });
+
+
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
             }
-        }*/
+            else{
 
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
+                builder1.setMessage("Are you sure want to Delete ?");
+                builder1.setCancelable(false);
+
+                builder1.setPositiveButton(
+                        "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+
+                                if (mCategoryAdapter instanceof CategoryAdapter) {
+                                    mCategoryAdapter.deleteItem(position);
+                                }else {
+                                    mItemsAdapter.deleteItem(position);
+                                }
+                            }
+                        });
+
+                builder1.setNegativeButton(
+                        "No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                dialog.cancel();
+                                if (mCategoryAdapter instanceof CategoryAdapter) {
+                                    mCategoryAdapter.notifyDataSetChanged();
+                                }else {
+                                    mItemsAdapter.notifyDataSetChanged();
+                                }
+
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+            }
+        }
+else {*/
         AlertDialog.Builder builder1 = new AlertDialog.Builder(mContext);
         builder1.setMessage("Are you sure want to Delete ?");
         builder1.setCancelable(false);
@@ -75,11 +131,11 @@ public class SwipeToDeleteCallback<T> extends ItemTouchHelper.SimpleCallback {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
 
-        if (mCategoryAdapter instanceof CategoryAdapter) {
-            mCategoryAdapter.deleteItem(position);
-        }else {
-            mItemsAdapter.deleteItem(position);
-        }
+                        if (mCategoryAdapter instanceof CategoryAdapter) {
+                            mCategoryAdapter.deleteItem(position);
+                        } else {
+                            mItemsAdapter.deleteItem(position);
+                        }
                     }
                 });
 
@@ -91,7 +147,7 @@ public class SwipeToDeleteCallback<T> extends ItemTouchHelper.SimpleCallback {
                         dialog.cancel();
                         if (mCategoryAdapter instanceof CategoryAdapter) {
                             mCategoryAdapter.notifyDataSetChanged();
-                        }else {
+                        } else {
                             mItemsAdapter.notifyDataSetChanged();
                         }
 
@@ -101,6 +157,7 @@ public class SwipeToDeleteCallback<T> extends ItemTouchHelper.SimpleCallback {
         AlertDialog alert11 = builder1.create();
         alert11.show();
     }
+   // }
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
