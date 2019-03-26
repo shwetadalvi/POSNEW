@@ -68,6 +68,7 @@ import butterknife.OnCheckedChanged;
 import butterknife.Unbinder;
 import vpos.apipackage.PosApiHelper;
 
+import static com.abremiratesintl.KOT.utils.Constants.CHANGE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ADDRESS;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_DATE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ID_PREF;
@@ -87,6 +88,7 @@ import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TAX;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TELE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TRN;
 import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
+import static com.abremiratesintl.KOT.utils.Constants.PAID_AMOUNT;
 import static com.abremiratesintl.KOT.utils.Constants.REQUEST_CODE_ENABLE_BLUETOOTH;
 
 /**
@@ -636,9 +638,10 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
+                float t1 = getTotalItemAmount();
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_TOTAL + createSpace(COMPANY_ITEM_TOTAL.length(), String.format("%.2f", getTotalItemAmount()).length()) + getTotalItemAmount())
+                        .setText(COMPANY_ITEM_TOTAL + createSpace(COMPANY_ITEM_TOTAL.length(), String.valueOf(t1).length()) + getTotalItemAmount())
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -656,9 +659,10 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
+                float t2 = getPriceExcludingVat();
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpace(COMPANY_ITEM_GROSS_AMOUNT.length(), String.format("%.2f", getPriceExcludingVat()).length()) + getPriceExcludingVat())
+                        .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpace(COMPANY_ITEM_GROSS_AMOUNT.length(), String.valueOf(t2).length()) + getPriceExcludingVat())
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -675,10 +679,46 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
+                if (selectedItem == "CASH"){
+                    if(!getString(edtChange).isEmpty()) {
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(PAID_AMOUNT + createSpace(PAID_AMOUNT.length(), String.valueOf(getString(edtChange)).length()) + getString(edtChange))
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                .setNewLinesAfter(2)
+                                .build());
+
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(CHANGE + createSpace(CHANGE.length(), String.valueOf(getString(edtBalance)).length()) + getString(edtBalance))
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                .setNewLinesAfter(2)
+                                .build());
+                    }
+                }
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText("................................................")
                        // .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("Thank You !!")
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_LARGE())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("Visit Again")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText("................................................")
+                        // .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 Printooth.INSTANCE.printer().print(printables);
@@ -724,7 +764,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         if (devices.size() == 0) {
             BtDevice device = new BtDevice();
-            device.setDeviceName("No devices Found\n Please got to bluetooth settings and pair the device");
+            device.setDeviceName("No devices Found\n Please go to bluetooth settings and pair the device");
         }
         return devices;
     }
@@ -838,7 +878,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_PRICE:
-                total = !isBluetooth ? 10 : 10;
+                total = !isBluetooth ? 15 : 15;
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_AMOUNT:
@@ -850,7 +890,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
 
     private String createSpace(int firstLength, int secondLegth) {
-        int num = 32 - firstLength;
+     //   int num = 32 - firstLength;
+        int num = 47 - firstLength ;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
@@ -956,17 +997,22 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
 
     float calculateVat(float vat, float price, int qty) {
+        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
         if (qty == 0) {
-            if(mPrefUtils.getBooleanPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, true))
-            price = price * vat / 100;
+            if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+                price = price * vat / 100;
+            else  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+                price = price * vat / (100 + vat);
             else
-                price = price * vat/(100 + vat);
+                price = 0;
             return Constants.round(price, 2);
         } else {
-            if(mPrefUtils.getBooleanPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, true))
-            price = (qty * price) * vat / 100;
+            if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+                price = (qty * price) * vat / 100;
+            else  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+                price = (qty * price) * vat / (100 + vat);
             else
-                price = (qty * price) * vat/(100 + vat);
+                price = 0;
             return Constants.round(price, 2);
         }
     }
@@ -1025,6 +1071,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
         }
         if (selectedItem == "CARD") {
+            edtChange.setText("");
+            edtBalance.setText("");
             mCard.setText(total);
             mCash.setEnabled(false);
             mCard.setEnabled(false);

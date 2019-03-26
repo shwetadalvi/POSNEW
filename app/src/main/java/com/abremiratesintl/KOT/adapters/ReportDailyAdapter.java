@@ -6,14 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
 import com.abremiratesintl.KOT.models.TransactionMaster;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

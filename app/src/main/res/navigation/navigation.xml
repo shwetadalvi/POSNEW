@@ -59,6 +59,9 @@
         <action
             android:id="@+id/action_homeFragment2_to_inventoryFragment"
             app:destination="@id/inventoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment2_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addNewItem"
@@ -202,6 +205,11 @@
             android:id="@+id/action_inventoryCheckoutFragment_to_inventoryFragment"
             app:destination="@id/inventoryFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.abremiratesintl.KOT.fragments.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 
 
 </navigation>

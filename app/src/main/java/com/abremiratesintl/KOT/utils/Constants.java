@@ -34,6 +34,9 @@ public class Constants {
     public static final String COMPANY_TOTAL_ITEM = "Total Item";
     public static final String CATEGORY = "Categort";
     public static final String VAT_EXCLUSIVE = "";
+    public static final String PAID_AMOUNT = "Paid Amount";
+    public static final String CHANGE = "Change";
+
 
         public static final String COMPANY_SL_NO = "Sl No.";
     public static final String PERMISSION_STORAGE_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;

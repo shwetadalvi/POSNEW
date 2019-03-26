@@ -876,17 +876,22 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
     }
 
     float calculateVat(float vat, float price, int qty) {
+        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
         if (qty == 0) {
-            if (mPrefUtils.getBooleanPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, true))
+            if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
                 price = price * vat / 100;
-            else
+            else  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
                 price = price * vat / (100 + vat);
+            else
+                price = 0;
             return Constants.round(price, 2);
         } else {
-            if (mPrefUtils.getBooleanPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, true))
+            if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
                 price = (qty * price) * vat / 100;
-            else
+            else  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
                 price = (qty * price) * vat / (100 + vat);
+            else
+                price = 0;
             return Constants.round(price, 2);
         }
     }

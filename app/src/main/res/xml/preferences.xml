@@ -9,8 +9,10 @@
             android:summary="@string/printer_selection_desc"
             android:title="@string/printer_selection_pref" />
     </PreferenceCategory>
-    <Preference android:title="@string/users"
-        android:icon="@drawable/bg_blue"
-        android:key="button_preference"/>
-      <!--android:widgetLayout="@layout/button_layout" />-->
+    <Preference
+
+        android:title="@string/users"
+        android:key="button_preference"
+   android:icon="@drawable/ic_settings"
+      />
 </PreferenceScreen>

@@ -600,11 +600,13 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
         totalItemPrice = Float.valueOf(getString(totalAmount));
         cartItem.setCartItems(mCartItems);
         Log.d("Inventory 4", "size" + mCartItems.size());
-
-
+        String str_supplier = "";
+        if(mSupplierList != null && mSupplierList.size() > 0 ){
+         str_supplier = mSelectedSupplier.getSupplierName();
 
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("inventory", MODE_PRIVATE).edit();
-        editor.putString("supplier", mSelectedSupplier.getSupplierName());
+
+        editor.putString("supplier", str_supplier);
         editor.putString("date", mSelectedDate);
         editor.putString("id", String.valueOf(id));
         editor.putString("refference", (editRef.getText().toString()));
@@ -619,6 +621,25 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
         } else {
             AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
             builder1.setMessage("No Item is Added");
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+
+
+                        }
+                    });
+
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+        }
+        }else{
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+            builder1.setMessage("Select Supplier");
             builder1.setCancelable(true);
 
             builder1.setPositiveButton(

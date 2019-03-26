@@ -31,7 +31,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
 
-            android:background="@color/colorAccent"
+            android:background="@drawable/bg_white_border"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -84,7 +84,7 @@
         android:layout_below="@+id/layout"
         android:layout_width="wrap_content"
         android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
+
         android:layout_height="wrap_content">
     <TextView
 
@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="5dp"
-        android:hint="change"
+        android:hint="Amount"
         android:textColor="#FFFFFF"
         android:inputType="numberDecimal"
         android:textColorHint="@color/grey"
@@ -132,7 +132,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="5dp"
-        android:hint="Balance"
+        android:hint="Change"
         android:inputType="numberDecimal"
         android:textColor="#FFFFFF"
         android:textColorHint="@color/grey"

@@ -46,12 +46,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
 
-        Preference button = (Preference)getPreferenceManager().findPreference("button_preference");
+       Preference button = (Preference)getPreferenceManager().findPreference("button_preference");
 
-        button.setLayoutResource(R.layout.button_layout);
+      //  button.setLayoutResource(R.layout.button_layout);
 
 
-        if (button != null) {
+     if (button != null) {
             button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference arg0) {

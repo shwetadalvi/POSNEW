@@ -27,9 +27,9 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                app:srcCompat="@drawable/ic_day_report" />
 
 
             <TextView
@@ -120,9 +120,9 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                app:srcCompat="@drawable/ic_item_report" />
 
 
             <TextView
@@ -166,9 +166,9 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                app:srcCompat="@drawable/ic_vat_report" />
 
 
             <TextView
@@ -211,9 +211,9 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                app:srcCompat="@drawable/ic_cat_report" />
 
 
             <TextView
@@ -257,9 +257,9 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
 
-                app:srcCompat="@drawable/ic_sale_report"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                app:srcCompat="@drawable/ic_inventory_report" />
 
 
             <TextView

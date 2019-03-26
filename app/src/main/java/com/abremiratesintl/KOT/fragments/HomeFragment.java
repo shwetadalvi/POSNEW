@@ -75,6 +75,7 @@ public class HomeFragment extends BaseFragment {
     @OnClick(R.id.settings) public void OnClickedSettings(View view) {
 //        showSnackBar(getView(), "This feature will added soon", 1000);
         Navigation.findNavController(view).navigate(R.id.action_homeFragment2_to_preferencesFragment);
+      //  Navigation.findNavController(view).navigate(R.id.action_homeFragment2_to_settingsFragment);
     }
 
     @OnClick(R.id.reports) public void OnClickedReports(View view) {

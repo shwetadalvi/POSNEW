@@ -48,6 +48,7 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
 import static android.support.constraint.Constraints.TAG;
+import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,6 +75,15 @@ public class VatSettingsFragment extends Fragment {
         mDatabase = AppDatabase.getInstance(getContext());
         mPrefUtils = new PrefUtils(getActivity());
 
+        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
+
+        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+            radioGroup.check(R.id.radioButton1);
+        else if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+            radioGroup.check(R.id.radioButton2);
+        else
+            radioGroup.check(R.id.radioButton3);
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -81,9 +91,11 @@ public class VatSettingsFragment extends Fragment {
                 RadioButton rb=(RadioButton)group.findViewById(checkedId);
 
                 if(rb.getText().toString().equals(getActivity().getResources().getString(R.string.vat_exclusive)))
-                mPrefUtils.putBooleanPreference(Constants.DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, true);
+                mPrefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
+                else if(rb.getText().toString().equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+                    mPrefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_inclusive));
                 else
-                    mPrefUtils.putBooleanPreference(Constants.DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, false);
+                    mPrefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.without_vat));
                 Toast.makeText(getActivity(), rb.getText(), Toast.LENGTH_SHORT).show();
             }
         });
