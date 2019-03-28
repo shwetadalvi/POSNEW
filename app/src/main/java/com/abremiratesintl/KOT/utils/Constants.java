@@ -36,6 +36,9 @@ public class Constants {
     public static final String VAT_EXCLUSIVE = "";
     public static final String PAID_AMOUNT = "Paid Amount";
     public static final String CHANGE = "Change";
+    public static final String USER_TYPE = "User Type";
+    public static final String ADMIN = "Admin";
+    public static final String CASHIER = "Cashier";
 
 
         public static final String COMPANY_SL_NO = "Sl No.";

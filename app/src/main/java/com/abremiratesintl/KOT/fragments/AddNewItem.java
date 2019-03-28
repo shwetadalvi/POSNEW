@@ -36,10 +36,12 @@ import com.abremiratesintl.KOT.adapters.POSRecyclerAdapter;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
 import com.abremiratesintl.KOT.models.CartItems;
+import com.abremiratesintl.KOT.models.Cashier;
 import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.Items;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
+import com.abremiratesintl.KOT.utils.PrefUtils;
 import com.abremiratesintl.KOT.views.CustomSpinner;
 
 import java.util.ArrayList;
@@ -87,6 +89,8 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
     CartItems cartItem = new CartItems();
     POSRecyclerAdapter mItemsAdapter;
     private  AudioManager audioManager;
+    private Cashier cashier;
+    private PrefUtils mPrefUtils;
     public AddNewItem() {
         // Required empty public constructor
     }
@@ -122,7 +126,52 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
             itemCount.setText(String.valueOf(totalItemCount));
             totalAmount.setText(String.valueOf(totalItemPrice));
         }
+        LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
+        cashierLiveData.observe(this, cashier -> {
+            if (cashier != null ) {
+
+                fillFields(cashier);
+            }
+        });
+        //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
         return view;
+    }
+    private void fillFields(Cashier cashier1){
+        cashier = new Cashier();
+        cashier.setCashierName(cashier1.getCashierName());
+        cashier.setItemView(cashier1.isItemView());
+        cashier.setItemInsert(cashier1.isItemInsert());
+        cashier.setItemUpdate(cashier1.isItemUpdate());
+        cashier.setItemDelete(cashier1.isItemDelete());
+        cashier.setCategoryView(cashier1.isCategoryView());
+
+        cashier.setCategoryInsert(cashier1.isCategoryInsert());
+        cashier.setCategoryUpdate(cashier1.isCategoryUpdate());
+        cashier.setCategoryDelete(cashier1.isCategoryDelete());
+        cashier.setPOSView(cashier1.isPOSView());
+        cashier.setPOSInsert(cashier1.isPOSInsert());
+        cashier.setPOSPrint(cashier1.isPOSPrint());
+        cashier.setPOSDelete(cashier1.isPOSDelete());
+        cashier.setInventoryView(cashier1.isInventoryView());
+        cashier.setInventoryInsert(cashier1.isInventoryInsert());
+        cashier.setInventoryUpdate(cashier1.isInventoryUpdate());
+        cashier.setInventoryDelete(cashier1.isInventoryDelete());
+        cashier.setDailyReportView(cashier1.isDailyReportView());
+        cashier.setDailyReportExport(cashier1.isDailyReportExport());
+        cashier.setSaleReportView(cashier1.isSaleReportView());
+        cashier.setSaleReportExport(cashier1.isSaleReportExport());
+        cashier.setItemReportView(cashier1.isItemReportView());
+        cashier.setItemReportExport(cashier1.isItemReportExport());
+        cashier.setVatReportView(cashier1.isVatReportView());
+        cashier.setVatReportExport(cashier1.isVatReportExport());
+        cashier.setCategoryReportView(cashier1.isCategoryReportView());
+        cashier.setCategoryReportExport(cashier1.isCategoryReportExport());
+        cashier.setInventoryReportView(cashier1.isInventoryReportView());
+        cashier.setInventoryReportExport(cashier1.isInventoryReportExport());
+
+
+
+
     }
 
     private void getCategoryList() {
@@ -191,66 +240,69 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
     @Override
     public void onClickedItem(Items item) {
 
-        audioManager.playSoundEffect(SoundEffectConstants.CLICK);
-        audioManager.playSoundEffect(SoundEffectConstants.CLICK, 0.5F);
+        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isItemInsert()) )
+            showSnackBar(getView(),"Not Allowed!!",5000);
+        else {
+            audioManager.playSoundEffect(SoundEffectConstants.CLICK);
+            audioManager.playSoundEffect(SoundEffectConstants.CLICK, 0.5F);
 
 
+            int mItemCountCount = 0;
+            float mTotalItemAmount = 0;
+            if (menuReturnClickCount == 1) {
 
-        int mItemCountCount = 0;
-        float mTotalItemAmount = 0;
-        if (menuReturnClickCount == 1) {
 
-
-            for (int i = 0; i < mCartItems.size(); i++) {
-                mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
-                mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;
+                for (int i = 0; i < mCartItems.size(); i++) {
+                    mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
+                    mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;
                    /* if (item.getItemId() == mCartItems.get(i).getItemId()) {
                         item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
                         item.setQty(mCartItems.get(i).getQty());
                     }*/
-            }
-            if (mCartItems.size() == 0) {
-                mTotalItemAmount = item.getPrice();
-                mItemCountCount = 1;
-            }
-            mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
-            returnFromList(item);
-            setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
+                }
+                if (mCartItems.size() == 0) {
+                    mTotalItemAmount = item.getPrice();
+                    mItemCountCount = 1;
+                }
+                mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
+                returnFromList(item);
+                setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
 
-            menuReturnClickCount = 0;
+                menuReturnClickCount = 0;
 
-        } else {
-            if (item.isOpen()) {
-                final Dialog dialog = new Dialog(getActivity());
-                dialog.setContentView(R.layout.dialog_layout);
-               // dialog.setTitle("Title...");
+            } else {
+                if (item.isOpen()) {
+                    final Dialog dialog = new Dialog(getActivity());
+                    dialog.setContentView(R.layout.dialog_layout);
+                    // dialog.setTitle("Title...");
 
-                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                EditText editOpenPrice = (EditText) dialog.findViewById(R.id.editOpenPrice);
-                //text.setText("Android custom dialog example!");
-                editOpenPrice.setText(String.valueOf(item.getPrice()));
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    EditText editOpenPrice = (EditText) dialog.findViewById(R.id.editOpenPrice);
+                    //text.setText("Android custom dialog example!");
+                    editOpenPrice.setText(String.valueOf(item.getPrice()));
 
-                Button dialogButton = (Button) dialog.findViewById(R.id.buttonSave);
-                // if button is clicked, close the custom dialog
-                dialogButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (getString(editOpenPrice) != null)
-                            item.setPrice(Float.parseFloat(getString(editOpenPrice)));
-                        mItemsAdapter.notifyDataSetChanged();
-                        Thread t = new Thread(() -> {
-                            mDatabase.mItemsDao().insertNewItems(item);
-                        });
-                        t.start();
+                    Button dialogButton = (Button) dialog.findViewById(R.id.buttonSave);
+                    // if button is clicked, close the custom dialog
+                    dialogButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (getString(editOpenPrice) != null)
+                                item.setPrice(Float.parseFloat(getString(editOpenPrice)));
+                            mItemsAdapter.notifyDataSetChanged();
+                            Thread t = new Thread(() -> {
+                                mDatabase.mItemsDao().insertNewItems(item);
+                            });
+                            t.start();
 
-                        dialog.dismiss();
-                       addItem(item);
-                    }
-                });
+                            dialog.dismiss();
+                            addItem(item);
+                        }
+                    });
 
-                dialog.show();
-            }else {
-                addItem(item);
+                    dialog.show();
+                } else {
+                    addItem(item);
+                }
             }
         }
     }

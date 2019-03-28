@@ -15,4 +15,10 @@
         android:key="button_preference"
    android:icon="@drawable/ic_settings"
       />
+    <Preference
+
+        android:title="Logout from Admin"
+        android:key="button_Logout"
+
+        />
 </PreferenceScreen>

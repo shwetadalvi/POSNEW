@@ -10,6 +10,7 @@ import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.fragments.super_user.CreateAdminFragment;
 import com.abremiratesintl.KOT.fragments.super_user.ExportDBFragment;
 import com.abremiratesintl.KOT.fragments.super_user.SuperAdminCompanyDetails;
+import com.abremiratesintl.KOT.fragments.super_user.UserSettingsFragment;
 import com.abremiratesintl.KOT.fragments.super_user.VatSettingsFragment;
 
 public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
@@ -26,7 +27,8 @@ public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new SuperAdminCompanyDetails();
             case 1:
-                return new CreateAdminFragment();
+               // return new CreateAdminFragment();
+                return new UserSettingsFragment();
             case 2:
                 return new ExportDBFragment();
             case 3:
@@ -40,7 +42,7 @@ public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return mContext.getResources().getString(R.string.company_details);
             case 1:
-                return mContext.getResources().getString(R.string.new_user);
+                return mContext.getResources().getString(R.string.user_management);
             case 2:
                 return mContext.getResources().getString(R.string.export_db);
             case 3:

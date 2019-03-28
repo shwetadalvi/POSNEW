@@ -19,6 +19,11 @@ import com.abremiratesintl.KOT.utils.PrefUtils;
 
 import androidx.navigation.Navigation;
 
+import static com.abremiratesintl.KOT.utils.Constants.ADMIN;
+import static com.abremiratesintl.KOT.utils.Constants.CASHIER;
+import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
+import static com.abremiratesintl.KOT.utils.Constants.USER_TYPE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -41,12 +46,29 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         mDropDownPreference = (DropDownPreference) getPreferenceManager().findPreference("dropdown_preference");
         PrefUtils prefUtils = new PrefUtils(getContext());
         mDropDownPreference.setOnPreferenceChangeListener((preference, entryValue) -> {
-            prefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, entryValue.toString());
+            prefUtils.putStringPreference(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, entryValue.toString());
             return true;
         });
 
+        Preference button_logout = (Preference)getPreferenceManager().findPreference("button_Logout");
+        if(prefUtils.getStringPrefrence(DEAFULT_PREFS,Constants.USER_TYPE,CASHIER).equals(ADMIN))
+            button_logout.setVisible(true);
+        else
+            button_logout.setVisible(false);
 
-       Preference button = (Preference)getPreferenceManager().findPreference("button_preference");
+        if (button_logout != null) {
+            button_logout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference arg0) {
+                 prefUtils.putStringPreference(DEAFULT_PREFS,USER_TYPE,CASHIER);
+                    button_logout.setVisible(false);
+                    return true;
+                }
+            });
+        }
+
+
+        Preference button = (Preference)getPreferenceManager().findPreference("button_preference");
 
       //  button.setLayoutResource(R.layout.button_layout);
 
@@ -62,6 +84,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 }
             });
         }
+
 
 
 

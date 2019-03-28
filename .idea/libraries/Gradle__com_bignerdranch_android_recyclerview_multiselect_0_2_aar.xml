@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.bignerdranch.android:recyclerview-multiselect:0.2@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/recyclerview-multiselect-0.2.aar/27ebfd93e48126c8aaa2e20cd9f3034e/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/recyclerview-multiselect-0.2.aar/27ebfd93e48126c8aaa2e20cd9f3034e/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/recyclerview-multiselect-0.2.aar/60bb5340df27635357f41eeeeab978c2/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/recyclerview-multiselect-0.2.aar/60bb5340df27635357f41eeeeab978c2/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

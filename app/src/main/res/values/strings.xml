@@ -63,7 +63,8 @@
     <string name="admin_login">Admin Login</string>
     <string name="enter_password">Enter Password</string>
     <string name="company_details">Company Details</string>
-    <string name="new_user">New User</string>
+   // <string name="new_user">New User</string>
+    <string name="user_management">User Management</string>
     <string name="company_name">Company name</string>
     <string name="telephone">Telephone</string>
     <string name="address">Address</string>

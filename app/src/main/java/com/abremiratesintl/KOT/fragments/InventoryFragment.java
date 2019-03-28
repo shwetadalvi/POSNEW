@@ -46,6 +46,7 @@ import com.abremiratesintl.KOT.adapters.SupplierSpinnerAdapter;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
 import com.abremiratesintl.KOT.models.CartItems;
+import com.abremiratesintl.KOT.models.Cashier;
 import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.InventoryMaster;
 import com.abremiratesintl.KOT.models.InventoryTransaction;
@@ -54,6 +55,7 @@ import com.abremiratesintl.KOT.models.Supplier;
 import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
+import com.abremiratesintl.KOT.utils.PrefUtils;
 import com.abremiratesintl.KOT.views.CustomSpinner;
 
 import java.util.ArrayList;
@@ -131,6 +133,9 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
     List<InventoryMaster> mItemsList = new ArrayList<>();
     List<InventoryTransaction> mItemsList1 = new ArrayList<>();
     private  AudioManager audioManager;
+    private Cashier cashier;
+
+    private PrefUtils mPrefUtils;
     public InventoryFragment() {
         // Required empty public constructor
     }
@@ -141,6 +146,7 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
         View view = inflater.inflate(R.layout.fragment_inventory, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mDatabase = AppDatabase.getInstance(getActivity());
+        mPrefUtils = new PrefUtils(getContext());
         audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
         addNewItemSpinnerCategory.setOnItemSelectedListener(this);
         addNewItemSpinnerCategory.setSpinnerEventsListener(this);
@@ -230,7 +236,52 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
         totalAmount.setText(String.valueOf(0));
 
 
+        LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
+        cashierLiveData.observe(this, cashier -> {
+            if (cashier != null ) {
+
+                fillFields(cashier);
+            }
+        });
+        //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
         return view;
+    }
+    private void fillFields(Cashier cashier1){
+        cashier = new Cashier();
+        cashier.setCashierName(cashier1.getCashierName());
+        cashier.setItemView(cashier1.isItemView());
+        cashier.setItemInsert(cashier1.isItemInsert());
+        cashier.setItemUpdate(cashier1.isItemUpdate());
+        cashier.setItemDelete(cashier1.isItemDelete());
+        cashier.setCategoryView(cashier1.isCategoryView());
+
+        cashier.setCategoryInsert(cashier1.isCategoryInsert());
+        cashier.setCategoryUpdate(cashier1.isCategoryUpdate());
+        cashier.setCategoryDelete(cashier1.isCategoryDelete());
+        cashier.setPOSView(cashier1.isPOSView());
+        cashier.setPOSInsert(cashier1.isPOSInsert());
+        cashier.setPOSPrint(cashier1.isPOSPrint());
+        cashier.setPOSDelete(cashier1.isPOSDelete());
+        cashier.setInventoryView(cashier1.isInventoryView());
+        cashier.setInventoryInsert(cashier1.isInventoryInsert());
+        cashier.setInventoryUpdate(cashier1.isInventoryUpdate());
+        cashier.setInventoryDelete(cashier1.isInventoryDelete());
+        cashier.setDailyReportView(cashier1.isDailyReportView());
+        cashier.setDailyReportExport(cashier1.isDailyReportExport());
+        cashier.setSaleReportView(cashier1.isSaleReportView());
+        cashier.setSaleReportExport(cashier1.isSaleReportExport());
+        cashier.setItemReportView(cashier1.isItemReportView());
+        cashier.setItemReportExport(cashier1.isItemReportExport());
+        cashier.setVatReportView(cashier1.isVatReportView());
+        cashier.setVatReportExport(cashier1.isVatReportExport());
+        cashier.setCategoryReportView(cashier1.isCategoryReportView());
+        cashier.setCategoryReportExport(cashier1.isCategoryReportExport());
+        cashier.setInventoryReportView(cashier1.isInventoryReportView());
+        cashier.setInventoryReportExport(cashier1.isInventoryReportExport());
+
+
+
+
     }
 
     private void getSupplierList() {
@@ -392,7 +443,10 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
 
     @Override
     public void onClickedItem(Items item) {
-        audioManager.playSoundEffect(SoundEffectConstants.CLICK);
+        if (mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS, Constants.USER_TYPE, Constants.CASHIER).equals(Constants.CASHIER) && (!cashier.isInventoryInsert()))
+            showSnackBar(getView(), "Not Allowed!!", 5000);
+        else{
+            audioManager.playSoundEffect(SoundEffectConstants.CLICK);
         audioManager.playSoundEffect(SoundEffectConstants.CLICK, 0.5F);
 
         int mItemCountCount = 0;
@@ -414,7 +468,7 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
         mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
         insertToList(item);
         setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
-
+    }
     }
 
     void setFooterAndVat(Items item, float mTotalItemAmount, int mItemCountCount) {

@@ -819,4 +819,8 @@ public class ExportDBFragment extends Fragment {
             e.printStackTrace();
         }
     }
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
 }
