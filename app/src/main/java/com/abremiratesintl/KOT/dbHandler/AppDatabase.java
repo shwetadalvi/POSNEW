@@ -7,6 +7,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
+import com.abremiratesintl.KOT.models.Admin;
 import com.abremiratesintl.KOT.models.Cashier;
 import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.Company;
@@ -18,7 +19,7 @@ import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.models.User;
 
-@Database(entities = {Category.class, Items.class, User.class, TransactionMaster.class, Transaction.class, Company.class, InventoryMaster.class, InventoryTransaction.class, Supplier.class, Cashier.class}, version =1 ,exportSchema = false)
+@Database(entities = {Category.class, Items.class, User.class, TransactionMaster.class, Transaction.class, Company.class, InventoryMaster.class, InventoryTransaction.class, Supplier.class, Cashier.class, Admin.class}, version =1 ,exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase mInstance;
@@ -62,4 +63,5 @@ public abstract class AppDatabase extends RoomDatabase {
    public abstract InventoryTransactionDao mInventoryTransactionDao();
    public abstract SupplierDao mSupplierDao();
    public abstract CashierDao mCashierDao();
+   public abstract AdminDao mAdminDao();
 }

@@ -22,6 +22,7 @@ import com.abremiratesintl.KOT.adapters.CategoryAdapter;
 import com.abremiratesintl.KOT.adapters.SwipeToDeleteCallback;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
+import com.abremiratesintl.KOT.models.Cashier;
 import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.utils.Constants;
 import com.abremiratesintl.KOT.utils.PrefUtils;
@@ -57,7 +58,8 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
     Completable mCompletable;
     int categoryIdOfEditItem =0;
     String categoryNameOfEditItem ="";
-
+    private Cashier cashier = new Cashier();
+    private boolean isCashier = false;
     public CategoryFragment() {
     }
 
@@ -70,6 +72,14 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
         ((MainActivity)getActivity()).changeTitle("NEW CATEGORY");
 
         mDatabase = AppDatabase.getInstance(getContext());
+
+        Thread t = new Thread(() -> {
+            cashier = mDatabase.mCashierDao().getCashier();
+        });
+        t.start();
+
+        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+            isCashier = true;
         return view;
     }
 
@@ -85,27 +95,34 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
 
     @SuppressLint("CheckResult") @OnClick(R.id.categorySave)
     public void onClickedSave(View view) {
-        if (categorySave.getText().toString().equals(getStringfromResource(R.string.save))) {
-            String categoryString = getString(categoryName);
-            if (!categoryString.isEmpty()) {
-                for (Category cat : mCategoryList) {
-                    if (cat.getCategoryName().equals(categoryString)) {
-                        showSnackBar(getView(), getStringfromResource(R.string.category_name_exist), 1000);
-                        return;
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isCategoryInsert())) )
+
+            showSnackBar(getView(),"Not Allowed!!",1000);
+
+        else {
+
+            if (categorySave.getText().toString().equals(getStringfromResource(R.string.save))) {
+                String categoryString = getString(categoryName);
+                if (!categoryString.isEmpty()) {
+                    for (Category cat : mCategoryList) {
+                        if (cat.getCategoryName().equals(categoryString)) {
+                            showSnackBar(getView(), getStringfromResource(R.string.category_name_exist), 1000);
+                            return;
+                        }
                     }
+                    insertCategory(categoryString);
                 }
-                insertCategory(categoryString);
+            } else {
+                Category category = new Category();
+                category.setCategoryName(getString(categoryName));
+                category.setCategoryId(categoryIdOfEditItem);
+                Completable.fromAction(() -> mDatabase.mCategoryDao().editCategoryNameById(getString(categoryName), categoryIdOfEditItem))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(() -> mCategoryAdapter.notifyDataSetChanged(), throwable -> showSnackBar(getView(), getStringfromResource(R.string.category_update_failed), 1000));
             }
-        }else {
-            Category category = new Category();
-            category.setCategoryName(getString(categoryName));
-            category.setCategoryId(categoryIdOfEditItem);
-            Completable.fromAction(() -> mDatabase.mCategoryDao().editCategoryNameById(getString(categoryName),categoryIdOfEditItem))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(()-> mCategoryAdapter.notifyDataSetChanged(), throwable ->  showSnackBar(getView(),getStringfromResource(R.string.category_update_failed),1000));
+            resetFields();
         }
-        resetFields();
     }
 
     @SuppressLint("CheckResult") private void insertCategory(String categoryString) {
@@ -148,11 +165,17 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
     }
 
     @Override public void onClickedEdit(Category category) {
-        categoryName.setText(category.getCategoryName());
-        categoryName.setSelection(category.getCategoryName().length());
-        categorySave.setText(getStringfromResource(R.string.edit));
-        categoryIdOfEditItem = category.getCategoryId();
-        categoryNameOfEditItem = category.getCategoryName();
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isCategoryUpdate())) )
+
+            showSnackBar(getView(),"Not Allowed!!",1000);
+
+        else {
+            categoryName.setText(category.getCategoryName());
+            categoryName.setSelection(category.getCategoryName().length());
+            categorySave.setText(getStringfromResource(R.string.edit));
+            categoryIdOfEditItem = category.getCategoryId();
+            categoryNameOfEditItem = category.getCategoryName();
+        }
     }
 
     @SuppressLint("CheckResult") @Override public void onDeletedItem(Category category) {

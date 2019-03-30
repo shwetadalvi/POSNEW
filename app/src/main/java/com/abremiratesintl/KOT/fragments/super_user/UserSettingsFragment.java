@@ -13,6 +13,8 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.abremiratesintl.KOT.BaseFragment;
+import com.abremiratesintl.KOT.MainActivity;
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.models.Cashier;
@@ -33,7 +35,7 @@ import static com.abremiratesintl.KOT.utils.Constants.USER_TYPE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserSettingsFragment extends Fragment implements CheckBox.OnCheckedChangeListener
+public class UserSettingsFragment extends BaseFragment implements CheckBox.OnCheckedChangeListener
 {
 
     @BindView(R.id.checkItemView)
@@ -129,12 +131,12 @@ public class UserSettingsFragment extends Fragment implements CheckBox.OnChecked
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_user_settings, container, false);
-
+        ((MainActivity) getActivity()).changeTitle("Settings");
         mUnbinder = ButterKnife.bind(this, view);
         mDatabase = AppDatabase.getInstance(getContext());
         mPrefUtils = new PrefUtils(getContext());
 
-        LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
+        LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier1();
         cashierLiveData.observe(this, cashier -> {
             if (cashier != null) {
                 fillFields(cashier);
@@ -245,14 +247,16 @@ public class UserSettingsFragment extends Fragment implements CheckBox.OnChecked
     @OnClick(R.id.btnCashier)
     public void onClickCashier(){
         mPrefUtils.putStringPreference(DEAFULT_PREFS,USER_TYPE,CASHIER);
-      /*  if (getFragmentManager() != null) {
+        if (getFragmentManager() != null) {
             getFragmentManager().popBackStack();
-        }*/
+        }
     }
     @OnClick(R.id.btnSubmit)
     public void onClickedSave(){
 
-         cashier.setCashierName(edtName.getText().toString());
+        String str_name = getString(edtName);
+         cashier.setCashierName(str_name
+         );
          cashier.setItemView(isItemView);
          cashier.setItemInsert(isItemInsert);
          cashier.setItemUpdate(isItemUpdate);

@@ -89,8 +89,9 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
     CartItems cartItem = new CartItems();
     POSRecyclerAdapter mItemsAdapter;
     private  AudioManager audioManager;
-    private Cashier cashier;
+    private Cashier cashier = new Cashier();
     private PrefUtils mPrefUtils;
+    private boolean isCashier = false;
     public AddNewItem() {
         // Required empty public constructor
     }
@@ -101,6 +102,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
         View view = inflater.inflate(R.layout.fragment_add_new_item, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mDatabase = AppDatabase.getInstance(getContext());
+        mPrefUtils = new PrefUtils(getContext());
         audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
         addNewItemSpinnerCategory.setOnItemSelectedListener(this);
         addNewItemSpinnerCategory.setSpinnerEventsListener(this);
@@ -126,13 +128,21 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
             itemCount.setText(String.valueOf(totalItemCount));
             totalAmount.setText(String.valueOf(totalItemPrice));
         }
-        LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
+        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+            isCashier = true;
+     /*   LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
         cashierLiveData.observe(this, cashier -> {
             if (cashier != null ) {
 
                 fillFields(cashier);
             }
+        });*/
+
+        Thread t = new Thread(() -> {
+            cashier = mDatabase.mCashierDao().getCashier();
         });
+        t.start();
+
         //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
         return view;
     }
@@ -240,8 +250,8 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
     @Override
     public void onClickedItem(Items item) {
 
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isItemInsert()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isPOSInsert())) )
+            showSnackBar(getView(),"Not Allowed!!",1000);
         else {
             audioManager.playSoundEffect(SoundEffectConstants.CLICK);
             audioManager.playSoundEffect(SoundEffectConstants.CLICK, 0.5F);

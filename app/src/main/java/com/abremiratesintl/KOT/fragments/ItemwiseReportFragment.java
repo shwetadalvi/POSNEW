@@ -41,11 +41,13 @@ import com.abremiratesintl.KOT.adapters.ItemwiseReportAdapter;
 import com.abremiratesintl.KOT.adapters.ReportAdapter;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
+import com.abremiratesintl.KOT.models.Cashier;
 import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.Items;
 import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
+import com.abremiratesintl.KOT.utils.PrefUtils;
 import com.abremiratesintl.KOT.views.CustomSpinner;
 
 import java.io.File;
@@ -99,6 +101,9 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     private List<Items> mItemsList;
     private Items mSelectedItem;
     private List<Transaction> mTransactionList;
+    private Cashier cashier = new Cashier();
+    private boolean isCashier = false;
+    PrefUtils mPrefUtils ;
     public ItemwiseReportFragment() {
         // Required empty public constructor
     }
@@ -111,6 +116,15 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         mDatabase = AppDatabase.getInstance(getContext());
         mUnbinder = ButterKnife.bind(this, view);
         ((MainActivity)getActivity()).changeTitle(" Item REPORTS");
+        mPrefUtils = new PrefUtils(getContext());
+
+        Thread t = new Thread(() -> {
+            cashier = mDatabase.mCashierDao().getCashier();
+        });
+        t.start();
+
+        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+            isCashier = true;
 
         spinItem.setOnItemSelectedListener(this);
         spinItem.setSpinnerEventsListener(this);
@@ -211,6 +225,9 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 }
                 break;
             case R.id.export:
+                if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isItemReportExport())) )
+                    showSnackBar(getView(),"Not Allowed!!",1000);
+                else
                 exportFileToExcel();
         }
 
@@ -278,7 +295,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
             workbook.write();
             workbook.close();
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage("Data Exported in a Excel Sheet");
+            builder.setMessage("Data Exported in a Excel Sheet to Reports folder .");
             builder.setCancelable(true);
 
             builder.setPositiveButton(
@@ -287,15 +304,11 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                             {
-                                Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
+                               /* Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
                                 Uri uri = Uri.parse (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
                                 intent.setDataAndType (uri, "resource/folder");
-                                startActivity (Intent.createChooser (intent, "Open folder"));
-                                /*
-                                Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
-                                Intent intent = new Intent(Intent.ACTION_VIEW);
-                                intent.setDataAndType(selectedUri, "resource/folder");
-                                startActivity(intent);*/
+                                startActivity (Intent.createChooser (intent, "Open folder"));*/
+
                             }
                         }
                     });

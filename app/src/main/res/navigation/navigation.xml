@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_loginFragment_to_superAdminHome"
             app:destination="@id/superAdminHome" />
+        <action
+            android:id="@+id/action_loginFragment_to_userSettingsFragment"
+            app:destination="@id/userSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment2"
@@ -210,6 +213,16 @@
         android:name="com.abremiratesintl.KOT.fragments.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/createAdminFragment"
+        android:name="com.abremiratesintl.KOT.fragments.super_user.CreateAdminFragment"
+        android:label="fragment_create_admin"
+        tools:layout="@layout/fragment_create_admin" />
+    <fragment
+        android:id="@+id/userSettingsFragment"
+        android:name="com.abremiratesintl.KOT.fragments.super_user.UserSettingsFragment"
+        android:label="fragment_user_settings"
+        tools:layout="@layout/fragment_user_settings" />
 
 
 </navigation>

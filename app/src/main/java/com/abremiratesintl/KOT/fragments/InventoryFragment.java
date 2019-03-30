@@ -133,8 +133,8 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
     List<InventoryMaster> mItemsList = new ArrayList<>();
     List<InventoryTransaction> mItemsList1 = new ArrayList<>();
     private  AudioManager audioManager;
-    private Cashier cashier;
-
+    private Cashier cashier = new Cashier();
+private boolean isCashier = false;
     private PrefUtils mPrefUtils;
     public InventoryFragment() {
         // Required empty public constructor
@@ -160,6 +160,9 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
         editInvoice.setEnabled(false);
         getSupplierList();
         getCategoryList();
+
+        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+            isCashier = true;
 
         if (cartItem.getCartItems() != null && cartItem.getCartItems().size() != 0) {
             int qty = 0;
@@ -236,13 +239,18 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
         totalAmount.setText(String.valueOf(0));
 
 
-        LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
+        Thread t = new Thread(() -> {
+            cashier = mDatabase.mCashierDao().getCashier();
+        });
+        t.start();
+
+      /*  LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
         cashierLiveData.observe(this, cashier -> {
             if (cashier != null ) {
 
                 fillFields(cashier);
             }
-        });
+        });*/
         //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
         return view;
     }
@@ -443,8 +451,8 @@ public class InventoryFragment extends BaseFragment implements AdapterView.OnIte
 
     @Override
     public void onClickedItem(Items item) {
-        if (mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS, Constants.USER_TYPE, Constants.CASHIER).equals(Constants.CASHIER) && (!cashier.isInventoryInsert()))
-            showSnackBar(getView(), "Not Allowed!!", 5000);
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isInventoryInsert())) )
+            showSnackBar(getView(), "Not Allowed!!", 1000);
         else{
             audioManager.playSoundEffect(SoundEffectConstants.CLICK);
         audioManager.playSoundEffect(SoundEffectConstants.CLICK, 0.5F);

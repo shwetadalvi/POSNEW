@@ -47,7 +47,8 @@ public class HomeFragment extends BaseFragment {
 //    CardView mUserManagement;
     private Unbinder mUnbinder;
     private AppDatabase mDatabase;
-private Cashier cashier ;
+private Cashier cashier = new Cashier();
+private boolean isCashier = false;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -63,14 +64,21 @@ private Cashier cashier ;
         mDatabase = AppDatabase.getInstance(getContext());
         ((MainActivity) getActivity()).changeTitle("POS");
 
-        LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
+        Thread t = new Thread(() -> {
+        cashier = mDatabase.mCashierDao().getCashier();
+        });
+        t.start();
+
+      /*  LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
         cashierLiveData.observe(this, cashier -> {
             if (cashier != null ) {
 
                 fillFields(cashier);
             }
-        });
+        });*/
      //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
+       if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+           isCashier = true;
         return view;
     }
     private void fillFields(Cashier cashier1){
@@ -113,7 +121,8 @@ private Cashier cashier ;
     @Override
     public void onResume() {
         super.onResume();
-
+        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+            isCashier = true;
     }
 
     @Override public void onDestroyView() {
@@ -123,24 +132,25 @@ private Cashier cashier ;
 
     @OnClick(R.id.categoryManagement) public void OnClickedCategoryManagement(View view) {
 
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isCategoryView()) )
 
-          showSnackBar(getView(),"Not Allowed!!",5000);
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isCategoryView())) )
+
+          showSnackBar(getView(),"Not Allowed!!",1000);
 
         else
           Navigation.findNavController(view).navigate(R.id.action_homeFragment2_to_categoryFragment);
     }
 
     @OnClick(R.id.itemManagement) public void OnClickedItemManagement(View view) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isItemView()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isItemView())) )
+            showSnackBar(getView(),"Not Allowed!!",1000);
         else
         Navigation.findNavController(view).navigate(R.id.action_homeFragment2_to_itemFragment);
     }
 
     @OnClick(R.id.pos) public void OnClickedPos(View view) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isPOSView()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isPOSView())) )
+            showSnackBar(getView(),"Not Allowed!!",1000);
         else
             Navigation.findNavController(view).navigate(R.id.action_homeFragment2_to_addNewItem);
     }
@@ -158,8 +168,8 @@ private Cashier cashier ;
 
     }
     @OnClick(R.id.inventory) public void OnClickedInventory(View view) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isInventoryView()))
-            showSnackBar(getView(),"Not Allowed!!",5000);
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isInventoryView())) )
+            showSnackBar(getView(),"Not Allowed!!",1000);
         else
             Navigation.findNavController(view).navigate(R.id.action_homeFragment2_to_inventoryFragment);
 

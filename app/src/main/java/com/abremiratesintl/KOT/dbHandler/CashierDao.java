@@ -16,7 +16,10 @@ public interface CashierDao {
     void insertCashier(Cashier cashier);
 
     @Query("SELECT * FROM Cashier")
-    LiveData<Cashier> getCashier();
+    LiveData<Cashier> getCashier1();
+
+    @Query("SELECT * FROM Cashier")
+    Cashier getCashier();
 
     @Query("DELETE FROM Cashier") void deleteAll();
 }

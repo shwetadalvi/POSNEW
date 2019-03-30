@@ -22,6 +22,7 @@ import com.abremiratesintl.KOT.MainActivity;
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.dbHandler.UserDbHandler;
+import com.abremiratesintl.KOT.models.Admin;
 import com.abremiratesintl.KOT.utils.PrefUtils;
 
 import java.util.HashMap;
@@ -82,6 +83,7 @@ public class LoginFragment extends BaseFragment implements View.OnFocusChangeLis
     PrefUtils mPrefUtils;
     private int mFromWhere;
     AppDatabase mDatabase;
+    private Admin admin = new Admin();
     private View mView;
 
     public LoginFragment() {
@@ -95,8 +97,16 @@ public class LoginFragment extends BaseFragment implements View.OnFocusChangeLis
         mView = inflater.inflate(R.layout.fragment_login, container, false);
         unbinder = ButterKnife.bind(this, mView);
         mPrefUtils = new PrefUtils(getContext());
+        mDatabase = AppDatabase.getInstance(getContext());
         LoginFragmentArgs args = LoginFragmentArgs.fromBundle(getArguments());
         mFromWhere = args.getFromFragment();
+
+
+        Thread t = new Thread(() -> {
+            admin = mDatabase.mAdminDao().getAdmin1();
+        });
+        t.start();
+
         if (mFromWhere == 1) {
             if (isAlreadyLogedIn()) {
                 Navigation.findNavController(mView).navigate(R.id.action_loginFragment_to_homeFragment2);
@@ -196,10 +206,17 @@ public class LoginFragment extends BaseFragment implements View.OnFocusChangeLis
     private void adminLogin(String pin) {
         HashMap<String, String> map = new HashMap<>();
         UserDbHandler userDbHandler = new UserDbHandler();
+        if(admin != null){
+            if(pin.equals(admin.getPassword())) {
+                showSnackBar(mView, "match", 1000);
+                Navigation.findNavController(mView).navigate(R.id.action_loginFragment_to_userSettingsFragment);
+            }
+        }
         if (pin.equals(MainActivity.getKey())) {
             AdminPasswordDialog adminPasswordDialog = new AdminPasswordDialog(getContext(), this);
             adminPasswordDialog.showAdminDialog();
         }
+
     }
 
     private String getString(TextView textView) {

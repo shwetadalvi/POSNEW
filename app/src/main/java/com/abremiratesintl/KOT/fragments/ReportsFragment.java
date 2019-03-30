@@ -32,8 +32,10 @@ import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.adapters.ReportAdapter;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
+import com.abremiratesintl.KOT.models.Cashier;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
+import com.abremiratesintl.KOT.utils.PrefUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +72,9 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
     private AppDatabase mDatabase;
     View mSelectedDateView;
     private List<TransactionMaster> mTransactionMasterList;
+    private Cashier cashier = new Cashier();
+    private boolean isCashier = false;
+    PrefUtils mPrefUtils ;
     public ReportsFragment() {
         // Required empty public constructor
     }
@@ -79,12 +84,23 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reports, container, false);
+        mPrefUtils = new PrefUtils(getContext());
         mDatabase = AppDatabase.getInstance(getContext());
         mUnbinder = ButterKnife.bind(this, view);
         ((MainActivity)getActivity()).changeTitle(" Sales REPORTS");
 
         setHasOptionsMenu(true);
         fetchTransactions();
+
+        Thread t = new Thread(() -> {
+            cashier = mDatabase.mCashierDao().getCashier();
+        });
+        t.start();
+
+
+        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+            isCashier = true;
+
         return view;
     }
 
@@ -140,6 +156,9 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
                 listLiveData.observe(this, this::setUpRecycler);
                 break;
             case R.id.export:
+                if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isSaleReportExport())) )
+                    showSnackBar(getView(),"Not Allowed!!",1000);
+                else
                 exportFileToExcel();
                 break;
         }
@@ -197,7 +216,7 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
             workbook.write();
             workbook.close();
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage("Data Exported in a Excel Sheet");
+            builder.setMessage("Data Exported in a Excel Sheet to Reports Folder");
             builder.setCancelable(true);
 
             builder.setPositiveButton(
@@ -206,15 +225,11 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                             {
-                                Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
+                              /*  Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
                                 Uri uri = Uri.parse (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
                                 intent.setDataAndType (uri, "resource/folder");
-                                startActivity (Intent.createChooser (intent, "Open folder"));
-                                /*
-                                Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
-                                Intent intent = new Intent(Intent.ACTION_VIEW);
-                                intent.setDataAndType(selectedUri, "resource/folder");
-                                startActivity(intent);*/
+                                startActivity (Intent.createChooser (intent, "Open folder"));*/
+
                             }
                         }
                     });

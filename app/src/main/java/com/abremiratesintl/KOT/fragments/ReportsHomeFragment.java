@@ -27,13 +27,14 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ReportsHomeFragment extends BaseFragment  {
+public class ReportsHomeFragment extends BaseFragment {
     private Unbinder mUnbinder;
     @BindView(R.id.dayReport)
     RelativeLayout mdayReport;
-private Cashier cashier;
-private AppDatabase mDatabase;
-private PrefUtils mPrefUtils;
+    private Cashier cashier = new Cashier();
+    private AppDatabase mDatabase;
+    private PrefUtils mPrefUtils;
+private boolean isCashier = false;
     public ReportsHomeFragment() {
         // Required empty public constructor
     }
@@ -43,22 +44,30 @@ private PrefUtils mPrefUtils;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reports_home2, container, false);
-mDatabase = AppDatabase.getInstance(getContext());
+        mDatabase = AppDatabase.getInstance(getContext());
         mPrefUtils = new PrefUtils(getContext());
-        ((MainActivity)getActivity()).changeTitle("ABR REPORTS");
+        ((MainActivity) getActivity()).changeTitle("ABR REPORTS");
         mUnbinder = ButterKnife.bind(this, view);
 
-        LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
+if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+    isCashier = true;
+        Thread t = new Thread(() -> {
+            cashier = mDatabase.mCashierDao().getCashier();
+        });
+        t.start();
+
+       /* LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
         cashierLiveData.observe(this, cashier -> {
             if (cashier != null ) {
 
                 fillFields(cashier);
             }
-        });
+        });*/
         //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
         return view;
     }
-    private void fillFields(Cashier cashier1){
+
+    private void fillFields(Cashier cashier1) {
         cashier = new Cashier();
         cashier.setCashierName(cashier1.getCashierName());
         cashier.setItemView(cashier1.isItemView());
@@ -92,48 +101,59 @@ mDatabase = AppDatabase.getInstance(getContext());
         cashier.setInventoryReportExport(cashier1.isInventoryReportExport());
 
 
-
-
     }
-    @Override public void onDestroyView() {
+
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
     }
 
-    @OnClick(R.id.dayReport) public void OnClickedDayReport(View view) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isDailyReportView()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+    @OnClick(R.id.dayReport)
+    public void OnClickedDayReport(View view) {
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isDailyReportView())) )
+            showSnackBar(getView(), "Not Allowed!!", 1000);
         else
-        Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_reportDailyFragment);
+            Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_reportDailyFragment);
     }
-    @OnClick(R.id.salesReport) public void OnClickedSalesReport(View view) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isSaleReportView()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+
+    @OnClick(R.id.salesReport)
+    public void OnClickedSalesReport(View view) {
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isSaleReportView())) )
+            showSnackBar(getView(), "Not Allowed!!", 1000);
         else
-        Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_reportsFragment);
+            Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_reportsFragment);
     }
-    @OnClick(R.id.itemReport) public void OnClickedItemwiseReport(View view) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isItemReportView()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+
+    @OnClick(R.id.itemReport)
+    public void OnClickedItemwiseReport(View view) {
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isItemReportView())) )
+            showSnackBar(getView(), "Not Allowed!!", 1000);
         else
-        Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_itemwiseReportFragment);
+            Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_itemwiseReportFragment);
     }
-    @OnClick(R.id.vatReport) public void OnClickedVATwiseReport(View view) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isVatReportView()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+
+    @OnClick(R.id.vatReport)
+    public void OnClickedVATwiseReport(View view) {
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isVatReportView())) )
+            showSnackBar(getView(), "Not Allowed!!", 1000);
         else
-        Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_VATwiseReportFragment);
+            Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_VATwiseReportFragment);
     }
-    @OnClick(R.id.categoryReport) public void OnClickedCategoryReport(View view) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isCategoryReportView()))
-            showSnackBar(getView(),"Not Allowed!!",5000);
+
+    @OnClick(R.id.categoryReport)
+    public void OnClickedCategoryReport(View view) {
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isCategoryReportView())) )
+            showSnackBar(getView(), "Not Allowed!!", 1000);
         else
-        Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_categoryReport2);
+            Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_categoryReport2);
     }
-    @OnClick(R.id.inventoryReport) public void OnClickedInventoryReport(View view) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isInventoryReportView()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+
+    @OnClick(R.id.inventoryReport)
+    public void OnClickedInventoryReport(View view) {
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isInventoryReportView())) )
+            showSnackBar(getView(), "Not Allowed!!", 1000);
         else
-        Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_inventoryReportFragment);
+            Navigation.findNavController(view).navigate(R.id.action_reportsHomeFragment_to_inventoryReportFragment);
     }
 }

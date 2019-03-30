@@ -104,7 +104,8 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
     private Uri mSelectedImageUri;
     private String mPath = "";
     private int itemId = 0;
-private Cashier cashier;
+private Cashier cashier = new Cashier();
+private boolean isCashier = false;
     public ItemFragment() {
     }
 
@@ -124,13 +125,20 @@ private Cashier cashier;
         mItemVat.setText(Constants.COMPANY_VAT);
 
         getCategoryList();
-        LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
+if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+    isCashier = true;
+        Thread t = new Thread(() -> {
+            cashier = mDatabase.mCashierDao().getCashier();
+        });
+        t.start();
+
+      /*  LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
         cashierLiveData.observe(this, cashier -> {
             if (cashier != null ) {
 
                 fillFields(cashier);
             }
-        });
+        });*/
         //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
         return view;
     }
@@ -211,8 +219,8 @@ private Cashier cashier;
 
     @OnClick(R.id.saveItem)
     public void onClickedSave() {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isItemInsert()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isItemInsert())) )
+            showSnackBar(getView(),"Not Allowed!!",1000);
         else
         getItemsFromFields();
     }
@@ -438,8 +446,8 @@ private Cashier cashier;
 
     @Override
     public void onClickedEdit(Items items) {
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER) &&  (!cashier.isItemUpdate()) )
-            showSnackBar(getView(),"Not Allowed!!",5000);
+        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isItemUpdate())) )
+            showSnackBar(getView(),"Not Allowed!!",1000);
         else
             fillToFields(items);
     }

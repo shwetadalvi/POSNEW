@@ -27,8 +27,8 @@ public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new SuperAdminCompanyDetails();
             case 1:
-               // return new CreateAdminFragment();
-                return new UserSettingsFragment();
+                return new CreateAdminFragment();
+              //return new UserSettingsFragment();
             case 2:
                 return new ExportDBFragment();
             case 3:
@@ -42,7 +42,7 @@ public class SuperAdminPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return mContext.getResources().getString(R.string.company_details);
             case 1:
-                return mContext.getResources().getString(R.string.user_management);
+                return mContext.getResources().getString(R.string.new_user);
             case 2:
                 return mContext.getResources().getString(R.string.export_db);
             case 3:
