@@ -464,15 +464,15 @@ public class UserSettingsFragment extends BaseFragment implements CheckBox.OnChe
                 break;
             case R.id.checkInvReportView:
                 if(isChecked)
-                    isItemReportView = true;
+                    isInventoryReportView = true;
                 else
-                    isItemReportView = false;
+                    isInventoryReportView = false;
                 break;
             case R.id.checkInvReportExport:
                 if(isChecked)
-                    isItemReportExport= true;
+                    isInventoryReportExport= true;
                 else
-                    isItemReportExport = false;
+                    isInventoryReportExport = false;
                 break;
         }
 

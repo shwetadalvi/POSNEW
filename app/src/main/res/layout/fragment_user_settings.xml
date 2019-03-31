@@ -387,7 +387,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_blue"
+                android:background="@color/colorPrimary"
                 android:text="Continue As Admin"
                 android:textColor="@color/white" />
             />
@@ -398,7 +398,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_blue"
+                android:background="@color/colorPrimary"
                 android:text="Cashier"
                 android:textColor="@color/white" />
 

@@ -972,15 +972,18 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
 
     float calculateTotal() {
+        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
         float total = 0;
         float vat = 0;
         for (Items items : mItemsList) {
             total = total + items.getTotalItemPrice();
             vat = vat + calculateVat(items.getVat(), items.getPrice(), items.getQty());
         }
-        textTotal.setText("Total Item Price : "+String.valueOf(Constants.round(total,2)));
+        textTotal.setText("Gross Amount : "+String.valueOf(Constants.round(total,2)));
         String disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
         float discount = 0;
+        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+            total = total + vat;
         if (!mIsPercentage) {
             discount = Float.parseFloat(disString);
             total = total - discount;
@@ -992,7 +995,10 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         Constants.round(vat, 2);
         Constants.round(total, 2);
         Constants.round(discount, 2);
-        updateFooters(vat, discount, total + vat);
+
+       // updateFooters(vat, discount, total + vat);
+
+            updateFooters(vat, discount, total);
         return Constants.round(total, 2);
     }
 
