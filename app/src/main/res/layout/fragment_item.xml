@@ -74,7 +74,6 @@
         android:inputType="textPersonName"
         android:textColor="@color/colorPrimary"
         android:textColorHint="@color/grey"
-        android:maxLength="19"
         android:theme="@style/AppTheme.EditText"
         app:layout_constraintEnd_toStartOf="@+id/itemPrice"
         app:layout_constraintHorizontal_bias="0.5"
@@ -93,6 +92,7 @@
         android:theme="@style/AppTheme.EditText"
         android:visibility="gone"
         tools:layout_editor_absoluteY="274dp" />
+
 
     <EditText
         android:id="@+id/itemPrice"
