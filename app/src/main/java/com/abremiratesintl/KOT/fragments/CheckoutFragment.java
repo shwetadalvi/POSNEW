@@ -873,6 +873,33 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         int num;
         switch (item) {
             case Sl_NO:
+                total=!isBluetooth ? 5: 5;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_DESCRIPTION:
+                total = !isBluetooth ? 19 : 48;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+                total = !isBluetooth ? 5 : 7;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_PRICE:
+                total = !isBluetooth ? 10 : 15;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                total = !isBluetooth ? 10 : 10;
+                num = 47 - length;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
+    private String createSpace1(String item, int length, boolean isBluetooth) {
+        int total;
+        int num;
+        switch (item) {
+            case Sl_NO:
                 total=!isBluetooth ? 4: 4;
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
@@ -895,7 +922,6 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         return null;
     }
-
     private String createSpace(int firstLength, int secondLegth) {
      //   int num = 32 - firstLength;
         int num = 47 - firstLength ;

@@ -2,24 +2,24 @@ package com.abremiratesintl.KOT.fragments;
 
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.abremiratesintl.KOT.BaseFragment;
 import com.abremiratesintl.KOT.MainActivity;
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.adapters.CategoryAdapter;
-import com.abremiratesintl.KOT.adapters.SwipeToDeleteCallback;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
 import com.abremiratesintl.KOT.models.Cashier;
@@ -159,9 +159,9 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
 
         mCategoryAdapter = new CategoryAdapter(mCategoryList, getContext(),this);
         categoryRecycler.setAdapter(mCategoryAdapter);
-        ItemTouchHelper itemTouchHelper = new
+     /*   ItemTouchHelper itemTouchHelper = new
                 ItemTouchHelper(new SwipeToDeleteCallback(getContext(),mCategoryAdapter));
-        itemTouchHelper.attachToRecyclerView(categoryRecycler);
+        itemTouchHelper.attachToRecyclerView(categoryRecycler);*/
     }
 
     @Override public void onClickedEdit(Category category) {
@@ -170,11 +170,49 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
             showSnackBar(getView(),"Not Allowed!!",1000);
 
         else {
-            categoryName.setText(category.getCategoryName());
-            categoryName.setSelection(category.getCategoryName().length());
-            categorySave.setText(getStringfromResource(R.string.edit));
-            categoryIdOfEditItem = category.getCategoryId();
-            categoryNameOfEditItem = category.getCategoryName();
+            final Dialog dialog = new Dialog(getActivity());
+            dialog.setContentView(R.layout.dialog_layout_item);
+            // dialog.setTitle("Title...");
+
+
+            TextView textName = (TextView) dialog.findViewById(R.id.textName);
+            textName.setText(category.getCategoryName());
+
+
+            Button dialogButtonEdit = (Button) dialog.findViewById(R.id.buttonEdit);
+            Button dialogButtonDelete = (Button) dialog.findViewById(R.id.buttonDelete);
+            // if button is clicked, close the custom dialog
+            dialogButtonEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    categoryName.setText(category.getCategoryName());
+                    categoryName.setSelection(category.getCategoryName().length());
+                    categorySave.setText(getStringfromResource(R.string.edit));
+                    categoryIdOfEditItem = category.getCategoryId();
+                    categoryNameOfEditItem = category.getCategoryName();
+
+                        dialog.dismiss();
+
+                }
+            });
+            dialogButtonDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showSnackBar(getView(),getStringfromResource(R.string.deleted),1000);
+                    Completable.fromAction(() -> mDatabase.mCategoryDao().editCategoryDeleteById(true,category.getCategoryId()))
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(()->
+                                            mCategoryAdapter.notifyDataSetChanged(),
+                                    throwable ->
+                                            showSnackBar(getView(),getStringfromResource(R.string.category_update_failed),1000));
+                    getCategoryList();
+                    dialog.dismiss();
+
+                }
+            });
+            dialog.show();
+
         }
     }
 

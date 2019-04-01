@@ -4,6 +4,7 @@ package com.abremiratesintl.KOT.fragments.super_user;
 import android.arch.lifecycle.LiveData;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -242,7 +243,11 @@ public class UserSettingsFragment extends BaseFragment implements CheckBox.OnChe
 
     @OnClick(R.id.btnAdmin)
     public void onClickAdmin(){
+        boolean isCashier = false;
         mPrefUtils.putStringPreference(DEAFULT_PREFS,USER_TYPE,ADMIN);
+        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+            isCashier = true;
+        Log.e("Cashier settings: ","type  : :"+isCashier);
     }
     @OnClick(R.id.btnCashier)
     public void onClickCashier(){

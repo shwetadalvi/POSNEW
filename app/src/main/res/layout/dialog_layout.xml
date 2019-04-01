@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/textView26"
+        android:id="@+id/textName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -34,7 +34,7 @@
         android:focusable="false"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="@+id/guideline19"
-        app:layout_constraintTop_toBottomOf="@+id/textView26" />
+        app:layout_constraintTop_toBottomOf="@+id/textName" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline19"
@@ -63,7 +63,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintEnd_toStartOf="@+id/guideline20"
         app:layout_constraintStart_toEndOf="@+id/textView27"
-        app:layout_constraintTop_toBottomOf="@+id/textView26" />
+        app:layout_constraintTop_toBottomOf="@+id/textName" />
 
     <Button
         android:id="@+id/buttonSave"

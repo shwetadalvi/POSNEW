@@ -2,6 +2,7 @@ package com.abremiratesintl.KOT.fragments;
 
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,11 +19,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.abremiratesintl.KOT.BaseFragment;
 import com.abremiratesintl.KOT.GlideApp;
@@ -104,8 +107,9 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
     private Uri mSelectedImageUri;
     private String mPath = "";
     private int itemId = 0;
-private Cashier cashier = new Cashier();
-private boolean isCashier = false;
+    private Cashier cashier = new Cashier();
+    private boolean isCashier = false;
+
     public ItemFragment() {
     }
 
@@ -125,8 +129,8 @@ private boolean isCashier = false;
         mItemVat.setText(Constants.COMPANY_VAT);
 
         getCategoryList();
-if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
-    isCashier = true;
+        if (mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS, Constants.USER_TYPE, Constants.CASHIER).equals(Constants.CASHIER))
+            isCashier = true;
         Thread t = new Thread(() -> {
             cashier = mDatabase.mCashierDao().getCashier();
         });
@@ -142,7 +146,8 @@ if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Con
         //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
         return view;
     }
-    private void fillFields(Cashier cashier1){
+
+    private void fillFields(Cashier cashier1) {
         cashier = new Cashier();
         cashier.setCashierName(cashier1.getCashierName());
         cashier.setItemView(cashier1.isItemView());
@@ -176,9 +181,8 @@ if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Con
         cashier.setInventoryReportExport(cashier1.isInventoryReportExport());
 
 
-
-
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -219,10 +223,10 @@ if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Con
 
     @OnClick(R.id.saveItem)
     public void onClickedSave() {
-        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isItemInsert())) )
-            showSnackBar(getView(),"Not Allowed!!",1000);
+        if ((isCashier && (cashier == null)) || (isCashier && cashier != null && (!cashier.isItemInsert())))
+            showSnackBar(getView(), "Not Allowed!!", 1000);
         else
-        getItemsFromFields();
+            getItemsFromFields();
     }
 
     @SuppressLint("CheckResult")
@@ -285,9 +289,9 @@ if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Con
             if (mItemList != null || mItemList.size() > 0) {
                 mItemsAdapter = new ItemsAdapter(mItemList, getContext(), this, this);
                 mItemRecycler.setAdapter(mItemsAdapter);
-                ItemTouchHelper itemTouchHelper = new
+              /*  ItemTouchHelper itemTouchHelper = new
                         ItemTouchHelper(new SwipeToDeleteCallback(getContext(), mItemsAdapter));
-                itemTouchHelper.attachToRecyclerView(mItemRecycler);
+                itemTouchHelper.attachToRecyclerView(mItemRecycler);*/
             }
         }
     }
@@ -312,7 +316,7 @@ if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Con
                 mItems.setCreatedDate(Constants.getCurrentDateTime());
                 mItems.setImagePath(mPath);
 
-                if(checkBox.isChecked())
+                if (checkBox.isChecked())
                     mItems.setOpen(true);
                 else
                     mItems.setOpen(false);
@@ -341,7 +345,7 @@ if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Con
         mItemVat.setText("");
         checkBox.setChecked(false);
 
-        mPath ="";
+        mPath = "";
         thumbImageVIew.setImageResource(R.drawable.thumb);
     }
 
@@ -368,19 +372,20 @@ if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Con
         if (mPath != null) {
             mSelectedImageUri = Uri.parse(mPath);
         }
-        if(items.isOpen())
+        if (items.isOpen())
             checkBox.setChecked(true);
         else
             checkBox.setChecked(false);
         GlideApp.with(getActivity())
                 .load(mSelectedImageUri)
-                .override(600,600)
+                .override(600, 600)
                 .placeholder(R.drawable.thumb)
                 .into(thumbImageVIew);
         LiveData<Category> categoryLiveData = mDatabase.mCategoryDao().findCategoryById(items.getCategoryId());
         categoryLiveData.observe(this, category -> {
             mItemName.setText(items.getItemName());
             mItemCategory.setSelection(category.getCategoryId() - 1);
+            //  mItemCategory.setSelection(category.getCategoryId() + 1);
             mItemPrice.setText(String.format("%.2f", items.getPrice()));
             mItemCost.setText(String.format("%.2f", items.getCost()));
             mItemBarcode.setText(items.getItemName());
@@ -414,11 +419,11 @@ if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Con
                 if (requestCode == REQUEST_CODE_IMAGE) {
                     mSelectedImageUri = data.getData();
                     // Get the path from the Uri
-                   // mPath = getPathFromURI(mSelectedImageUri);
+                    // mPath = getPathFromURI(mSelectedImageUri);
                     mPath = mSelectedImageUri.toString();
                     if (mPath != null) {
-                       // File f = new File(mPath);
-                      //  mSelectedImageUri = Uri.fromFile(f);
+                        // File f = new File(mPath);
+                        //  mSelectedImageUri = Uri.fromFile(f);
                         mSelectedImageUri = Uri.parse(mPath);
                     }
                     Glide.with(getContext())
@@ -446,10 +451,52 @@ if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Con
 
     @Override
     public void onClickedEdit(Items items) {
-        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isItemUpdate())) )
-            showSnackBar(getView(),"Not Allowed!!",1000);
-        else
-            fillToFields(items);
+        if ((isCashier && (cashier == null)) || (isCashier && cashier != null && (!cashier.isItemUpdate())))
+            showSnackBar(getView(), "Not Allowed!!", 1000);
+        else {
+
+            final Dialog dialog = new Dialog(getActivity());
+            dialog.setContentView(R.layout.dialog_layout_item);
+            // dialog.setTitle("Title...");
+
+
+            TextView textName = (TextView) dialog.findViewById(R.id.textName);
+            textName.setText(items.getItemName());
+
+
+            Button dialogButtonEdit = (Button) dialog.findViewById(R.id.buttonEdit);
+            Button dialogButtonDelete = (Button) dialog.findViewById(R.id.buttonDelete);
+            // if button is clicked, close the custom dialog
+            dialogButtonEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    fillToFields(items);
+                    dialog.dismiss();
+
+                }
+            });
+            dialogButtonDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    showSnackBar(getView(), getStringfromResource(R.string.deleted), 1000);
+
+                    Completable.fromAction(() -> mDatabase.mItemsDao().deleteItem(items))
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() ->
+                                            mItemsAdapter.notifyDataSetChanged(),
+                                    throwable ->
+                                            showSnackBar(getView(), getStringfromResource(R.string.category_update_failed), 1000));
+                    getItemsFromDb();
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+
+        }
     }
 
     @SuppressLint("CheckResult")

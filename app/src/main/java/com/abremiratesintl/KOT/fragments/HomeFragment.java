@@ -79,6 +79,9 @@ private boolean isCashier = false;
      //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
            isCashier = true;
+       else
+           isCashier = false;
+
         return view;
     }
     private void fillFields(Cashier cashier1){
@@ -128,6 +131,10 @@ private boolean isCashier = false;
 
         if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
             isCashier = true;
+        else
+            isCashier = false;
+
+        Log.e("Cashier : ","type  : :"+isCashier);
     }
 
     @Override public void onDestroyView() {
