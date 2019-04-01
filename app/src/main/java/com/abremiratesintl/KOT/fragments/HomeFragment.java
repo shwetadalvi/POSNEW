@@ -121,6 +121,11 @@ private boolean isCashier = false;
     @Override
     public void onResume() {
         super.onResume();
+        Thread t = new Thread(() -> {
+            cashier = mDatabase.mCashierDao().getCashier();
+        });
+        t.start();
+
         if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
             isCashier = true;
     }

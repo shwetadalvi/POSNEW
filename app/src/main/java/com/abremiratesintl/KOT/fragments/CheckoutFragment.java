@@ -90,6 +90,7 @@ import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TRN;
 import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
 import static com.abremiratesintl.KOT.utils.Constants.PAID_AMOUNT;
 import static com.abremiratesintl.KOT.utils.Constants.REQUEST_CODE_ENABLE_BLUETOOTH;
+import static com.abremiratesintl.KOT.utils.Constants.Sl_NO;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -604,7 +605,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_DESCRIPTION + createSpace(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
+                        .setText(Sl_NO  + createSpace(Sl_NO, Sl_NO.length(), false) +COMPANY_ITEM_DESCRIPTION+ createSpace(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
                                 COMPANY_ITEM_QUANTITY + createSpace(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
                                 COMPANY_ITEM_PRICE + createSpace(COMPANY_ITEM_PRICE, COMPANY_ITEM_PRICE.length(), false) +
                                 COMPANY_ITEM_AMOUNT + createSpace(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
@@ -617,14 +618,16 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
+                int i = 0;
                 for (Items order : mItemsList) {
+                    i+= 1;
                     String price = decimalAdjust(order.getPrice());
                     String totalprice = decimalAdjust(order.getTotalItemPrice());
                     if (price == null) price = String.valueOf(order.getPrice());
                     if (totalprice == null) totalprice = String.valueOf(order.getTotalItemPrice());
                     printables.add(new Printable.PrintableBuilder()
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(order.getItemName() + createSpace(COMPANY_ITEM_DESCRIPTION, order.getItemName().length(), false) +
+                            .setText(i+createSpace(Sl_NO, String.valueOf(i).length(), false) +order.getItemName() + createSpace(COMPANY_ITEM_DESCRIPTION, order.getItemName().length(), false) +
                                     order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
                                     price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
                                     totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
@@ -869,6 +872,10 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         int total;
         int num;
         switch (item) {
+            case Sl_NO:
+                total=!isBluetooth ? 4: 4;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
                 total = !isBluetooth ? 19 : 48;
                 num = total - length;

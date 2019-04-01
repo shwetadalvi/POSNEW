@@ -32,7 +32,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/telephone"
-        android:inputType="number"
+        android:inputType="phone"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/company_address"
         app:layout_constraintEnd_toEndOf="@+id/company_name"
