@@ -262,6 +262,7 @@ public class UserSettingsFragment extends BaseFragment implements CheckBox.OnChe
         String str_name = getString(edtName);
          cashier.setCashierName(str_name
          );
+
          cashier.setItemView(isItemView);
          cashier.setItemInsert(isItemInsert);
          cashier.setItemUpdate(isItemUpdate);

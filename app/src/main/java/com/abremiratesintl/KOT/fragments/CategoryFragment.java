@@ -2,13 +2,16 @@ package com.abremiratesintl.KOT.fragments;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,7 @@ import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
 import com.abremiratesintl.KOT.models.Cashier;
 import com.abremiratesintl.KOT.models.Category;
+import com.abremiratesintl.KOT.models.Items;
 import com.abremiratesintl.KOT.utils.Constants;
 import com.abremiratesintl.KOT.utils.PrefUtils;
 
@@ -60,6 +64,7 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
     String categoryNameOfEditItem ="";
     private Cashier cashier = new Cashier();
     private boolean isCashier = false;
+    List<Items> mItemList = new ArrayList<>();
     public CategoryFragment() {
     }
 
@@ -165,11 +170,7 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
     }
 
     @Override public void onClickedEdit(Category category) {
-        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isCategoryUpdate())) )
 
-            showSnackBar(getView(),"Not Allowed!!",1000);
-
-        else {
             final Dialog dialog = new Dialog(getActivity());
             dialog.setContentView(R.layout.dialog_layout_item);
             // dialog.setTitle("Title...");
@@ -185,12 +186,17 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
             dialogButtonEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    categoryName.setText(category.getCategoryName());
-                    categoryName.setSelection(category.getCategoryName().length());
-                    categorySave.setText(getStringfromResource(R.string.edit));
-                    categoryIdOfEditItem = category.getCategoryId();
-                    categoryNameOfEditItem = category.getCategoryName();
+                    if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isCategoryUpdate())) )
 
+                        showSnackBar(getView(),"Not Allowed!!",1000);
+
+                    else {
+                        categoryName.setText(category.getCategoryName());
+                        categoryName.setSelection(category.getCategoryName().length());
+                        categorySave.setText(getStringfromResource(R.string.edit));
+                        categoryIdOfEditItem = category.getCategoryId();
+                        categoryNameOfEditItem = category.getCategoryName();
+                    }
                         dialog.dismiss();
 
                 }
@@ -198,22 +204,56 @@ public class CategoryFragment extends BaseFragment implements ClickListeners.Cat
             dialogButtonDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showSnackBar(getView(),getStringfromResource(R.string.deleted),1000);
-                    Completable.fromAction(() -> mDatabase.mCategoryDao().editCategoryDeleteById(true,category.getCategoryId()))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(()->
-                                            mCategoryAdapter.notifyDataSetChanged(),
-                                    throwable ->
-                                            showSnackBar(getView(),getStringfromResource(R.string.category_update_failed),1000));
-                    getCategoryList();
+                    if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isCategoryDelete())) )
+
+                        showSnackBar(getView(),"Not Allowed!!",1000);
+
+
+                    else {
+                       /* int catId = category.getCategoryId();
+                        Thread t = new Thread(() -> {
+                            mItemList = mDatabase.mItemsDao().findItemsByCategoryId1(catId);
+                        });
+                        t.start();
+
+                        Log.e("Cat delete :","size "+mItemList.size()+"  Id :"+catId);
+                        if (mItemList != null && mItemList.size() > 0) {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                            builder1.setMessage("Can not delete category having Items");
+                            builder1.setCancelable(false);
+
+                            builder1.setPositiveButton(
+                                    "Ok",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+
+                                            mCategoryAdapter.notifyDataSetChanged();
+                                        }
+                                    });
+
+
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
+                        }else {*/
+                            showSnackBar(getView(), getStringfromResource(R.string.deleted), 1000);
+                            Completable.fromAction(() -> mDatabase.mCategoryDao().editCategoryDeleteById(true, category.getCategoryId()))
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(() ->
+                                                    mCategoryAdapter.notifyDataSetChanged(),
+                                            throwable ->
+                                                    showSnackBar(getView(), getStringfromResource(R.string.category_update_failed), 1000));
+                            getCategoryList();
+
+                    }
                     dialog.dismiss();
 
                 }
             });
             dialog.show();
 
-        }
+
     }
 
     @SuppressLint("CheckResult") @Override public void onDeletedItem(Category category) {

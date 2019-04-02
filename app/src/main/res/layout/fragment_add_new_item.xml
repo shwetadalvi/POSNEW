@@ -186,13 +186,16 @@
 
         <TextView
             android:id="@+id/current_item_and_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="26dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:textColor="@color/colorPrimary"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintBaseline_toBaselineOf="@+id/textView24"
+            app:layout_constraintEnd_toStartOf="@+id/addNewItemProceed"
             app:layout_constraintStart_toStartOf="@+id/guideline5" />
 
     </android.support.constraint.ConstraintLayout>

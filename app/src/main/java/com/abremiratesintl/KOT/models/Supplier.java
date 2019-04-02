@@ -8,6 +8,7 @@ public class Supplier {
     @PrimaryKey(autoGenerate = true)
     private int supplierId;
     private String supplierName;
+    private String vatNo;
     private boolean isDeleted;
     private String createdDate;
 
@@ -43,5 +44,13 @@ public class Supplier {
 
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
+    }
+
+    public String getVatNo() {
+        return vatNo;
+    }
+
+    public void setVatNo(String vatNo) {
+        this.vatNo = vatNo;
     }
 }

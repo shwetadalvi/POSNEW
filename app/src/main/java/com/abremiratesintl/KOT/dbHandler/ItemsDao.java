@@ -36,7 +36,7 @@ public interface ItemsDao {
 
     @Delete() void deleteItem(Items item);
 
-    @Query("SELECT * FROM Items WHERE categoryId=:categoryId ") List<Items> findItemsByCategoryId1(int categoryId);
+    @Query("SELECT * FROM Items WHERE categoryId=:categoryId and isDeleted =0") List<Items> findItemsByCategoryId1(int categoryId);
  // @Query("UPDATE Items SET itemName = :itemName ,price=:price,cost=:cost,vat=:vat ,categoryId=:categoryId WHERE itemId = :itemId") void updateItem( int itemId,String itemName,float price,float cost,float vat,int categoryId);
 
 }

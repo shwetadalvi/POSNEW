@@ -8,8 +8,9 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class Cashier {
     @PrimaryKey
-    private int id = 1;
+    private int id =1;
     private String mCashierName;
+    private String password;
     private boolean isItemView;
     private boolean isItemInsert;
     private boolean isItemUpdate;
@@ -278,5 +279,13 @@ public class Cashier {
 
     public void setInventoryReportExport(boolean inventoryReportExport) {
         isInventoryReportExport = inventoryReportExport;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

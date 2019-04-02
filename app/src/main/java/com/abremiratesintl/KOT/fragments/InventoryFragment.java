@@ -205,6 +205,7 @@ private boolean isCashier = false;
 
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                 EditText editSupplier = (EditText) dialog.findViewById(R.id.editSupplier);
+                EditText editVatNo = (EditText) dialog.findViewById(R.id.editVatNo);
                 //text.setText("Android custom dialog example!");
 
 
@@ -216,7 +217,7 @@ private boolean isCashier = false;
                  if(!getString(editSupplier).isEmpty()) {
 
 
-                     insertSupplier(getString(editSupplier));
+                     insertSupplier(getString(editSupplier),getString(editVatNo));
                      dialog.dismiss();
                  }
                     }
@@ -366,9 +367,10 @@ private boolean isCashier = false;
     }
 
 
-    private void insertSupplier(String supplier_name) {
+    private void insertSupplier(String supplier_name,String vat_no) {
         Supplier supplier = new Supplier();
         supplier.setSupplierName(supplier_name);
+        supplier.setVatNo(vat_no);
         supplier.setCreatedDate(Constants.getCurrentDateTime());
         supplier.setDeleted(false);
         Completable.fromAction(() -> mDatabase.mSupplierDao().insertNewSupplier(supplier))

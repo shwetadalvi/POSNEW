@@ -103,6 +103,16 @@
             android:layout_margin="10dp"
             android:textColor="@color/brown"
             android:buttonTint="@color/brown"/>
+        <CheckBox
+            android:id="@+id/checkSupplier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Supplier"
+            android:textSize="20dp"
+            android:layout_margin="10dp"
+            android:textColor="@color/brown"
+            android:buttonTint="@color/brown"
+            android:visibility="gone"/>
     </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>

@@ -26,6 +26,7 @@ import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.InventoryMaster;
 import com.abremiratesintl.KOT.models.InventoryTransaction;
 import com.abremiratesintl.KOT.models.Items;
+import com.abremiratesintl.KOT.models.Supplier;
 import com.abremiratesintl.KOT.models.Transaction;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
@@ -77,6 +78,8 @@ public class ExportDBFragment extends Fragment {
     CheckBox checkInventoryTrans;
     @BindView(R.id.checkInventoryMaster)
     CheckBox checkInventoryMaster;
+    @BindView(R.id.checkSupplier)
+    CheckBox checkSupplier;
     @BindView(R.id.progress)
     ProgressBar progress;
     private Unbinder mUnbinder;
@@ -205,7 +208,46 @@ public class ExportDBFragment extends Fragment {
                                                            }
                                                        }
         );
+        checkSupplier.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                     @Override
+                                                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                         if (isChecked) {
+
+                                                             deleteSupplier();
+
+
+                                                         }
+
+                                                     }
+                                                 }
+        );
         return view;
+    }
+
+    private void deleteSupplier() {
+        Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                mDatabase.mSupplierDao().deleteAll();
+            }
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action() {
+                    @Override
+                    public void run() throws Exception {
+
+                        Toast.makeText(getActivity(), "Supplier table deleted.", Toast.LENGTH_SHORT).show();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                        Log.d(TAG, "throwable.getMessage(): " + throwable.getMessage());
+
+
+                    }
+                });
     }
 
     private void deleteInventoryTansaction() {
@@ -722,6 +764,7 @@ public class ExportDBFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
     private void getInventoryTransaction() {
         LiveData<List<InventoryTransaction>> listLiveData = mDatabase.mInventoryTransactionDao().getAllItems();
         listLiveData.observe(this, this::exportInventoryTransaction);
@@ -789,6 +832,8 @@ public class ExportDBFragment extends Fragment {
             workbook.write();
             workbook.close();
             progress.setVisibility(View.GONE);
+
+
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage("ALL Tables Exported in a Excel Sheet to POS Backup folder");
             builder.setCancelable(true);
@@ -798,20 +843,20 @@ public class ExportDBFragment extends Fragment {
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
-                            {
-                                Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
+
+                                /*Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
                                 Uri uri = Uri.parse (Environment.getExternalStorageDirectory().getAbsolutePath() + "/POS Backup");
                                 intent.setDataAndType (uri, "resource/folder");
                                 startActivity (Intent.createChooser (intent, "Open folder"));
+*/
 
-                            }
                         }
                     });
 
 
-            AlertDialog alert11 = builder.create();
-            alert11.show();
-           // Toast.makeText(getActivity(), "ALL Tables Exported in a Excel Sheet to POS Backup folder", Toast.LENGTH_SHORT).show();
+            AlertDialog alert = builder.create();
+            alert.show();
+            // Toast.makeText(getActivity(), "ALL Tables Exported in a Excel Sheet to POS Backup folder", Toast.LENGTH_SHORT).show();
 
         } catch (WriteException e) {
             e.printStackTrace();
@@ -819,7 +864,67 @@ public class ExportDBFragment extends Fragment {
             e.printStackTrace();
         }
     }
-    @Override public void onDestroyView() {
+
+    private void getSupplier() {
+        LiveData<List<Supplier>> listLiveData = mDatabase.mSupplierDao().getAllSupplier();
+        listLiveData.observe(this, this::exportSupplier);
+
+    }
+
+    private void exportSupplier(List<Supplier> mSupplierList) {
+        File sd = Environment.getExternalStorageDirectory();
+
+        String csvFile = "supplier" + System.currentTimeMillis() + ".xls";
+
+        File directory = new File(sd.getAbsolutePath() + "/POS Backup");
+        //create directory if not exist
+        if (!directory.isDirectory()) {
+            directory.mkdirs();
+        }
+        try {
+
+            //file path
+            File file = new File(directory, csvFile);
+            WorkbookSettings wbSettings = new WorkbookSettings();
+            wbSettings.setLocale(new Locale("en", "EN"));
+            WritableWorkbook workbook;
+            workbook = Workbook.createWorkbook(file, wbSettings);
+            //Excel sheet name. 0 represents first sheet
+            WritableSheet sheet = workbook.createSheet("Supplier", 0);
+
+
+            sheet.addCell(new Label(0, 0, "Sr No."));
+            sheet.addCell(new Label(1, 0, "Supplier Id"));
+            sheet.addCell(new Label(2, 0, "Supplier Name"));
+            sheet.addCell(new Label(3, 0, "Created Date"));
+
+
+            int i = 0;
+
+
+            for (Supplier item : mSupplierList) {
+                i = i + 1;
+                sheet.addCell(new Label(0, i, String.valueOf(i)));
+                sheet.addCell(new Label(1, i, String.valueOf(item.getSupplierId())));
+                sheet.addCell(new Label(2, i, item.getSupplierName()));
+                sheet.addCell(new Label(3, i, item.getCreatedDate()));
+
+            }
+
+            workbook.write();
+            workbook.close();
+
+            // Toast.makeText(getActivity(), "ALL Tables Exported in a Excel Sheet to POS Backup folder", Toast.LENGTH_SHORT).show();
+
+        } catch (WriteException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
     }

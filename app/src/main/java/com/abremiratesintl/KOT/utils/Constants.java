@@ -19,8 +19,8 @@ public class Constants {
     public static String COMPANY_PREFIX = "SJ";
     public static String COMPANY_VAT = "";
     public static final String COMPANY_TAX = "TAX Invoice";
-    public static final String COMPANY_ORDER_NO = "Invoice No.  ";
-    public static final String COMPANY_DATE = "Invoice Date  ";
+    public static final String COMPANY_ORDER_NO = "Invoice No. ";
+    public static final String COMPANY_DATE = "Invoice Date ";
     public static final String COMPANY_ITEM_DESCRIPTION = "Item";
     public static final String COMPANY_ITEM_QUANTITY = "Qty";
     public static final String COMPANY_ITEM_PRICE = "Price";
@@ -39,7 +39,10 @@ public class Constants {
     public static final String USER_TYPE = "User Type";
     public static final String ADMIN = "Admin";
     public static final String CASHIER = "Cashier";
-    public static final String Sl_NO = "SlNo";
+    public static final String Sl_NO = "No";
+    public static final String PRINTER_TYPE = "Printer Type";
+    public static final String FEASYCOM = "Feasycom";
+    public static final String PRINTER = "Printer-3B26";
 
 
         public static final String COMPANY_SL_NO = "Sl No.";

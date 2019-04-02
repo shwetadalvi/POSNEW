@@ -451,9 +451,6 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
 
     @Override
     public void onClickedEdit(Items items) {
-        if ((isCashier && (cashier == null)) || (isCashier && cashier != null && (!cashier.isItemUpdate())))
-            showSnackBar(getView(), "Not Allowed!!", 1000);
-        else {
 
             final Dialog dialog = new Dialog(getActivity());
             dialog.setContentView(R.layout.dialog_layout_item);
@@ -470,8 +467,12 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
             dialogButtonEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if ((isCashier && (cashier == null)) || (isCashier && cashier != null && (!cashier.isItemUpdate())))
+                        showSnackBar(getView(), "Not Allowed!!", 1000);
+                    else {
 
-                    fillToFields(items);
+                        fillToFields(items);
+                    }
                     dialog.dismiss();
 
                 }
@@ -479,24 +480,35 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
             dialogButtonDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if ((isCashier && (cashier == null)) || (isCashier && cashier != null && (!cashier.isItemDelete())))
+                        showSnackBar(getView(), "Not Allowed!!", 1000);
+                    else {
 
 
-                    showSnackBar(getView(), getStringfromResource(R.string.deleted), 1000);
+                        showSnackBar(getView(), getStringfromResource(R.string.deleted), 1000);
 
-                    Completable.fromAction(() -> mDatabase.mItemsDao().deleteItem(items))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(() ->
-                                            mItemsAdapter.notifyDataSetChanged(),
-                                    throwable ->
-                                            showSnackBar(getView(), getStringfromResource(R.string.category_update_failed), 1000));
-                    getItemsFromDb();
+                        Completable.fromAction(() -> mDatabase.mItemsDao().editItemsDeleteById(true, items.getItemId()))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() ->
+                                                mItemsAdapter.notifyDataSetChanged(),
+                                        throwable ->
+                                                showSnackBar(getView(), getStringfromResource(R.string.category_update_failed), 1000));
+                      /*  Completable.fromAction(() -> mDatabase.mItemsDao().deleteItem(items))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() ->
+                                                mItemsAdapter.notifyDataSetChanged(),
+                                        throwable ->
+                                                showSnackBar(getView(), getStringfromResource(R.string.category_update_failed), 1000));*/
+                        getItemsFromDb();
+                    }
                     dialog.dismiss();
                 }
             });
             dialog.show();
 
-        }
+
     }
 
     @SuppressLint("CheckResult")

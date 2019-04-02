@@ -539,11 +539,15 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     private void printReciptBluetooth(String newInvoiceNo) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothChecking()) {
+            if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
             printViaBluetoothPrinter();
+            else
+
+                printViaBluetoothPrinter1();
         }
     }
 
-    private void printViaBluetoothPrinter() {
+    private void printViaBluetoothPrinter1() {
         if (Printooth.INSTANCE.hasPairedPrinter()) {
             new Thread(() -> {
                 ArrayList<Printable> printables = new ArrayList<>();
@@ -569,6 +573,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText(COMPANY_TAX)
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -586,6 +591,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
                         .setText(COMPANY_ORDER_NO + newInvoiceNo)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
@@ -614,6 +620,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .build());*/
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
                         .setText(Sl_NO  + createSpace3(Sl_NO, Sl_NO.length(), false) +COMPANY_ITEM_DESCRIPTION+ createSpace3(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
                                 COMPANY_ITEM_QUANTITY + createSpace3(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
                                 COMPANY_ITEM_PRICE + createSpace3(COMPANY_ITEM_PRICE, COMPANY_ITEM_PRICE.length(), false) +
@@ -628,10 +635,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setNewLinesAfter(2)
                         .build());
                 int i = 0;
+                String[] items ={};
                 for (Items order : mItemsList) {
                     int length =  order.getItemName().length();
                     String item_name = order.getItemName();
-                    String[] items = item_name.split(" ");
+
+                    if(item_name.length() > 19)
+                    items = item_name.split(" ");
                    /* for(int j = 0 ;j<= items.length;j++){
 
                     }*/
@@ -649,24 +659,233 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                             .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());*/
-                    printables.add(new Printable.PrintableBuilder()
-                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(i+createSpace(Sl_NO, String.valueOf(i).length(), false) +items[0]+createSpace(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
-                                    order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                    price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
-                                    totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
-                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                            .setNewLinesAfter(2)
-                            .build());
-                    printables.add(new Printable.PrintableBuilder()
-                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(createSpace(Sl_NO, String.valueOf(i).length()+1, false) +items[1] +createSpace(COMPANY_ITEM_DESCRIPTION, items[1].length(), false) +
-                                     createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                    createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
-                                     createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
-                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                            .setNewLinesAfter(2)
-                            .build());
+                   if(item_name.length() <= 19){
+                       printables.add(new Printable.PrintableBuilder()
+                               .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                               .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + item_name + createSpace11(COMPANY_ITEM_DESCRIPTION, item_name.length(), false) +
+                                       order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                       price + createSpace11(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                       totalprice + createSpace11(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                               .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                               .setNewLinesAfter(2)
+                               .build());
+                    }
+                   else{
+                      /* for(int j = 0 ;j<= items.length;j++){
+                           if(j == 0) {
+                               printables.add(new Printable.PrintableBuilder()
+                                       .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                       .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                               order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                               price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                               totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                       .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                       .setNewLinesAfter(2)
+                                       .build());
+                           }else{
+                               printables.add(new Printable.PrintableBuilder()
+                                       .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                       .setText(createSpace(Sl_NO, 0, false) + items[j] + createSpace(COMPANY_ITEM_DESCRIPTION, items[j].length(), false))
+                                       .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                       .setNewLinesAfter(2)
+                                       .build());
+                           }
+
+                       }*/
+                     if(items.length == 2) {
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace11
+                                           (COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                           order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                           price + createSpace11(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                           totalprice + createSpace11(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[1] + createSpace11(COMPANY_ITEM_DESCRIPTION, items[1].length(), false))
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                       }
+                       if(items.length == 3) {
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace11(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                           order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                           price + createSpace11(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                           totalprice + createSpace11(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[1])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[2])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                       }
+                       if(items.length == 4) {
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace11(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                           order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                           price + createSpace11(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                           totalprice + createSpace11(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[1])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[2])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[3])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                       }
+                       if(items.length == 5) {
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace11(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                           order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                           price + createSpace11(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                           totalprice + createSpace11(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[1])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[2] )
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[3] )
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[4] )
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                       }
+                       if(items.length == 6) {
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace11(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                           order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                           price + createSpace11(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                           totalprice + createSpace11(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[1])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[2])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[3])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[4])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[5] )
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                       }
+                       if(items.length == 7) {
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace11(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                           order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                           price + createSpace11(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                           totalprice + createSpace11(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[1])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[2] )
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[3])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[4])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[5])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                           printables.add(new Printable.PrintableBuilder()
+                                   .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                   .setText(createSpace11(Sl_NO, 0, false) + items[6])
+                                   .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                   .setNewLinesAfter(2)
+                                   .build());
+                       }
+                        }
                 }
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
@@ -677,14 +896,15 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 float t1 = getTotalItemAmount();
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_TOTAL + createSpace(COMPANY_ITEM_TOTAL.length(), String.valueOf(t1).length()) + getTotalItemAmount())
+                        .setText(COMPANY_ITEM_TOTAL + createSpacePrinter(COMPANY_ITEM_TOTAL.length(), String.valueOf(t1).length()) + getTotalItemAmount())
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
+
                 if (!getString(mFooterDiscount).isEmpty()) {
                     printables.add(new Printable.PrintableBuilder()
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(COMPANY_ITEM_DISCOUNT + createSpace(COMPANY_ITEM_DISCOUNT.length(), String.valueOf(getString(mFooterDiscount)).length()) + getString(mFooterDiscount))
+                            .setText(COMPANY_ITEM_DISCOUNT + createSpacePrinter(COMPANY_ITEM_DISCOUNT.length(), String.valueOf(getString(mFooterDiscount)).length()) + getString(mFooterDiscount))
                             .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());
@@ -699,20 +919,20 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 float t2 = getPriceExcludingVat();
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpace(COMPANY_ITEM_GROSS_AMOUNT.length(), String.valueOf(t2).length()) + getPriceExcludingVat())
+                        .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpacePrinter(COMPANY_ITEM_GROSS_AMOUNT.length(), String.valueOf(t2).length()) + getPriceExcludingVat())
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
 
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_VAT + createSpace(COMPANY_ITEM_VAT.length(), String.valueOf(getString(mFooterVat)).length()) + getString(mFooterVat))
+                        .setText(COMPANY_ITEM_VAT + createSpacePrinter(COMPANY_ITEM_VAT.length(), String.valueOf(getString(mFooterVat)).length()) + getString(mFooterVat))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_NET_AMOUNT + createSpace(COMPANY_ITEM_NET_AMOUNT.length(), String.valueOf(getString(mFooterTotal)).length()) + getString(mFooterTotal))
+                        .setText(COMPANY_ITEM_NET_AMOUNT + createSpacePrinter(COMPANY_ITEM_NET_AMOUNT.length(), String.valueOf(getString(mFooterTotal)).length()) + getString(mFooterTotal))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -721,14 +941,14 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                     if(!getString(edtChange).isEmpty()) {
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                                .setText(PAID_AMOUNT + createSpace(PAID_AMOUNT.length(), String.valueOf(getString(edtChange)).length()) + getString(edtChange))
+                                .setText(PAID_AMOUNT + createSpacePrinter(PAID_AMOUNT.length(), String.valueOf(getString(edtChange)).length()) + getString(edtChange))
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(2)
                                 .build());
 
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                                .setText(CHANGE + createSpace(CHANGE.length(), String.valueOf(getString(edtBalance)).length()) + getString(edtBalance))
+                                .setText(CHANGE + createSpacePrinter(CHANGE.length(), String.valueOf(getString(edtBalance)).length()) + getString(edtBalance))
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(2)
                                 .build());
@@ -766,7 +986,523 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             }).start();
         }
     }
+    private void printViaBluetoothPrinter() {
+        if (Printooth.INSTANCE.hasPairedPrinter()) {
+            new Thread(() -> {
+                ArrayList<Printable> printables = new ArrayList<>();
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(COMPANY_NAME)
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_LARGE())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(COMPANY_TELE)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(COMPANY_ADDRESS)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(COMPANY_TAX)
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("TRN   : "+COMPANY_TRN)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                        .setText(COMPANY_ORDER_NO + newInvoiceNo)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(COMPANY_DATE + Constants.getCurrentDateTime())
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
 
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+              /*  printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(Sl_NO  + createSpace(Sl_NO, Sl_NO.length(), false) +COMPANY_ITEM_DESCRIPTION+ createSpace(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
+                                COMPANY_ITEM_QUANTITY + createSpace(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
+                                COMPANY_ITEM_PRICE + createSpace(COMPANY_ITEM_PRICE, COMPANY_ITEM_PRICE.length(), false) +
+                                COMPANY_ITEM_AMOUNT + createSpace(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());*/
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                        .setText(Sl_NO  + createSpace33(Sl_NO, Sl_NO.length(), false) +COMPANY_ITEM_DESCRIPTION+ createSpace33(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
+                                COMPANY_ITEM_QUANTITY + createSpace33(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
+                                COMPANY_ITEM_PRICE + createSpace33(COMPANY_ITEM_PRICE, COMPANY_ITEM_PRICE.length(), false) +
+                                COMPANY_ITEM_AMOUNT + createSpace33(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+
+                int i = 0;
+                String[] items ={};
+                for (Items order : mItemsList) {
+
+                    String item_name = order.getItemName();
+
+                    if(item_name.length() > 9)
+                        items = item_name.split(" ");
+                    Log.e("Print :","Item length :"+items.length);
+                   /* for(int j = 0 ;j<= items.length;j++){
+
+                    }*/
+                    i+= 1;
+                    String price = decimalAdjust(order.getPrice());
+                    String totalprice = decimalAdjust(order.getTotalItemPrice());
+                    if (price == null) price = String.valueOf(order.getPrice());
+                    if (totalprice == null) totalprice = String.valueOf(order.getTotalItemPrice());
+                   /* printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                            .setText(i+createSpace(Sl_NO, String.valueOf(i).length(), false) +order.getItemName() + createSpace(COMPANY_ITEM_DESCRIPTION, order.getItemName().length(), false) +
+                                    order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                    price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                    totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                            .setNewLinesAfter(2)
+                            .build());*/
+                    if(item_name.length() <= 9 && items.length == 0){
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + item_name + createSpace(COMPANY_ITEM_DESCRIPTION, item_name.length(), false) +
+                                        order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                        price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                        totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                .setNewLinesAfter(1)
+                                .build());
+                    }else if(item_name.length() > 9 && items.length == 1) {
+                        String str_first = item_name.substring(0,9);
+                        String str_next = item_name.substring(9,item_name.length());
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
+                                        order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                        price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                        totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                .build());
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + str_next + createSpace(COMPANY_ITEM_DESCRIPTION, str_next.length(), false))
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                .setNewLinesAfter(1)
+                                .build());
+                    }else{
+                      for(int j = 0 ;j<= items.length;j++){
+                           if(j == 0) {
+                               if(items[0].length() > 9 ) {
+                                   String str_first = items[0].substring(0, 9);
+                                   String str_next1 = items[0].substring(9, items[0].length());
+                                   String str_next = "";
+                                   if(str_next1.length() > 9)
+                                       str_next  = items[0].substring(9, 18);
+                                   else
+                                       str_next = items[0].substring(9, items[0].length());
+
+                                   printables.add(new Printable.PrintableBuilder()
+                                           .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                           .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
+                                                   order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                                   price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                                   totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                           .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                           .build());
+                                   printables.add(new Printable.PrintableBuilder()
+                                           .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                           .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + str_next + createSpace(COMPANY_ITEM_DESCRIPTION, str_next.length(), false))
+                                           .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                           .build());
+                               }else {
+                                   printables.add(new Printable.PrintableBuilder()
+                                           .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                           .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                                   order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                                   price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                                   totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                           .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                           .build());
+                               }
+                           }else if(j == 1){
+                               if(items[1].length() > 9 ) {
+                                   String str_first = items[j].substring(0, 9);
+                                   String str_next1 = items[j].substring(9, items[j].length());
+                                   String str_next = "";
+                                   if(str_next1.length() > 9)
+                                       str_next  = items[j].substring(9, 18);
+                                   else
+                                       str_next = items[j].substring(9, items[j].length());
+
+                                   printables.add(new Printable.PrintableBuilder()
+                                           .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                           .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace(COMPANY_ITEM_DESCRIPTION, str_first.length(), false))
+                                           .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                           .build());
+                                   printables.add(new Printable.PrintableBuilder()
+                                           .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                           .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + str_next + createSpace(COMPANY_ITEM_DESCRIPTION, str_next.length(), false))
+                                           .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                           .setNewLinesAfter(1)
+                                           .build());
+                               }else {
+                                   printables.add(new Printable.PrintableBuilder()
+                                           .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                           .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + items[j] + createSpace(COMPANY_ITEM_DESCRIPTION, items[j].length(), false))
+                                           .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                           .setNewLinesAfter(1)
+                                           .build());
+                               }
+                           }/*else if(j == 2){
+                               if(items[2].length() > 9 ) {
+                                   String str_first = items[j].substring(0, 9);
+                                   String str_next = items[j].substring(9, items[j].length());
+                                   printables.add(new Printable.PrintableBuilder()
+                                           .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                           .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace(COMPANY_ITEM_DESCRIPTION, str_first.length(), false))
+                                           .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                           .build());
+                                   printables.add(new Printable.PrintableBuilder()
+                                           .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                           .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + str_next + createSpace(COMPANY_ITEM_DESCRIPTION, str_next.length(), false))
+                                           .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                           .setNewLinesAfter(1)
+                                           .build());
+                               }else {
+                                   printables.add(new Printable.PrintableBuilder()
+                                           .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                           .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + items[j] + createSpace(COMPANY_ITEM_DESCRIPTION, items[j].length(), false))
+                                           .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                           .setNewLinesAfter(1)
+                                           .build());
+                               }
+                           }*/
+
+                       }
+                       /* if(items.length == 2) {
+                                     printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                            order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                            price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                            totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                                     printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + items[1] + createSpace(COMPANY_ITEM_DESCRIPTION, items[1].length(), false))
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                             .setNewLinesAfter(1)
+                                    .build());
+                        }
+                        if(items.length == 3) {
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                            order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                            price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                            totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + items[1])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, String.valueOf(i).length(), false) + items[2])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                        }
+                        if(items.length == 4) {
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                            order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                            price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                            totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[1])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[2])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[3])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                        }
+                        if(items.length == 5) {
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                            order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                            price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                            totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[1])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[2] )
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[3] )
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[4] )
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                        }
+                        if(items.length == 6) {
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                            order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                            price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                            totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[1])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[2])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[3])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[4])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[5] )
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                    .build());
+                        }
+                        if(items.length == 7) {
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + items[0] + createSpace(COMPANY_ITEM_DESCRIPTION, items[0].length(), false) +
+                                            order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                            price + createSpace(COMPANY_ITEM_PRICE, String.format("%.2f", order.getPrice()).length(), false) +
+                                            totalprice + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getTotalItemPrice()).length(), false))
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[1])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[2] )
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[3])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[4])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[5])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                            printables.add(new Printable.PrintableBuilder()
+                                    .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                    .setText(createSpace(Sl_NO, 0, false) + items[6])
+                                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                                    .build());
+                        }*/
+                    }
+                }
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText("................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                float t1 = getTotalItemAmount();
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(COMPANY_ITEM_TOTAL + createSpace(COMPANY_ITEM_TOTAL.length(), String.valueOf(t1).length()) + getTotalItemAmount())
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                if (!getString(mFooterDiscount).isEmpty()) {
+                    printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                            .setText(COMPANY_ITEM_DISCOUNT + createSpace(COMPANY_ITEM_DISCOUNT.length(), String.valueOf(getString(mFooterDiscount)).length()) + getString(mFooterDiscount))
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                            .setNewLinesAfter(1)
+                            .build());
+                }
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText("................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+
+                float t2 = getPriceExcludingVat();
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpace(COMPANY_ITEM_GROSS_AMOUNT.length(), String.valueOf(t2).length()) + getPriceExcludingVat())
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(COMPANY_ITEM_VAT + createSpace(COMPANY_ITEM_VAT.length(), String.valueOf(getString(mFooterVat)).length()) + getString(mFooterVat))
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(COMPANY_ITEM_NET_AMOUNT + createSpace(COMPANY_ITEM_NET_AMOUNT.length(), String.valueOf(getString(mFooterTotal)).length()) + getString(mFooterTotal))
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+
+                if (selectedItem == "CASH"){
+                    if(!getString(edtChange).isEmpty()) {
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(PAID_AMOUNT + createSpace(PAID_AMOUNT.length(), String.valueOf(getString(edtChange)).length()) + getString(edtChange))
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                .setNewLinesAfter(1)
+                                .build());
+
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(CHANGE + createSpace(CHANGE.length(), String.valueOf(getString(edtBalance)).length()) + getString(edtBalance))
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                .setNewLinesAfter(1)
+                                .build());
+                    }
+                }
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText("................................")
+                        // .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("Thank You !!")
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_LARGE())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("Visit Again")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText("................................")
+                        // .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+
+                        .build());
+                Printooth.INSTANCE.printer().print(printables);
+               /* if (getFragmentManager() != null) {
+                    getFragmentManager().popBackStack();
+                }*/
+            }).start();
+        }
+    }
     private boolean bluetoothChecking() {
         if (!bluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -904,12 +1640,17 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
     private String createSpace(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
+        int num = 32 - firstLength ;
+        num = num - secondLegth;
+        return new String(new char[num]).replace('\0', ' ');
+    }
+    private String createSpacePrinter(int firstLength, int secondLegth) {
+        //   int num = 32 - firstLength;
         int num = 47 - firstLength ;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
-
-    private String createSpace(String item, int length, boolean isBluetooth) {
+    private String createSpace11(String item, int length, boolean isBluetooth) {
         int total;
         int num;
         switch (item) {
@@ -932,6 +1673,43 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             case COMPANY_ITEM_AMOUNT:
                 total = !isBluetooth ? 10 : 10;
                 num = 7 - length;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
+    private String createSpace(String item, int length, boolean isBluetooth) {
+        int total;
+        int num;
+        switch (item) {
+            case Sl_NO:
+                total=!isBluetooth ? 5: 5;
+                num = 3 - length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_DESCRIPTION:
+                total = !isBluetooth ? 19 : 48;
+                num = 10-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+                total = !isBluetooth ? 5 : 7;
+                num = 4-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_PRICE:
+                total = !isBluetooth ? 10 : 15;
+                num = 8-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                total = !isBluetooth ? 10 : 10;
+                num = 8 - length;
+                if (num < 0)
+                    num = 0;
                 return new String(new char[num]).replace('\0', ' ');
         }
         return null;
@@ -963,6 +1741,33 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         return null;
     }
+    private String createSpace33(String item, int length, boolean isBluetooth) {
+        int total;
+        int num;
+        switch (item) {
+            case Sl_NO:
+                total=!isBluetooth ? 5: 5;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_DESCRIPTION:
+                total = !isBluetooth ? 19 : 48;
+                num = 6;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+                total = !isBluetooth ? 5 : 7;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_PRICE:
+                total = !isBluetooth ? 10 : 15;
+                num = 3;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                total = !isBluetooth ? 10 : 10;
+                num = 2;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
     private String createSpace2(String item, int length, boolean isBluetooth) {
         int total;
         int num;
@@ -986,6 +1791,33 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             case COMPANY_ITEM_AMOUNT:
                 total = !isBluetooth ? 10 : 10;
                 num = 47 - length;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
+    private String createSpace12(String item, int length, boolean isBluetooth) {
+        int total;
+        int num;
+        switch (item) {
+            case Sl_NO:
+                total=!isBluetooth ? 5: 4;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_DESCRIPTION:
+                total = !isBluetooth ? 10 : 48;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+                total = !isBluetooth ? 4 : 7;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_PRICE:
+                total = !isBluetooth ? 8 : 15;
+                num = total - length;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                total = !isBluetooth ? 7 : 10;
+                num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
         }
         return null;
@@ -1183,7 +2015,12 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     @Override
     public void interacterOne(BtDevice btDevice) {
         Printooth.INSTANCE.setPrinter(btDevice.getDeviceName(), btDevice.getDeviceMac());
-        printViaBluetoothPrinter();
+        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
+            printViaBluetoothPrinter();
+        else
+
+            printViaBluetoothPrinter1();
+
     }
 
     @Override
