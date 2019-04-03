@@ -94,6 +94,8 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
     LinearLayout saveItem;
     @BindView(R.id.checkBox)
     CheckBox checkBox;
+    @BindView(R.id.textSave)
+    TextView textSave;
     private Unbinder mUnbinder;
 
     private List<Category> mCategoryList;
@@ -103,7 +105,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
     private AppDatabase mDatabase;
     private List<Items> mItemList;
     private Items mItems;
-    private boolean isEditing;
+   // private boolean isEditing = false;
     private Uri mSelectedImageUri;
     private String mPath = "";
     private int itemId = 0;
@@ -147,41 +149,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
         return view;
     }
 
-    private void fillFields(Cashier cashier1) {
-        cashier = new Cashier();
-        cashier.setCashierName(cashier1.getCashierName());
-        cashier.setItemView(cashier1.isItemView());
-        cashier.setItemInsert(cashier1.isItemInsert());
-        cashier.setItemUpdate(cashier1.isItemUpdate());
-        cashier.setItemDelete(cashier1.isItemDelete());
-        cashier.setCategoryView(cashier1.isCategoryView());
 
-        cashier.setCategoryInsert(cashier1.isCategoryInsert());
-        cashier.setCategoryUpdate(cashier1.isCategoryUpdate());
-        cashier.setCategoryDelete(cashier1.isCategoryDelete());
-        cashier.setPOSView(cashier1.isPOSView());
-        cashier.setPOSInsert(cashier1.isPOSInsert());
-        cashier.setPOSPrint(cashier1.isPOSPrint());
-        cashier.setPOSDelete(cashier1.isPOSDelete());
-        cashier.setInventoryView(cashier1.isInventoryView());
-        cashier.setInventoryInsert(cashier1.isInventoryInsert());
-        cashier.setInventoryUpdate(cashier1.isInventoryUpdate());
-        cashier.setInventoryDelete(cashier1.isInventoryDelete());
-        cashier.setDailyReportView(cashier1.isDailyReportView());
-        cashier.setDailyReportExport(cashier1.isDailyReportExport());
-        cashier.setSaleReportView(cashier1.isSaleReportView());
-        cashier.setSaleReportExport(cashier1.isSaleReportExport());
-        cashier.setItemReportView(cashier1.isItemReportView());
-        cashier.setItemReportExport(cashier1.isItemReportExport());
-        cashier.setVatReportView(cashier1.isVatReportView());
-        cashier.setVatReportExport(cashier1.isVatReportExport());
-        cashier.setCategoryReportView(cashier1.isCategoryReportView());
-        cashier.setCategoryReportExport(cashier1.isCategoryReportExport());
-        cashier.setInventoryReportView(cashier1.isInventoryReportView());
-        cashier.setInventoryReportExport(cashier1.isInventoryReportExport());
-
-
-    }
 
     @Override
     public void onDestroyView() {
@@ -231,6 +199,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
 
     @SuppressLint("CheckResult")
     private void insetToDb(Items items) {
+
         Completable.fromAction(() -> mDatabase.mItemsDao().insertNewItems(items))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -242,13 +211,14 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
 
     private void updateItem(Items items) {
 
+       // isEditing = false;
         Completable.fromAction(() -> mDatabase.mItemsDao().updateItem(items))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
 
                     inserted(false, items);
-                    resetFeilds();
+
 
                 }, throwable -> inserted(false, items));
 
@@ -261,14 +231,17 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
                     resetFeilds();
 
                 }, throwable -> inserted(false, items));*/
+
     }
 
     private void inserted(boolean inserted, Items items) {
-        if (!inserted) {
+        resetFeilds();
+        Log.e("Inside Insert11",String.valueOf(inserted));
+       if (!inserted) {
 
             getItemsFromDb();
 
-        } else {
+       } else {
             mItemList.add(items);
             mItemsAdapter.notifyDataSetChanged();
         }
@@ -310,7 +283,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
                 mItems.setItemName(getString(mItemName));
                 mItems.setSaleReturned(false);
                 mItems.setVat(itemVat);
-                mItems.setItemId(itemId);
+              //  mItems.setItemId(itemId);
                 mItems.setPrice(Float.parseFloat(itemPrice));
                 mItems.setCost(Float.parseFloat(itemCost));
                 mItems.setCreatedDate(Constants.getCurrentDateTime());
@@ -320,11 +293,12 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
                     mItems.setOpen(true);
                 else
                     mItems.setOpen(false);
-                if (isEditing)
-
-                    updateItem(mItems);
-                else
+                if (textSave.getText().toString().equals(getStringfromResource(R.string.save))) {
                     insetToDb(mItems);
+                }else {
+                    mItems.setItemId(itemId);
+                    updateItem(mItems);
+                }
             } else {
                 showSnackBar(getView(), getStringfromResource(R.string.fields_cannot_be_empty), 1000);
             }
@@ -338,6 +312,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
     }
 
     void resetFeilds() {
+        textSave.setText(getStringfromResource(R.string.save));
         mItemName.setText("");
         mItemBarcode.setText("");
         mItemPrice.setText("");
@@ -366,7 +341,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
 
     void fillToFields(Items items) {
         itemId = items.getItemId();
-        isEditing = true;
+      //  isEditing = true;
 
         String mPath = items.getImagePath();
         if (mPath != null) {
@@ -470,7 +445,7 @@ public class ItemFragment extends BaseFragment implements ClickListeners.Categor
                     if ((isCashier && (cashier == null)) || (isCashier && cashier != null && (!cashier.isItemUpdate())))
                         showSnackBar(getView(), "Not Allowed!!", 1000);
                     else {
-
+                        textSave.setText(getStringfromResource(R.string.edit));
                         fillToFields(items);
                     }
                     dialog.dismiss();

@@ -93,6 +93,7 @@ private Toolbar toolbar;
         Constants.COMPANY_ADDRESS = company.getCompanyAddress();
         Constants.COMPANY_TRN = company.getCompanyTrn();
         Constants.COMPANY_VAT = company.getCompanyVat();
+        Constants.COMPANY_Email = company.getCompanyEmail();
 
         mPrefUtils.putStringPreference(Constants.DEAFULT_PREFS, Constants.COMPANY_PREFIX, company.getCompanyPrefix());
 

@@ -13,6 +13,7 @@ public class Company {
     private String mCompanyName;
     private String mCompanyTel;
     private String mCompanyAddress;
+    private String mCompanyEmail;
     private String mCompanyTrn;
     private String mCompanyPrefix;
     private String mCompanyVat;
@@ -73,5 +74,13 @@ public class Company {
 
     public void setCompanyVat(String mCompanyVat) {
         this.mCompanyVat = mCompanyVat;
+    }
+
+    public String getCompanyEmail() {
+        return mCompanyEmail;
+    }
+
+    public void setCompanyEmail(String companyEmail) {
+        mCompanyEmail = companyEmail;
     }
 }

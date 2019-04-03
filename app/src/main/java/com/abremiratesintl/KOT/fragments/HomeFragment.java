@@ -124,6 +124,7 @@ private boolean isCashier = false;
     @Override
     public void onResume() {
         super.onResume();
+        Constants.disableDelete = false;
         Thread t = new Thread(() -> {
             cashier = mDatabase.mCashierDao().getCashier();
         });

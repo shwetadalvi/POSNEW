@@ -25,8 +25,8 @@ public interface ItemsDao {
     @Query("SELECT * FROM Items WHERE itemId=:itemName  and isDeleted =0") LiveData<Items> findItemsById(int itemName);
 
     @Query("SELECT * FROM Items WHERE categoryId=:categoryId  and isDeleted =0") LiveData<List<Items>> findItemsByCategoryId(int categoryId);
-    @Insert(onConflict = REPLACE)
-    void insertNewItems(Items category);
+   // @Insert(onConflict = REPLACE)
+   @Insert()void insertNewItems(Items category);
 
     @Query("UPDATE Items SET itemName = :itemName WHERE itemId = :itemId") void editItemsNameById(String itemName, int itemId);
 

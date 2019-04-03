@@ -40,6 +40,8 @@ public class SuperAdminCompanyDetails extends BaseFragment {
     EditText mCompanyPrefix;
     @BindView(R.id.company_vat)
     EditText mCompanyVat;
+    @BindView(R.id.company_email)
+    EditText company_email;
     @BindView(R.id.admin_company_save)
     Button mCompanySave;
     private Unbinder mUnbinder;
@@ -75,6 +77,7 @@ public class SuperAdminCompanyDetails extends BaseFragment {
         mCompanyTrn.setText(company.getCompanyTrn());
         mCompanyPrefix.setText(company.getCompanyPrefix());
         mCompanyVat.setText(company.getCompanyVat());
+        company_email.setText(company.getCompanyEmail());
     }
 
     @OnClick(R.id.admin_company_save)
@@ -85,6 +88,7 @@ public class SuperAdminCompanyDetails extends BaseFragment {
         String companyTrn = getString(mCompanyTrn);
         String companyPrefix = getString(mCompanyPrefix);
         String companyVat = getString(mCompanyVat);
+        String companyEmail = getString(company_email);
 
 
         if (isEmpty(companyName) && isEmpty(companyTel) && isEmpty(companyAddress) && isEmpty(companyTrn) && isEmpty(companyPrefix) && isEmpty(companyVat)) {
@@ -97,6 +101,7 @@ public class SuperAdminCompanyDetails extends BaseFragment {
             company.setCompanyTrn(companyTrn);
             company.setCompanyPrefix(companyPrefix);
             company.setCompanyVat(companyVat);
+            company.setCompanyEmail(companyEmail);
 
             Constants.COMPANY_VAT = companyVat;
             Thread t = new Thread(() -> {

@@ -15,6 +15,7 @@ public class Constants {
     public static String COMPANY_NAME = "ABR Emirates";
     public static String COMPANY_TELE = "05-1234567";
     public static String COMPANY_ADDRESS = "Sharjah";
+    public static String COMPANY_Email = "abr@gmail.com";
     public static String COMPANY_TRN = "1234567890";
     public static String COMPANY_PREFIX = "SJ";
     public static String COMPANY_VAT = "";
@@ -43,8 +44,8 @@ public class Constants {
     public static final String PRINTER_TYPE = "Printer Type";
     public static final String FEASYCOM = "Feasycom";
     public static final String PRINTER = "Printer-3B26";
-
-
+    public static boolean disableDelete = false ;
+    public static final String COMPANY_INV_NO = "Inv No";
         public static final String COMPANY_SL_NO = "Sl No.";
     public static final String PERMISSION_STORAGE_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final String PERMISSION_STORAGE_READ = Manifest.permission.WRITE_EXTERNAL_STORAGE;
