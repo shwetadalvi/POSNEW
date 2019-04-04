@@ -75,7 +75,7 @@ public class CreateAdminFragment extends BaseFragment {
                                                         @Override
                                                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                                             if (isChecked) {
-
+                                                                checkBoxPrinter.setChecked(false);
                                                                 mPrefUtils.putStringPreference(DEAFULT_PREFS,PRINTER_TYPE,FEASYCOM);
 
 
@@ -89,7 +89,7 @@ public class CreateAdminFragment extends BaseFragment {
                                                         @Override
                                                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                                             if (isChecked) {
-
+                                                                checkBoxFeasycome.setChecked(false);
                                                                 mPrefUtils.putStringPreference(DEAFULT_PREFS,PRINTER_TYPE,PRINTER);
 
 

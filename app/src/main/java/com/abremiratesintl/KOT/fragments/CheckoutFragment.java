@@ -519,7 +519,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         new Thread(() -> {
             int transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
             transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
-            newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ") + " "+transactionMasterMaxId;
+         //   newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ") + " "+transactionMasterMaxId;
+            newInvoiceNo = String.valueOf(transactionMasterMaxId);
             transactionMaster.setInvoiceNo(newInvoiceNo);
             mDatabase.mTransactionMasterDao().insertNewItems(transactionMaster);
             for (Items item : mItemsList) {item.getItemName();
@@ -590,6 +591,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setText("TRN   : "+COMPANY_TRN)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
+                        .build());
+                String prefix = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ");
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(prefix)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
@@ -1033,6 +1041,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText("TRN   : "+COMPANY_TRN)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(1)
+                        .build());
+               String prefix = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ");
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(prefix)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(1)
                         .build());
