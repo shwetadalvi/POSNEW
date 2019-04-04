@@ -17,6 +17,7 @@ public class InventoryMaster {
     private String invoiceNo;
     private String purchaseDate;
     private String vat;
+    private String name;
 
     public int getTransMasterId() {
         return transMasterId;
@@ -82,5 +83,13 @@ public class InventoryMaster {
 
     public void setVat(String vat) {
         this.vat = vat;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

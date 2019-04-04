@@ -24,6 +24,7 @@ public class TransactionMaster {
     private float cash;
     private float card;
     private String type;
+    private String name;
 
 
     public int getTransMasterId() {
@@ -143,5 +144,13 @@ public class TransactionMaster {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

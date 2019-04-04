@@ -21,6 +21,7 @@ public class Transaction {
     private String ItemName;
     private String category;
     private String invoiceDate;
+    private String name;
 
     public int getTransactionId() {
         return transactionId;
@@ -116,5 +117,13 @@ public class Transaction {
 
     public void setInvoiceDate(String invoiceDate) {
         this.invoiceDate = invoiceDate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
