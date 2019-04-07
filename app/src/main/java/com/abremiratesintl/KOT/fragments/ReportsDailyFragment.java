@@ -72,6 +72,8 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import vpos.apipackage.PosApiHelper;
 
+import static com.abremiratesintl.KOT.utils.Constants.CARD;
+import static com.abremiratesintl.KOT.utils.Constants.CASH;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ADDRESS;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_DATE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_Email;
@@ -86,6 +88,7 @@ import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_TOTAL;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_VAT;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_NAME;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ORDER_NO;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_PREFIX;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TAX;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TELE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TOTAL_ITEM;
@@ -208,8 +211,28 @@ private List<TransactionMaster> mTransactionMasterList;
         textTotalAmount.setText("Total Amount : "+getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(total,2)));
 
     }
+    private float getTotalCash() {
+        float cash = 0;
 
+        for (TransactionMaster items : mTransactionMasterList) {
+            cash = cash + items.getCash();
 
+        }
+        Log.e("Inside ","inside cash"+cash);
+       return cash;
+    }
+    private float getTotalCard (){
+
+        float card = 0;
+
+        for (TransactionMaster items : mTransactionMasterList) {
+
+            card = card + items.getCard();
+
+        }
+        Log.e("Inside ","inside card"+card);
+        return card;
+    }
     @OnClick(R.id.toDate) public void onClickedToDate() {
         mSelectedDateView = toDate;
         showDatePicker();
@@ -223,9 +246,9 @@ private List<TransactionMaster> mTransactionMasterList;
     }
      public void interacterOne(BtDevice btDevice) {
         Printooth.INSTANCE.setPrinter(btDevice.getDeviceName(), btDevice.getDeviceMac());
-         if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
+         /*if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
              printViaBluetoothPrinter();
-         else
+         else*/
              printViaBluetoothPrinter1();
 
     }
@@ -381,9 +404,9 @@ private List<TransactionMaster> mTransactionMasterList;
         if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) return;
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothChecking()) {
-            if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
+           /* if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
                 printViaBluetoothPrinter();
-            else
+            else*/
                 printViaBluetoothPrinter1();
 
 
@@ -680,25 +703,32 @@ private List<TransactionMaster> mTransactionMasterList;
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText(COMPANY_TELE)
-                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
-                        .build());
-                printables.add(new Printable.PrintableBuilder()
-                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText(COMPANY_ADDRESS)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText(COMPANY_TAX)
+                        .setText("Email : "+COMPANY_Email)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText("TRN   : "+COMPANY_TRN)
+                        .setText("Tel No : "+COMPANY_TELE)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("TRN : "+COMPANY_TRN)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                String prefix = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ");
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(prefix)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -712,6 +742,7 @@ private List<TransactionMaster> mTransactionMasterList;
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText("Daily Report of " + mSelectedDate)
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -724,10 +755,10 @@ private List<TransactionMaster> mTransactionMasterList;
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ORDER_NO + createSpace(COMPANY_ORDER_NO, COMPANY_ORDER_NO.length(), false) +
-                                COMPANY_TOTAL_ITEM + createSpace(COMPANY_TOTAL_ITEM, COMPANY_TOTAL_ITEM.length(), false) +
-                                COMPANY_ITEM_PAYMENT + createSpace(COMPANY_ITEM_PAYMENT, COMPANY_ITEM_PAYMENT.length(), false) +
-                                COMPANY_ITEM_AMOUNT + createSpace(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
+                        .setText(Sl_NO  + createSpacePrinterHeading(Sl_NO, Sl_NO.length(), false)+COMPANY_INV_NO + createSpacePrinterHeading(COMPANY_INV_NO, COMPANY_INV_NO.length(), false) +
+                                COMPANY_ITEM_QUANTITY + createSpacePrinterHeading(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
+                                COMPANY_ITEM_PAYMENT + createSpaceAmtPrinter(COMPANY_ITEM_PAYMENT.length(), COMPANY_ITEM_AMOUNT.length()) +
+                                COMPANY_ITEM_AMOUNT + createSpacePrinterHeading(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -737,9 +768,10 @@ private List<TransactionMaster> mTransactionMasterList;
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-                //
                 float total = 0;
+                int i = 0;
                 for (TransactionMaster order : mTransactionMasterList) {
+                    i += 1;
                     total = total+ order.getGrandTotal();
 
                     String price = decimalAdjust(order.getGrandTotal());
@@ -750,66 +782,53 @@ private List<TransactionMaster> mTransactionMasterList;
 
                     printables.add(new Printable.PrintableBuilder()
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(order.getInvoiceNo() + createSpace(COMPANY_ORDER_NO, String.valueOf(order.getInvoiceNo()).length(), false) +
-                                    order.getTotalQty() + createSpace(COMPANY_TOTAL_ITEM, String.valueOf(order.getTotalQty()).length(), false) +
-                                    order.getType() + createSpace(COMPANY_ITEM_PAYMENT, String.valueOf(order.getType()).length(), false) +
-                                    order.getGrandTotal() + createSpace(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getGrandTotal()).length(), false))
+                            .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) +order.getInvoiceNo() + createSpacePrinterData(COMPANY_INV_NO, String.valueOf(order.getInvoiceNo()).length(), false) +
+                                    order.getTotalQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getTotalQty()).length(), false) +
+                                    order.getType() + createSpaceAmtPrinter(String.valueOf(order.getType()).length(), String.format("%.2f", order.getGrandTotal()).length()) +
+                                    order.getGrandTotal() + createSpacePrinterData(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getGrandTotal()).length(), false))
                             .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());
                 }
                 String str_total = decimalAdjust(total);
+                float cash = getTotalCash();
+                float card = getTotalCard();
+             //   String str_cash = decimalAdjust(cash);
+                //String str_card = decimalAdjust(card);
+
                 printables.add(new Printable.PrintableBuilder()
-                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText("................................................")
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-                printables.add(new Printable.PrintableBuilder()
+               /* printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(       COMPANY_ITEM_TOTAL +"                                    "+ String.valueOf(total))
+                        .setText(CASH +createSpacePrinter(CASH.length(),String.valueOf(cash).length())+cash)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(CARD +createSpacePrinter(CARD.length(),String.valueOf(card).length())+card)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());*/
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(COMPANY_ITEM_TOTAL +createSpacePrinter(COMPANY_ITEM_TOTAL.length(),str_total.length())+str_total)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText("................................................")
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-              /*  if (!getString(mFooterDiscount).isEmpty()) {
-                    printables.add(new Printable.PrintableBuilder()
-                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(COMPANY_ITEM_DISCOUNT + createSpace(COMPANY_ITEM_DISCOUNT.length(), String.valueOf(getString(mFooterDiscount)).length()) + getString(mFooterDiscount))
-                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                            .setNewLinesAfter(2)
-                            .build());
-                }*/
 
-
-                    /*  printables.add(new Printable.PrintableBuilder()
-                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpace(COMPANY_ITEM_GROSS_AMOUNT.length(), String.format("%.2f", getPriceExcludingVat()).length()) + getPriceExcludingVat())
-                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
-                        .build());*/
-
-               /* printables.add(new Printable.PrintableBuilder()
-                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_VAT + createSpace(COMPANY_ITEM_VAT.length(), String.valueOf(getString(mFooterVat)).length()) + getString(mFooterVat))
-                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
-                        .build());*/
-               /* printables.add(new Printable.PrintableBuilder()
-                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_NET_AMOUNT + createSpace(COMPANY_ITEM_NET_AMOUNT.length(), String.valueOf(getString(mFooterTotal)).length()) + getString(mFooterTotal))
-                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
-                        .build());*/
                 Printooth.INSTANCE.printer().print(printables);
-               /* if (getFragmentManager() != null) {
-                    getFragmentManager().popBackStack();
-                }*/
+
             }).start();
         }else{
             AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
@@ -906,33 +925,66 @@ private List<TransactionMaster> mTransactionMasterList;
         thread.start();
 //        }
     }*/
+    private String createSpaceAmtPrinter(int firstLength, int secondLegth) {
+        //   int num = 32 - firstLength;
+        int num = 23 - firstLength ;
+        num = num - secondLegth;
+        return new String(new char[num]).replace('\0', ' ');
+    }
    private String createSpace(String item, int length, boolean isBluetooth) {
-       int total;
-       int num;
-       switch (item) {
-           case Sl_NO:
-               total=!isBluetooth ? 5: 5;
-               num = 1;
-               return new String(new char[num]).replace('\0', ' ');
-           case COMPANY_INV_NO:
-               total = !isBluetooth ? 19 : 48;
-               num = 1;
-               return new String(new char[num]).replace('\0', ' ');
-           case COMPANY_ITEM_QUANTITY:
-               total = !isBluetooth ? 5 : 7;
-               num = 1;
-               return new String(new char[num]).replace('\0', ' ');
-           case COMPANY_ITEM_PAYMENT:
-               total = !isBluetooth ? 10 : 15;
-               num = 1;
-               return new String(new char[num]).replace('\0', ' ');
-           case COMPANY_ITEM_AMOUNT:
-               total = !isBluetooth ? 10 : 10;
-               num = 4;
-               return new String(new char[num]).replace('\0', ' ');
-       }
-       return null;
-   }
+        int total;
+        int num;
+        switch (item) {
+            case Sl_NO:
+                total=!isBluetooth ? 5: 5;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_INV_NO:
+                total = !isBluetooth ? 19 : 48;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+                total = !isBluetooth ? 5 : 7;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_PAYMENT:
+                total = !isBluetooth ? 10 : 15;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                total = !isBluetooth ? 10 : 10;
+                num = 4;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
+    private String createSpacePrinterHeading(String item, int length, boolean isBluetooth) {
+        int total;
+        int num;
+        switch (item) {
+            case Sl_NO:
+                total=!isBluetooth ? 5: 5;
+                num = 2;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_INV_NO:
+                total = !isBluetooth ? 19 : 48;
+                num = 4;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+                total = !isBluetooth ? 5 : 7;
+                num = 7;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_PAYMENT:
+                total = !isBluetooth ? 10 : 15;
+                num = 3;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                total = !isBluetooth ? 10 : 10;
+                num = 7;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
     private String createSpace11(String item, int length, boolean isBluetooth) {
         int total;
         int num;
@@ -970,38 +1022,54 @@ private List<TransactionMaster> mTransactionMasterList;
         }
         return null;
     }
-    private String createSpace1(String item, int length, boolean isBluetooth) {
+    private String createSpacePrinterData(String item, int length, boolean isBluetooth) {
         int total;
         int num;
-
         switch (item) {
-            case COMPANY_ORDER_NO:
-                total = !isBluetooth ? 15 : 40;
-                num = total - length;
+            case Sl_NO:
+
+                num = 5 - length;
+                if (num < 0)
+                    num = 0;
                 return new String(new char[num]).replace('\0', ' ');
-            case COMPANY_TOTAL_ITEM:
-                total = !isBluetooth ? 12 : 12;
-                num = total - length;
+            case COMPANY_INV_NO:
+
+                num = 10-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+
+                num = 10-length;
+                if (num < 0)
+                    num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_PAYMENT:
-                total = !isBluetooth ? 10 : 10;
-                num = total - length;
+
+                num = 10-length;
+                if (num < 0)
+                    num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_AMOUNT:
                 total = !isBluetooth ? 10 : 10;
-                num = total - length;
+                num = 13 - length;
+                if (num < 0)
+                    num = 0;
                 return new String(new char[num]).replace('\0', ' ');
         }
         return null;
     }
-
 
     private String createSpace(int firstLength, int secondLegth) {
         int num = 32 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
-
+    private String createSpacePrinter(int firstLength, int secondLegth) {
+        int num = 48- firstLength;
+        num = num - secondLegth;
+        return new String(new char[num]).replace('\0', ' ');
+    }
     private String decimalAdjust(float value) {
         String stringValue = String.valueOf(value);
         if (stringValue.substring(stringValue.length() - 1).equals("0")) {

@@ -4,12 +4,17 @@ package com.abremiratesintl.KOT.fragments;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.LiveData;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -33,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.abremiratesintl.KOT.BaseFragment;
+import com.abremiratesintl.KOT.Dialog;
 import com.abremiratesintl.KOT.MainActivity;
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.adapters.CategorySpinnerAdapter;
@@ -41,6 +47,7 @@ import com.abremiratesintl.KOT.adapters.ItemwiseReportAdapter;
 import com.abremiratesintl.KOT.adapters.ReportAdapter;
 import com.abremiratesintl.KOT.dbHandler.AppDatabase;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
+import com.abremiratesintl.KOT.models.BtDevice;
 import com.abremiratesintl.KOT.models.Cashier;
 import com.abremiratesintl.KOT.models.Category;
 import com.abremiratesintl.KOT.models.Items;
@@ -49,12 +56,18 @@ import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
 import com.abremiratesintl.KOT.utils.PrefUtils;
 import com.abremiratesintl.KOT.views.CustomSpinner;
+import com.mazenrashed.printooth.Printooth;
+import com.mazenrashed.printooth.data.DefaultPrinter;
+import com.mazenrashed.printooth.data.Printable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import butterknife.BindDrawable;
 import butterknife.BindView;
@@ -67,6 +80,25 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ADDRESS;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_Email;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_INV_NO;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_AMOUNT;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_DESCRIPTION;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_PAYMENT;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_QUANTITY;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_TOTAL;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_NAME;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_PREFIX;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TAX;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TELE;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TRN;
+import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
+import static com.abremiratesintl.KOT.utils.Constants.REQUEST_CODE_ENABLE_BLUETOOTH;
+import static com.abremiratesintl.KOT.utils.Constants.Sl_NO;
+import static com.abremiratesintl.KOT.utils.Constants.REPORT_DATE;
+import static com.abremiratesintl.KOT.utils.Constants.CARD;
+import static com.abremiratesintl.KOT.utils.Constants.CASH;
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -104,6 +136,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     private Cashier cashier = new Cashier();
     private boolean isCashier = false;
     PrefUtils mPrefUtils ;
+    private BluetoothAdapter bluetoothAdapter;
     public ItemwiseReportFragment() {
         // Required empty public constructor
     }
@@ -183,6 +216,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         reportRecyclerview.setAdapter(adapter);
         setFooterValues(transactionList);
     }
+
     private void setFooterValues(List<Transaction> transactionList) {
 
         float total = 0;
@@ -194,7 +228,149 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         textTotal.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(total,2)));
 
     }
+    private void printViaBluetoothPrinter() {
+        if (Printooth.INSTANCE.hasPairedPrinter()) {
+            new Thread(() -> {
+                ArrayList<Printable> printables = new ArrayList<>();
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(COMPANY_NAME)
+                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_LARGE())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(COMPANY_ADDRESS)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("Email : "+COMPANY_Email)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("Tel No : "+COMPANY_TELE)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(COMPANY_TAX)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("TRN : "+COMPANY_TRN)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                String prefix = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ");
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText(prefix)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("................................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
 
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText("Item Report of " + mSelectedItem.getItemName())
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("................................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(Sl_NO  + createSpacePrinterHeading(Sl_NO, Sl_NO.length(), false)+COMPANY_ITEM_DESCRIPTION + createSpacePrinterHeading(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
+                                COMPANY_ITEM_QUANTITY + createSpacePrinterHeading(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
+                                REPORT_DATE + createSpaceAmtPrinter(REPORT_DATE.length(), COMPANY_ITEM_AMOUNT.length()) +
+                                COMPANY_ITEM_AMOUNT )
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("................................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                float total = 0;
+                int i = 0;
+                for (Transaction order : mTransactionList) {
+                    i += 1;
+                    total = total+ order.getGrandTotal();
+
+
+                    printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                            .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) +order.getItemName() + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, String.valueOf(order.getItemName()).length(), false) +
+                                    order.getQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                    order.getInvoiceDate() + createSpaceAmtPrinter(String.valueOf(order.getInvoiceDate()).length(), String.format("%.2f", order.getPrice()).length()) +
+                                    order.getPrice())
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                            .setNewLinesAfter(2)
+                            .build());
+                }
+                String str_total = decimalAdjust(total);
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("................................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(COMPANY_ITEM_TOTAL +createSpacePrinter(COMPANY_ITEM_TOTAL.length(),str_total.length())+str_total)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                        .setText("................................................")
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+
+                Printooth.INSTANCE.printer().print(printables);
+
+            }).start();
+        }else{
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+            builder1.setMessage("Select Printer from Settings");
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+
+                        }
+                    });
+
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+        }
+
+    }
     @OnClick(R.id.fromDate) public void onClickedFromDate() {
         mSelectedDateView = fromDate;
         showDatePicker();
@@ -204,10 +380,98 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         mSelectedDateView = toDate;
         showDatePicker();
     }
+    private void printReport() {
+        String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "0");
+        switch (printerCategory) {
+            case "0":
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                builder1.setMessage("Select Printer from Settings");
+                builder1.setCancelable(true);
+
+                builder1.setPositiveButton(
+                        "Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+
+                            }
+                        });
+
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+                break;
+            case "1":
+                printReciptBluetooth();
+                break;
+            case "2":
+                // printReciptBuiltin(newInvoiceNo);
+                break;
+            case "3":
+                //  showRecipt(newInvoiceNo);
+                break;
+
+        }
+    }
+    private void printReciptBluetooth() {
+        if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) return;
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothChecking()) {
+
+            printViaBluetoothPrinter();
+
+
+        }
+    }
+    private boolean bluetoothChecking() {
+        if (!bluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_CODE_ENABLE_BLUETOOTH);
+        } else {
+            if (!Printooth.INSTANCE.hasPairedPrinter()) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(() -> {
+                    Dialog dialog = new Dialog(getContext());
+                    dialog.showBluetoothDevices(getPairedDevices());
+                    dialog.setInteractorToFragment(ItemwiseReportFragment.this::interacterOne);
+                    dialog.show();
+                });
+
+            }
+            return true;
+        }
+        return false;
+    }
+    private List<BtDevice> getPairedDevices() {
+
+        // Get a set of currently paired devices
+        List<BtDevice> devices = new ArrayList<>();
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        Iterator<BluetoothDevice> itr = pairedDevices.iterator();
+        while (itr.hasNext()) {
+            BtDevice btDevice = new BtDevice();
+            BluetoothDevice bluetoothDevice = itr.next();
+            btDevice.setDeviceName(bluetoothDevice.getName());
+            btDevice.setDeviceMac(bluetoothDevice.getAddress());
+            devices.add(btDevice);
+        }
+        if (devices.size() == 0) {
+            BtDevice device = new BtDevice();
+            device.setDeviceName("No devices Found\n Please got to bluetooth settings and pair the device");
+        }
+        return devices;
+    }
+
+
+    public void interacterOne(BtDevice btDevice) {
+
+        printViaBluetoothPrinter();
+
+    }
 
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.item_report_menu, menu);
+        inflater.inflate(R.menu.day_menu, menu);
     }
 
     int menuClickCount = 0;
@@ -227,8 +491,15 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
             case R.id.export:
                 if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isItemReportExport())) )
                     showSnackBar(getView(),"Not Allowed!!",1000);
-                else
-                exportFileToExcel();
+                else {
+                    if(mTransactionList.size() > 0)
+                    exportFileToExcel();
+                }
+                break;
+            case R.id.menu_print:
+                if(mTransactionList.size() > 0)
+                printReport();
+                break;
         }
 
         return true;
@@ -267,7 +538,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
 
                 sheet.addCell(new Label(0, 0, Constants.COMPANY_SL_NO));
                 sheet.addCell(new Label(1, 0, Constants.COMPANY_ORDER_NO));
-                sheet.addCell(new Label(2, 0, Constants.COMPANY_ITEM_DESCRIPTION));
+                sheet.addCell(new Label(2, 0, COMPANY_ITEM_DESCRIPTION));
                 sheet.addCell(new Label(3, 0, Constants.CATEGORY));
                 sheet.addCell(new Label(4, 0, Constants.COMPANY_ITEM_QUANTITY));
                 sheet.addCell(new Label(5, 0, Constants.COMPANY_DATE));
@@ -401,4 +672,90 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     public void onSpinnerClosed(Spinner spinner) {
         mSpinnerArrow.setImageDrawable(icDown);
     }
+    private String createSpaceAmtPrinter(int firstLength, int secondLegth) {
+        //   int num = 32 - firstLength;
+        int num = 18 - firstLength ;
+        num = num - secondLegth;
+        return new String(new char[num]).replace('\0', ' ');
+    }
+
+    private String createSpacePrinterHeading(String item, int length, boolean isBluetooth) {
+        int total;
+        int num;
+        switch (item) {
+            case Sl_NO:
+                total=!isBluetooth ? 4: 5;
+                num = 2;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_DESCRIPTION:
+                total = !isBluetooth ? 21 : 48;
+                num = 17;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+                total = !isBluetooth ? 5 : 7;
+                num = 2;
+                return new String(new char[num]).replace('\0', ' ');
+            case REPORT_DATE:
+                total = !isBluetooth ? 11 : 15;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                total = !isBluetooth ? 7 : 10;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
+
+    private String createSpacePrinterData(String item, int length, boolean isBluetooth) {
+        int num;
+        switch (item) {
+            case Sl_NO:
+
+                num = 4 - length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_DESCRIPTION:
+
+                num = 21-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+
+                num = 5-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case REPORT_DATE:
+
+                num = 11-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                num = 7 - length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
+
+    private String createSpacePrinter(int firstLength, int secondLegth) {
+        int num = 48- firstLength;
+        num = num - secondLegth;
+        return new String(new char[num]).replace('\0', ' ');
+    }
+    private String decimalAdjust(float value) {
+        String stringValue = String.valueOf(value);
+        if (stringValue.substring(stringValue.length() - 1).equals("0")) {
+            return stringValue + 0;
+        }
+        return null;
+    }
+
+
 }
+

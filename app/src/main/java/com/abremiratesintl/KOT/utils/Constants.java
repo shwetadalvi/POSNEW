@@ -40,6 +40,7 @@ public class Constants {
     public static final String USER_TYPE = "User Type";
     public static final String ADMIN = "Admin";
     public static final String CASHIER = "Cashier";
+    public static final String REPORT_DATE = "Date";
     public static final String Sl_NO = "No";
     public static final String PRINTER_TYPE = "Printer Type";
     public static final String FEASYCOM = "Feasycom";
@@ -47,6 +48,8 @@ public class Constants {
     public static boolean disableDelete = false ;
     public static final String COMPANY_INV_NO = "Inv No";
         public static final String COMPANY_SL_NO = "Sl No.";
+    public static final String CARD = "Total Card : ";
+    public static final String CASH = "Total Cash :";
     public static final String PERMISSION_STORAGE_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final String PERMISSION_STORAGE_READ = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final int REQUEST_CODE_PERMISSION_STORAGE = 0x123;
