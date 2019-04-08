@@ -676,7 +676,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                                         price+ createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getTotalItemPrice()).length())
                                         +totalprice )
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                                .setNewLinesAfter(1)
+                                .setNewLinesAfter(2)
                                 .build());
                     }else if(item_name.length() > 19 && items.length == 1) {
                         String str_first = item_name.substring(0,19);
@@ -692,9 +692,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                                 .build());
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                                .setText(createSpace11(Sl_NO, String.valueOf(i).length(), false) + str_next + createSpace11(COMPANY_ITEM_DESCRIPTION, str_next.length(), false))
+                                .setText(createSpace11(Sl_NO, 0, false) + str_next + createSpace11(COMPANY_ITEM_DESCRIPTION, str_next.length(), false))
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                                .setNewLinesAfter(1)
+                                .setNewLinesAfter(2)
                                 .build());
                     }else{
                         String parts[] = item_name.split(" ", 2);
@@ -712,9 +712,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                                     .build());
                             printables.add(new Printable.PrintableBuilder()
                                     .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                                    .setText(createSpace11(Sl_NO, String.valueOf(i).length(), false) + str_next + createSpace11(COMPANY_ITEM_DESCRIPTION, str_next.length(), false))
+                                    .setText(createSpace11(Sl_NO, 0, false) + str_next + createSpace11(COMPANY_ITEM_DESCRIPTION, str_next.length(), false))
                                     .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                                    .setNewLinesAfter(1)
+                                    .setNewLinesAfter(2)
                                     .build());
                         }else {
                             printables.add(new Printable.PrintableBuilder()
@@ -729,9 +729,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         }
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                                .setText(createSpace11(Sl_NO, String.valueOf(i).length(), false) + parts[1] + createSpace11(COMPANY_ITEM_DESCRIPTION, parts[1].length(), false))
+                                .setText(createSpace11(Sl_NO, 0, false) + parts[1] + createSpace11(COMPANY_ITEM_DESCRIPTION, parts[1].length(), false))
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                                .setNewLinesAfter(1)
+                                .setNewLinesAfter(2)
                                 .build());
                     }
                 }
