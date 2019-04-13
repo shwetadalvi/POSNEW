@@ -8,6 +8,7 @@
     android:background="#000000"
     tools:context=".fragments.AddNewItem">
 
+
     <com.abremiratesintl.KOT.views.CustomSpinner
         android:id="@+id/addNewItemspinnerCategory"
         android:layout_width="0dp"
@@ -20,8 +21,9 @@
         android:background="@null"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/editInvoiceNo" />
 
     <ImageView
         android:id="@+id/addNewItemSpinnerArrow"
@@ -99,8 +101,8 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/cart_total_price"
-            android:textColor="@color/colorPrimary"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintHorizontal_bias="1.0"
@@ -116,8 +118,8 @@
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
             android:text="@string/proceed"
-            android:textColor="@color/white"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -132,8 +134,8 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="@string/current_item"
-            android:textColor="@color/colorPrimary"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -156,8 +158,8 @@
             android:layout_marginRight="8dp"
             android:gravity="center"
             android:text="0"
-            android:textColor="@color/colorPrimary"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintBaseline_toBaselineOf="@+id/addNewItemVat"
             app:layout_constraintEnd_toStartOf="@+id/addNewItemProceed"
             app:layout_constraintHorizontal_bias="0.0"
@@ -171,8 +173,8 @@
             android:layout_marginLeft="8dp"
             android:gravity="center"
             android:text="0"
-            android:textColor="@color/colorPrimary"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintBaseline_toBaselineOf="@+id/addNewItemTotal"
             app:layout_constraintStart_toStartOf="@+id/guideline5" />
 
@@ -199,5 +201,51 @@
             app:layout_constraintStart_toStartOf="@+id/guideline5" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <EditText
+        android:id="@+id/editInvoiceNo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:hint="Enter Invoice No to Print"
+        android:inputType="number"
+        android:textColor="@color/white"
+        android:textColorHint="@color/grey"
+        app:layout_constraintEnd_toStartOf="@+id/guideline25"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="10dp"
+        android:background="@drawable/bg_white_border"
+        android:visibility="gone"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <Button
+        android:id="@+id/btnInvoicePrint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/bg_blue"
+        android:text="Print"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editInvoiceNo"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
 
 </android.support.constraint.ConstraintLayout>

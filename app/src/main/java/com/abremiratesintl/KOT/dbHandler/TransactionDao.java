@@ -32,4 +32,6 @@ public interface TransactionDao {
 @Query("SELECT * FROM Transactions WHERE (category=:category) AND (invoiceDate BETWEEN date(:from) AND date(:to))") LiveData<List<Transaction>> findItemsByCategoryBetween(String from, String to,String category );
 
     @Query("SELECT * FROM Transactions WHERE category=:category") LiveData<List<Transaction>> getAllItemsByCategoryName (String category);
+
+    @Query("SELECT * FROM Transactions  WHERE transMasterId=:invId") LiveData<List<Transaction>> getItemsByItemInvId(int invId);
 }

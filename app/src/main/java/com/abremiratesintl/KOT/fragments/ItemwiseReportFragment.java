@@ -312,16 +312,36 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                     i += 1;
                     total = total+ order.getGrandTotal();
 
-
-                    printables.add(new Printable.PrintableBuilder()
-                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) +order.getItemName() + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, String.valueOf(order.getItemName()).length(), false) +
-                                    order.getQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                    order.getInvoiceDate() + createSpaceAmtPrinter(String.valueOf(order.getInvoiceDate()).length(), String.format("%.2f", order.getPrice()).length()) +
-                                    order.getPrice())
-                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                            .setNewLinesAfter(2)
-                            .build());
+                    String item_name = order.getItemName();
+                    if(item_name.length() <= 19) {
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) + order.getItemName() + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, String.valueOf(order.getItemName()).length(), false) +
+                                        order.getQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                        order.getInvoiceDate() + createSpaceAmtPrinter(String.valueOf(order.getInvoiceDate()).length(), String.format("%.2f", order.getPrice()).length()) +
+                                        order.getPrice())
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                .setNewLinesAfter(2)
+                                .build());
+                    }else{
+                        String str_first = item_name.substring(0,19);
+                        String str_next = item_name.substring(19,item_name.length());
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, String.valueOf(str_first).length(), false) +
+                                        order.getQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
+                                        order.getInvoiceDate() + createSpaceAmtPrinter(String.valueOf(order.getInvoiceDate()).length(), String.format("%.2f", order.getPrice()).length()) +
+                                        order.getPrice())
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                .setNewLinesAfter(1)
+                                .build());
+                        printables.add(new Printable.PrintableBuilder()
+                                .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                                .setText(createSpacePrinterData(Sl_NO, 0, false) + str_next + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, str_next.length(), false))
+                                .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                                .setNewLinesAfter(2)
+                                .build());
+                    }
                 }
                 String str_total = decimalAdjust(total);
                 printables.add(new Printable.PrintableBuilder()

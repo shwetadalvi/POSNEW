@@ -2,6 +2,7 @@ package com.abremiratesintl.KOT.fragments;
 
 
 import android.app.AlertDialog;
+import android.arch.lifecycle.LiveData;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -112,7 +113,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     @BindView(R.id.footer_vat)
     TextView mFooterVat;
     @BindView(R.id.discount_footer)
-    TextView mFooterDiscount;
+    EditText mFooterDiscount;
     @BindView(R.id.checkBoxPercentage)
     CheckBox mCheckBoxPercentage;
     @BindView(R.id.spinner1)
@@ -141,6 +142,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     private boolean mIsPercentage;
     private String selectedItem = "CASH";
     private int btnCounter = 0;
+    private boolean isForCustomer = false;
+    int transactionMasterMaxId;
     //private boolean disableDelete = false;
     /*
    * private String decimalAdjust(float value) {
@@ -197,7 +200,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         mCart = args.getCart();
         mItemsList = mCart.getCartItems();
         getArguments().remove("cart");
-        mFooterDiscount.addTextChangedListener(this);
+       // mFooterDiscount.addTextChangedListener(this);
 
         setUpRecyclerView();
         calculateTotal();
@@ -247,7 +250,25 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 }
             }
         });*/
+        mFooterDiscount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 1) {
+                 calculateTotal();
+                }
+
+            }
+        });
         mCash.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -415,6 +436,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     private void saveCart() {
         btnCounter++;
         if (btnCounter == 1) {
+            isForCustomer = false;
             Constants.disableDelete = true;
             insertTransactions(mItemsList);
             String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "0");
@@ -449,7 +471,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             }
         }
         else {
-
+            isForCustomer = true;
             String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "0");
             switch (printerCategory) {
                 case "0":
@@ -496,7 +518,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         float itemAmount = getTotalItemAmount();
         float grantTotal = Float.parseFloat(getString(mFooterTotal));
         float itemVat = Float.parseFloat(getString(mFooterVat));
-        float itemDiscount = Float.parseFloat((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterVat)));
+        float itemDiscount = Float.parseFloat((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount)));
         boolean isSale = true;
         int isCashCardOrBoth = 1;
         float cash = Float.parseFloat((getString(mCash).isEmpty() ? "0" : getString(mCash)));
@@ -516,10 +538,23 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         transactionMaster.setCard(card);
         transactionMaster.setType(ptype);
 //        LiveData<Integer> t.ransactionMasterLiveData = mDatabase.mTransactionMasterDao().findTransMasterOfMaxId();
+
+        LiveData<List<TransactionMaster>> transactionMasterLiveData = mDatabase.mTransactionMasterDao().getAllItems();
+        transactionMasterLiveData.observe(this, transactionMasters  -> {
+            if (transactionMasters == null ) {
+                transactionMasterMaxId = 0;
+                return;
+            }
+            transactionMasterMaxId = transactionMasters.size();
+
+          //  invTransactionMaster = transactionMaster;
+
+        });
         new Thread(() -> {
-            int transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
-            transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
-         //   newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ") + " "+transactionMasterMaxId;
+
+        //  int transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
+          transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
+          // newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ") + " "+transactionMasterMaxId;
             newInvoiceNo = String.valueOf(transactionMasterMaxId);
             transactionMaster.setInvoiceNo(newInvoiceNo);
             mDatabase.mTransactionMasterDao().insertNewItems(transactionMaster);
@@ -546,14 +581,23 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
            /* if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
                 printViaBluetoothPrinter();
             else*/
-                printViaBluetoothPrinter1();
+                printViaBluetoothPrinter1(isForCustomer);
         }
     }
 
-    private void printViaBluetoothPrinter1() {
+    private void printViaBluetoothPrinter1(boolean isForCustomer) {
         if (Printooth.INSTANCE.hasPairedPrinter()) {
             new Thread(() -> {
                 ArrayList<Printable> printables = new ArrayList<>();
+                if(isForCustomer) {
+                    printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                            .setText("Customer Copy")
+                            .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_LARGE())
+                            .setNewLinesAfter(2)
+                            .build());
+                }
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText(COMPANY_NAME)
@@ -1636,17 +1680,27 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         textTotal.setText("Gross Amount : "+String.valueOf(Constants.round(total,2)));
         String disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
-        float discount = 0;
-        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
-            total = total + vat;
+        float discount = 0;float discountVat = 0;
+      /*  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+            total = total + vat;*/
         if (!mIsPercentage) {
             discount = Float.parseFloat(disString);
             total = total - discount;
         } else {
             discount = Float.parseFloat(disString);
-            discount = total * (discount / 100);
+            discount = (total * discount) / 100;
             total = total - discount;
         }
+        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive))){
+            if(discount > 0) {
+                discountVat = total * vat / 100;
+                total = total + discountVat;
+            } else
+                total = total + vat;
+        }
+
+
+
         Constants.round(vat, 2);
         Constants.round(total, 2);
         Constants.round(discount, 2);
@@ -1719,7 +1773,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
        /* if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
             printViaBluetoothPrinter();
         else*/
-            printViaBluetoothPrinter1();
+            printViaBluetoothPrinter1(isForCustomer);
 
     }
 

@@ -212,11 +212,11 @@
             android:id="@+id/textTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Card :"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/textCash"
             android:layout_alignParentRight="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+            android:text="Card :"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/textCash" />
     </RelativeLayout>
 
 </RelativeLayout>

@@ -234,7 +234,8 @@ android:background="@color/colorPrimary"
             android:layout_marginTop="8dp"
             android:text="Total Amount :"
             android:textColor="@color/white"
-        android:layout_alignParentRight="true"
+      android:layout_below="@+id/textVATAmount"
+
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
     </RelativeLayout>
 </LinearLayout>
