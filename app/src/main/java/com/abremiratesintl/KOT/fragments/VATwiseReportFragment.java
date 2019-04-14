@@ -93,6 +93,10 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
     private Cashier cashier = new Cashier();
     private boolean isCashier = false;
     PrefUtils mPrefUtils ;
+    @BindView(R.id.textVat)
+    TextView textVat;
+    @BindView(R.id.textVatAmt)
+    TextView textVatAmt;
     public VATwiseReportFragment() {
         // Required empty public constructor
     }
@@ -144,14 +148,20 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
     }
     private void setFooterValues(List<TransactionMaster> transactionMasterList) {
 
-        float total = 0;
+        float total = 0,vat = 0,vatable_amt=0;
         for (TransactionMaster items : transactionMasterList) {
 
             total = total + items.getGrandTotal();
+            vat = vat +items.getVatAmount();
+          /*  if(items.getDiscountAmount() > 0)
+                vatable_amt = vatable_amt + items.getItemTotalAmount() - items.getDiscountAmount();
+            else*/
+            vatable_amt = vatable_amt + items.getItemTotalAmount();
         }
 
         textTotal.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(total,2)));
-
+        textVat.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(vat,2)));
+        textVatAmt.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(vatable_amt,2)));
     }
     @OnClick(R.id.fromDate) public void onClickedFromDate() {
         mSelectedDateView = fromDate;

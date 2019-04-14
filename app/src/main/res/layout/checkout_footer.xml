@@ -48,7 +48,7 @@
         android:layout_marginTop="8dp"
         android:hint="@string/discount"
         android:imeOptions="actionDone"
-        android:inputType="number"
+        android:inputType="numberSigned"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="#FFFFFF"
         android:textColorHint="@color/grey"

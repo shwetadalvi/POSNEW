@@ -199,12 +199,54 @@
         android:background="@color/colorPrimary"
         android:padding="10dp"
         android:layout_alignParentBottom="true">
+
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Vatable Amount :"
+            android:textColor="@color/white"
+            android:layout_alignParentLeft="true"
+
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        <TextView
+            android:id="@+id/textVatAmt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text=""
+
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/textCash" />
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Vat:"
+            android:textColor="@color/white"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/text1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        <TextView
+            android:id="@+id/textVat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text=""
+            android:layout_below="@+id/text1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/textCash" />
+
         <TextView
             android:id="@+id/textCash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Total :"
             android:textColor="@color/white"
+            android:layout_below="@+id/text2"
             android:layout_alignParentLeft="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
@@ -214,6 +256,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="Card :"
+            android:layout_below="@+id/text2"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/white"
             app:layout_constraintTop_toBottomOf="@+id/textCash" />

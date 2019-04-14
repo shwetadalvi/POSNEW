@@ -26,7 +26,8 @@ public interface TransactionMasterDao {
     @Query("SELECT * FROM TransactionMaster WHERE invoiceDate BETWEEN date(:from) AND date(:to)") LiveData<List<TransactionMaster>> findItemsByBetween(String from, String to);
 
     @Insert() void insertNewItems(TransactionMaster category);
-
+    @Query("SELECT COUNT(transMasterId) FROM TRANSACTIONMASTER ")
+    int getCount();
     @Query("SELECT * FROM TransactionMaster WHERE invoiceDate =  date(:to)") LiveData<List<TransactionMaster>> findItemsByDate( String to);
 //    @Query("UPDATE TransactionMaster SET itemName = :itemName WHERE itemId = :itemId") void editItemsNameById(String itemName, int itemId);
 //

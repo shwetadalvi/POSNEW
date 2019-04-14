@@ -519,12 +519,16 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
                         .build());
 
                 float t2 = invTransactionMaster.getItemTotalAmount();
-                printables.add(new Printable.PrintableBuilder()
-                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpacePrinter(COMPANY_ITEM_GROSS_AMOUNT.length(), String.valueOf(t2).length()) +t2)
-                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
-                        .build());
+                if (invTransactionMaster.getDiscountAmount() != 0)
+                    t2 = t2-invTransactionMaster.getDiscountAmount();
+
+                    printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                            .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpacePrinter(COMPANY_ITEM_GROSS_AMOUNT.length(), String.valueOf(t2).length()) +t2)
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                            .setNewLinesAfter(2)
+                            .build());
+
 
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())

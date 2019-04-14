@@ -263,9 +263,12 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() > 1) {
+            /*    if(s.length() == 1 && s.equals("-"))
+                {return;}
+                else if*/
+            if(s.length() > 0)
                  calculateTotal();
-                }
+
 
             }
         });
@@ -310,7 +313,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                             alert11.show();
                         }
                         float card = total - cash;
-                        mCard.setText(String.valueOf(card));
+                        String str_card = String.format("%.2f", card);
+                        mCard.setText(str_card);
                     }
                 }
 
@@ -426,7 +430,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     @Override
     public void onResume() {
         super.onResume();
-        calculateTotal();
+        //calculateTotal();
     }
 
     public void setOnItemChangedListener(ClickListeners.OnItemChangedListener onItemChangedListener) {
@@ -524,6 +528,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         float cash = Float.parseFloat((getString(mCash).isEmpty() ? "0" : getString(mCash)));
         float card = Float.parseFloat((getString(mCard).isEmpty() ? "0" : getString(mCard)));
         String ptype = (mSpinner.getSelectedItem().toString());
+
+        if(itemDiscount > 0)
+            itemAmount = itemAmount - itemDiscount;
         String invoiceDate = Constants.getCurrentDate();
         transactionMaster.setDiscountAmount(itemDiscount);
         transactionMaster.setInvoiceDate(invoiceDate);
@@ -539,7 +546,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         transactionMaster.setType(ptype);
 //        LiveData<Integer> t.ransactionMasterLiveData = mDatabase.mTransactionMasterDao().findTransMasterOfMaxId();
 
-        LiveData<List<TransactionMaster>> transactionMasterLiveData = mDatabase.mTransactionMasterDao().getAllItems();
+       /* LiveData<List<TransactionMaster>> transactionMasterLiveData = mDatabase.mTransactionMasterDao().getAllItems();
         transactionMasterLiveData.observe(this, transactionMasters  -> {
             if (transactionMasters == null ) {
                 transactionMasterMaxId = 0;
@@ -549,9 +556,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
           //  invTransactionMaster = transactionMaster;
 
-        });
+        });*/
         new Thread(() -> {
-
+            transactionMasterMaxId = mDatabase.mTransactionMasterDao().getCount();
         //  int transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
           transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
           // newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ") + " "+transactionMasterMaxId;
@@ -594,7 +601,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                             .setText("Customer Copy")
                             .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
-                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_LARGE())
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());
                 }
@@ -1596,6 +1603,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
     private void insertTransactionMaster(boolean b, Items item, Integer finalTransactionMasterMaxId) {
         if (b) {
+
             Transaction transaction = new Transaction();
             transaction.setTransMasterId(finalTransactionMasterMaxId);
             transaction.setVat(item.getVat());
@@ -1671,30 +1679,42 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         return qty;
     }
     float calculateTotal() {
+
         String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
         float total = 0;
         float vat = 0;
+        float itemVat = 5;
         for (Items items : mItemsList) {
+            itemVat = items.getVat();
             total = total + items.getTotalItemPrice();
             vat = vat + calculateVat(items.getVat(), items.getPrice(), items.getQty());
         }
+
         textTotal.setText("Gross Amount : "+String.valueOf(Constants.round(total,2)));
-        String disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
+        String disString ="";
+        if(getString(mFooterDiscount).equalsIgnoreCase("-"))
+            disString = "-1";
+        else
+        disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
         float discount = 0;float discountVat = 0;
+
       /*  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
             total = total + vat;*/
         if (!mIsPercentage) {
             discount = Float.parseFloat(disString);
             total = total - discount;
+
         } else {
             discount = Float.parseFloat(disString);
             discount = (total * discount) / 100;
             total = total - discount;
+
         }
         if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive))){
             if(discount > 0) {
-                discountVat = total * vat / 100;
+                discountVat = total * itemVat / 100;
                 total = total + discountVat;
+                vat = discountVat;
             } else
                 total = total + vat;
         }
