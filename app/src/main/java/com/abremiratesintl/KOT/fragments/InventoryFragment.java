@@ -72,6 +72,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
+import static com.abremiratesintl.KOT.utils.Constants.INVENTORY_VAT;
+import static com.abremiratesintl.KOT.utils.Constants.VAT_EXCLUSIVE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -156,6 +159,7 @@ private boolean isCashier = false;
         ((MainActivity) getActivity()).changeTitle("Inventory");
         editDate.setText(Constants.getCurrentDate());
         str_vat = getActivity().getResources().getString(R.string.vat_exclusive);
+
 
         editInvoice.setEnabled(false);
         getSupplierList();
@@ -660,6 +664,7 @@ private boolean isCashier = false;
 
     @OnClick(R.id.addNewItemProceed)
     public void onClickedProceed(View view) {
+        mPrefUtils.putStringPreference(DEAFULT_PREFS,INVENTORY_VAT,str_vat);
         totalItemCount = Integer.valueOf(getString(itemCount));
         totalItemPrice = Float.valueOf(getString(totalAmount));
         cartItem.setCartItems(mCartItems);

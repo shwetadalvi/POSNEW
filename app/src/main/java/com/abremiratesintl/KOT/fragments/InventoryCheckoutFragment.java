@@ -113,7 +113,7 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
     @BindView(R.id.footer_vat)
     TextView mFooterVat;
     @BindView(R.id.discount_footer)
-    TextView mFooterDiscount;
+    EditText mFooterDiscount;
     @BindView(R.id.checkBoxPercentage)
     CheckBox mCheckBoxPercentage;
     @BindView(R.id.spinner1)
@@ -200,7 +200,7 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
         mCart = args.getInventoryCart();
         mItemsList = mCart.getCartItems();
         getArguments().remove("cart");
-        mFooterDiscount.addTextChangedListener(this);
+      //  mFooterDiscount.addTextChangedListener(this);
 
         setUpRecyclerView();
         calculateTotal();
@@ -209,6 +209,29 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
             @Override
             public void onClick(View v) {
                 insertTransactions(mItemsList);
+            }
+        });
+
+        mFooterDiscount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            /*    if(s.length() == 1 && s.equals("-"))
+                {return;}
+                else if*/
+                if (s.length() > 0)
+                    calculateTotal();
+
+
             }
         });
         return view;
@@ -293,7 +316,7 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
     @Override
     public void onResume() {
         super.onResume();
-        calculateTotal();
+      //  calculateTotal();
     }
 
     public void setOnItemChangedListener(ClickListeners.OnItemChangedListener onItemChangedListener) {
@@ -851,36 +874,66 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
         }
     }
 
+
     float calculateTotal() {
+
+        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.INVENTORY_VAT, getActivity().getResources().getString(R.string.vat_exclusive));
         float total = 0;
         float vat = 0;
+        float itemVat = 5;
         for (Items items : mItemsList) {
+            itemVat = items.getVat();
             total = total + items.getTotalItemPrice();
             vat = vat + calculateVat(items.getVat(), items.getPrice(), items.getQty());
         }
-        String disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
+
+
+        String disString = "";
+        if (getString(mFooterDiscount).equalsIgnoreCase("-"))
+            disString = "-1";
+        else
+            disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
         float discount = 0;
+        float discountVat = 0;
+
+      /*  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+            total = total + vat;*/
         if (!mIsPercentage) {
             discount = Float.parseFloat(disString);
             total = total - discount;
+
         } else {
             discount = Float.parseFloat(disString);
-            discount = total * (discount / 100);
+            discount = (total * discount) / 100;
             total = total - discount;
+
         }
+        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive))) {
+            if (discount > 0) {
+                discountVat = total * itemVat / 100;
+                total = total + discountVat;
+                vat = discountVat;
+            } else
+                total = total + vat;
+        }
+
+
         Constants.round(vat, 2);
         Constants.round(total, 2);
         Constants.round(discount, 2);
-        updateFooters(vat, discount, total + vat);
+
+        // updateFooters(vat, discount, total + vat);
+
+        updateFooters(vat, discount, total);
         return Constants.round(total, 2);
     }
 
     float calculateVat(float vat, float price, int qty) {
-        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
+        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.INVENTORY_VAT, getActivity().getResources().getString(R.string.vat_exclusive));
         if (qty == 0) {
             if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
                 price = price * vat / 100;
-            else  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+            else if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
                 price = price * vat / (100 + vat);
             else
                 price = 0;
@@ -888,13 +941,14 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
         } else {
             if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
                 price = (qty * price) * vat / 100;
-            else  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+            else if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
                 price = (qty * price) * vat / (100 + vat);
             else
                 price = 0;
             return Constants.round(price, 2);
         }
     }
+
 
     void updateFooters(float vat, float discount, float total) {
         String totalStirng = String.valueOf(Constants.round(total, 2));
@@ -903,7 +957,7 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
         if (vatString == null) vatString = String.valueOf(vat);
         mFooterTotal.setText(totalStirng);
         mFooterVat.setText(vatString);
-        mCash.setText(totalStirng);
+      //  mCash.setText(totalStirng);
 
 //        mFooterDiscount.setText(String.valueOf(discount));
     }

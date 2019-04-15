@@ -16,7 +16,8 @@
         android:icon="@mipmap/pos"
         android:roundIcon="@mipmap/pos"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        >
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
