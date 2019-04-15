@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-sdk tools:overrideLibrary="com.mazenrashed.printooth"/>
+    <uses-permission android:name = "android.permission.READ_PHONE_STATE" />
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
     <application
         android:name=".AppClass"

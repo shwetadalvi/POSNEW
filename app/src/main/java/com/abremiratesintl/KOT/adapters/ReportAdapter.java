@@ -57,7 +57,11 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
         }
 
         void bind(TransactionMaster transactionMaster) {
-            invoiceNo.setText(transactionMaster.getInvoiceNo());
+            if(transactionMaster.getName()==null)
+                invoiceNo.setText(transactionMaster.getInvoiceNo());
+            else
+                invoiceNo.setText(transactionMaster.getInvoiceNo()+" (Ref "+transactionMaster.getName()+")");
+
             invoiceDate.setText(transactionMaster.getInvoiceDate());
             invoiceVat.setText(String.valueOf(transactionMaster.getVatAmount()));
             total.setText(String.valueOf(transactionMaster.getGrandTotal()));

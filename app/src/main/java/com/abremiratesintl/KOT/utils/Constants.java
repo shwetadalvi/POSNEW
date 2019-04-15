@@ -45,6 +45,7 @@ public class Constants {
     public static final String PRINTER_TYPE = "Printer Type";
     public static final String FEASYCOM = "Feasycom";
     public static final String PRINTER = "Printer-3B26";
+    public static final String IS_VERIFIED = "IS_VERIFIED";
     public static boolean disableDelete = false ;
     public static final String COMPANY_INV_NO = "Inv No";
         public static final String COMPANY_SL_NO = "Sl No.";

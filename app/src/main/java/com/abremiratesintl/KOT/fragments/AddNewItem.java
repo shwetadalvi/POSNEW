@@ -16,6 +16,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -138,6 +140,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
     TransactionMaster invTransactionMaster=new TransactionMaster();
     List<Transaction> invTransactionList = new ArrayList<>();
     private String invNo ="";
+    private boolean isSaleReturned = false;
     public AddNewItem() {
         // Required empty public constructor
     }
@@ -176,21 +179,42 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
         }
         if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
             isCashier = true;
-     /*   LiveData<Cashier> cashierLiveData = mDatabase.mCashierDao().getCashier();
-        cashierLiveData.observe(this, cashier -> {
-            if (cashier != null ) {
+        editInvoiceNo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                fillFields(cashier);
             }
-        });*/
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            /*    if(s.length() == 1 && s.equals("-"))
+                {return;}
+                else if*/
+                if (s.length() > 0) {
+                    getTransactionByInvId(s.toString());
+                    getItemsbyInvId(s.toString());
+                }
+
+
+            }
+        });
         btnInvoicePrint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(getString(editInvoiceNo) != null){
                     invNo = getString(editInvoiceNo);
 
-                    getTransactionByInvId(getString(editInvoiceNo));
-                    getItemsbyInvId(getString(editInvoiceNo));
+                   if( invTransactionMaster.getName()== null)
+                     isSaleReturned = false;
+                   else
+                       isSaleReturned = true;
+//                    getTransactionByInvId(getString(editInvoiceNo));
+//                    getItemsbyInvId(getString(editInvoiceNo));
 
                     String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "0");
                     switch (printerCategory) {
@@ -360,13 +384,24 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-                printables.add(new Printable.PrintableBuilder()
-                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
-                        .setText(COMPANY_ORDER_NO + invNo)
-                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
-                        .build());
+                if(isSaleReturned) {
+                    printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                            .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                            .setText(COMPANY_ORDER_NO + invNo+"  (Ref "+invTransactionMaster.getName()+")")
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                            .setNewLinesAfter(2)
+                            .build());
+                }else{
+                    printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                            .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                            .setText(COMPANY_ORDER_NO + invNo)
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                            .setNewLinesAfter(2)
+                            .build());
+                }
+
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText(COMPANY_DATE + invTransactionMaster.getInvoiceDate())

@@ -223,6 +223,15 @@
         android:name="com.abremiratesintl.KOT.fragments.super_user.UserSettingsFragment"
         android:label="fragment_user_settings"
         tools:layout="@layout/fragment_user_settings" />
+    <fragment
+        android:id="@+id/POSKeyFragment"
+        android:name="com.abremiratesintl.KOT.fragments.POSKeyFragment"
+        android:label="fragment_pos_key"
+        tools:layout="@layout/fragment_pos_key" >
+        <action
+            android:id="@+id/action_POSKeyFragment_to_homeFragment22"
+            app:destination="@id/homeFragment2" />
+    </fragment>
 
 
 </navigation>

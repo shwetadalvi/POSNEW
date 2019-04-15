@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -100,6 +102,10 @@ import static com.abremiratesintl.KOT.utils.Constants.Sl_NO;
 public class CheckoutFragment extends BaseFragment implements ClickListeners.CheckoutCountClickListeners, TextWatcher, ClickListeners.BtResponseListener, AdapterView.OnItemSelectedListener, CustomSpinner.OnSpinnerEventsListener {
 
     private static MarkItemListener mMarkItemListener;
+    @BindView(R.id.editRefInvoice)
+    EditText editRefInvoice;
+    @BindView(R.id.textRefInvoice)
+    TextView textRefInvoice;
     @BindView(R.id.checkout_recycler)
     RecyclerView mCheckoutRecyclerView;
     @BindView(R.id.spinner_arrow)
@@ -143,7 +149,9 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     private String selectedItem = "CASH";
     private int btnCounter = 0;
     private boolean isForCustomer = false;
+    private boolean isSaleReturned = false;
     int transactionMasterMaxId;
+    private String strRefInv = "";
     //private boolean disableDelete = false;
     /*
    * private String decimalAdjust(float value) {
@@ -193,18 +201,32 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         // mSpinner.setSelection(1);
 
         btnCounter = 0;
-      //  disableDelete = false;
+        //  disableDelete = false;
         mSpinner.setOnItemSelectedListener(this);
         setHasOptionsMenu(true);
         CheckoutFragmentArgs args = CheckoutFragmentArgs.fromBundle(getArguments());
         mCart = args.getCart();
         mItemsList = mCart.getCartItems();
         getArguments().remove("cart");
-       // mFooterDiscount.addTextChangedListener(this);
+        // mFooterDiscount.addTextChangedListener(this);
 
         setUpRecyclerView();
         calculateTotal();
 
+        for (Items item : mItemsList) {
+            if (item.isSaleReturned()) {
+                isSaleReturned = true;
+                Log.d("Inside", "Inside sale :" + isSaleReturned);
+                break;
+            }
+        }
+        if (isSaleReturned) {
+            editRefInvoice.setVisibility(View.VISIBLE);
+            textRefInvoice.setVisibility(View.VISIBLE);
+        } else {
+            editRefInvoice.setVisibility(View.GONE);
+            textRefInvoice.setVisibility(View.GONE);
+        }
         /*mCard.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -266,8 +288,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             /*    if(s.length() == 1 && s.equals("-"))
                 {return;}
                 else if*/
-            if(s.length() > 0)
-                 calculateTotal();
+                if (s.length() > 0)
+                    calculateTotal();
 
 
             }
@@ -393,13 +415,31 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         return true;*/
         switch (item.getItemId()) {
             case R.id.menu_print:
+                if (editRefInvoice.getVisibility() == View.VISIBLE && getString(editRefInvoice).isEmpty()) {
+                    //Snackbar.make(getView(),"Enter Refference Inv No.",1500);
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
+                    builder1.setMessage("Enter Refference Inv No.");
+                    builder1.setCancelable(true);
 
-                saveCart();
+                    builder1.setPositiveButton(
+                            "Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+
+                                }
+                            });
+
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+                } else
+                    saveCart();
                 break;
             case R.id.delete:
                 //   if (btnCounter == 1)
-                if(!Constants.disableDelete)
-                mCheckoutAdapter.deleteCheck();
+                if (!Constants.disableDelete)
+                    mCheckoutAdapter.deleteCheck();
              /*   else{
                     item.setEnabled(false);
                     item.getIcon().setAlpha(130);
@@ -473,8 +513,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                     showRecipt(newInvoiceNo);
                     break;
             }
-        }
-        else {
+        } else {
             isForCustomer = true;
             String printerCategory = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.PRINTER_PREF_KEY, "0");
             switch (printerCategory) {
@@ -529,7 +568,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         float card = Float.parseFloat((getString(mCard).isEmpty() ? "0" : getString(mCard)));
         String ptype = (mSpinner.getSelectedItem().toString());
 
-        if(itemDiscount > 0)
+        if (itemDiscount > 0)
             itemAmount = itemAmount - itemDiscount;
         String invoiceDate = Constants.getCurrentDate();
         transactionMaster.setDiscountAmount(itemDiscount);
@@ -544,6 +583,10 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         transactionMaster.setCash(cash);
         transactionMaster.setCard(card);
         transactionMaster.setType(ptype);
+        if(isSaleReturned) {
+            strRefInv = editRefInvoice.getText().toString();
+            transactionMaster.setName(editRefInvoice.getText().toString());
+        }
 //        LiveData<Integer> t.ransactionMasterLiveData = mDatabase.mTransactionMasterDao().findTransMasterOfMaxId();
 
        /* LiveData<List<TransactionMaster>> transactionMasterLiveData = mDatabase.mTransactionMasterDao().getAllItems();
@@ -559,13 +602,14 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         });*/
         new Thread(() -> {
             transactionMasterMaxId = mDatabase.mTransactionMasterDao().getCount();
-        //  int transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
-          transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
-          // newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ") + " "+transactionMasterMaxId;
+            //  int transactionMasterMaxId = (mDatabase.mTransactionMasterDao().findTransMasterOfMaxId());
+            transactionMasterMaxId = transactionMasterMaxId == 0 ? 1 : transactionMasterMaxId + 1;
+            // newInvoiceNo = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ") + " "+transactionMasterMaxId;
             newInvoiceNo = String.valueOf(transactionMasterMaxId);
             transactionMaster.setInvoiceNo(newInvoiceNo);
             mDatabase.mTransactionMasterDao().insertNewItems(transactionMaster);
-            for (Items item : mItemsList) {item.getItemName();
+            for (Items item : mItemsList) {
+                item.getItemName();
 
                 insertTransactionMaster(true, item, transactionMasterMaxId);
 
@@ -588,7 +632,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
            /* if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
                 printViaBluetoothPrinter();
             else*/
-                printViaBluetoothPrinter1(isForCustomer);
+            printViaBluetoothPrinter1(isForCustomer);
         }
     }
 
@@ -596,15 +640,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         if (Printooth.INSTANCE.hasPairedPrinter()) {
             new Thread(() -> {
                 ArrayList<Printable> printables = new ArrayList<>();
-                if(isForCustomer) {
-                    printables.add(new Printable.PrintableBuilder()
-                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                            .setText("Customer Copy")
-                            .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
-                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                            .setNewLinesAfter(2)
-                            .build());
-                }
+
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText(COMPANY_NAME)
@@ -620,13 +656,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText("Email : "+COMPANY_Email)
+                        .setText("Email : " + COMPANY_Email)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText("Tel No : "+COMPANY_TELE)
+                        .setText("Tel No : " + COMPANY_TELE)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -639,7 +675,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText("TRN : "+COMPANY_TRN)
+                        .setText("TRN : " + COMPANY_TRN)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(3)
                         .build());
@@ -650,26 +686,46 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(1)
                         .build());
+                if (isForCustomer) {
+                    printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
+                            .setText("Customer Copy")
+                            .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                            .setNewLinesAfter(2)
+                            .build());
+                }
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText("................................................")
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-                printables.add(new Printable.PrintableBuilder()
-                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
-                        .setText(COMPANY_ORDER_NO + newInvoiceNo)
-                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
-                        .build());
+
+
+                if(isSaleReturned) {
+                    printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                            .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                            .setText(COMPANY_ORDER_NO + newInvoiceNo+"  (Ref "+strRefInv+")")
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                            .setNewLinesAfter(2)
+                            .build());
+                }else{
+                    printables.add(new Printable.PrintableBuilder()
+                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                            .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
+                            .setText(COMPANY_ORDER_NO + newInvoiceNo)
+                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                            .setNewLinesAfter(2)
+                            .build());
+                }
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText(COMPANY_DATE + Constants.getCurrentDateTime())
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText("................................................")
@@ -688,7 +744,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
-                        .setText(Sl_NO  + createSpace3(Sl_NO, Sl_NO.length(), false) +COMPANY_ITEM_DESCRIPTION+ createSpace3(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
+                        .setText(Sl_NO + createSpace3(Sl_NO, Sl_NO.length(), false) + COMPANY_ITEM_DESCRIPTION + createSpace3(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
                                 COMPANY_ITEM_QUANTITY + createSpace3(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
                                 COMPANY_ITEM_PRICE + createSpace3(COMPANY_ITEM_PRICE, COMPANY_ITEM_PRICE.length(), false) +
                                 COMPANY_ITEM_AMOUNT + createSpace3(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
@@ -702,41 +758,41 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setNewLinesAfter(2)
                         .build());
                 int i = 0;
-                String[] items ={};
+                String[] items = {};
                 for (Items order : mItemsList) {
 
                     String item_name = order.getItemName();
 
-                    if(item_name.length() > 19)
+                    if (item_name.length() > 19)
                         items = item_name.split(" ");
-                    Log.e("Print :","Item length :"+items.length);
+                    Log.e("Print :", "Item length :" + items.length);
                    /* for(int j = 0 ;j<= items.length;j++){
 
                     }*/
-                    i+= 1;
+                    i += 1;
                     String price = decimalAdjust(order.getPrice());
                     String totalprice = decimalAdjust(order.getTotalItemPrice());
                     if (price == null) price = String.valueOf(order.getPrice());
                     if (totalprice == null) totalprice = String.valueOf(order.getTotalItemPrice());
 
-                    if(item_name.length() <= 19 && items.length == 0){
+                    if (item_name.length() <= 19 && items.length == 0) {
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + item_name + createSpace11(COMPANY_ITEM_DESCRIPTION, item_name.length(), false) +
                                         order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                        price+ createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getTotalItemPrice()).length())
-                                        +totalprice )
+                                        price + createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getTotalItemPrice()).length())
+                                        + totalprice)
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(2)
                                 .build());
-                    }else if(item_name.length() > 19 && items.length == 1) {
-                        String str_first = item_name.substring(0,19);
-                        String str_next = item_name.substring(19,item_name.length());
+                    } else if (item_name.length() > 19 && items.length == 1) {
+                        String str_first = item_name.substring(0, 19);
+                        String str_next = item_name.substring(19, item_name.length());
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace11(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
                                         order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                        price+ createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getTotalItemPrice()).length())+
+                                        price + createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getTotalItemPrice()).length()) +
                                         totalprice)
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
 
@@ -747,11 +803,11 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(2)
                                 .build());
-                    }else{
+                    } else {
                         String parts[] = item_name.split(" ", 2);
-                        if(parts[0].length() > 19 ) {
-                            String str_first = parts[0].substring(0,19);
-                            String str_next = parts[0].substring(19,parts[0].length());
+                        if (parts[0].length() > 19) {
+                            String str_first = parts[0].substring(0, 19);
+                            String str_next = parts[0].substring(19, parts[0].length());
                             printables.add(new Printable.PrintableBuilder()
                                     .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                     .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace11(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
@@ -767,12 +823,12 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                                     .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                     .setNewLinesAfter(2)
                                     .build());
-                        }else {
+                        } else {
                             printables.add(new Printable.PrintableBuilder()
                                     .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                     .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + parts[0] + createSpace11(COMPANY_ITEM_DESCRIPTION, parts[0].length(), false) +
                                             order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                            price+ createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getTotalItemPrice()).length())+
+                                            price + createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getTotalItemPrice()).length()) +
                                             totalprice)
                                     .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
 
@@ -797,7 +853,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 String str_total_amount = decimalAdjust(t1);
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_TOTAL + createSpaceQty() +getTotalItemQty()+createSpaceQtyPrinter(String.valueOf(qty).length(), str_total_amount.length()) + str_total_amount)
+                        .setText(COMPANY_ITEM_TOTAL + createSpaceQty() + getTotalItemQty() + createSpaceQtyPrinter(String.valueOf(qty).length(), str_total_amount.length()) + str_total_amount)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -838,8 +894,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setNewLinesAfter(2)
                         .build());
 
-                if (selectedItem == "CASH"){
-                    if(!getString(edtChange).isEmpty()) {
+                if (selectedItem == "CASH") {
+                    if (!getString(edtChange).isEmpty()) {
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(PAID_AMOUNT + createSpacePrinter(PAID_AMOUNT.length(), String.valueOf(getString(edtChange)).length()) + getString(edtChange))
@@ -899,6 +955,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             }).start();
         }
     }
+
     private void printViaBluetoothPrinter() {
         if (Printooth.INSTANCE.hasPairedPrinter()) {
             new Thread(() -> {
@@ -937,11 +994,11 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText("TRN   : "+COMPANY_TRN)
+                        .setText("TRN   : " + COMPANY_TRN)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(1)
                         .build());
-               String prefix = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ");
+                String prefix = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, COMPANY_PREFIX, "SJ");
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
                         .setText(prefix)
@@ -987,7 +1044,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
-                        .setText(Sl_NO  + createSpace33(Sl_NO, Sl_NO.length(), false) +COMPANY_ITEM_DESCRIPTION+ createSpace33(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
+                        .setText(Sl_NO + createSpace33(Sl_NO, Sl_NO.length(), false) + COMPANY_ITEM_DESCRIPTION + createSpace33(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
                                 COMPANY_ITEM_QUANTITY + createSpace33(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
                                 COMPANY_ITEM_PRICE + createSpace33(COMPANY_ITEM_PRICE, COMPANY_ITEM_PRICE.length(), false) +
                                 COMPANY_ITEM_AMOUNT + createSpace33(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
@@ -1001,18 +1058,18 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .build());
 
                 int i = 0;
-                String[] items ={};
+                String[] items = {};
                 for (Items order : mItemsList) {
 
                     String item_name = order.getItemName();
 
-                    if(item_name.length() > 9)
+                    if (item_name.length() > 9)
                         items = item_name.split(" ");
-                    Log.e("Print :","Item length :"+items.length);
+                    Log.e("Print :", "Item length :" + items.length);
                    /* for(int j = 0 ;j<= items.length;j++){
 
                     }*/
-                    i+= 1;
+                    i += 1;
                     String price = decimalAdjust(order.getPrice());
                     String totalprice = decimalAdjust(order.getTotalItemPrice());
                     if (price == null) price = String.valueOf(order.getPrice());
@@ -1026,7 +1083,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                             .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());*/
-                    if(item_name.length() <= 9 && items.length == 0){
+                    if (item_name.length() <= 9 && items.length == 0) {
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + item_name + createSpace(COMPANY_ITEM_DESCRIPTION, item_name.length(), false) +
@@ -1036,10 +1093,10 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(1)
                                 .build());
-                    }else if(item_name.length() > 9 && items.length == 1) {
-                        String str_first = item_name.substring(0,9);
-                        String str_next = item_name.substring(9,item_name.length());
-                                printables.add(new Printable.PrintableBuilder()
+                    } else if (item_name.length() > 9 && items.length == 1) {
+                        String str_first = item_name.substring(0, 9);
+                        String str_next = item_name.substring(9, item_name.length());
+                        printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
                                         order.getQty() + createSpace(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
@@ -1054,11 +1111,11 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(1)
                                 .build());
-                    }else{
+                    } else {
                         String parts[] = item_name.split(" ", 2);
-                        if(parts[0].length() > 9 ) {
-                            String str_first = parts[0].substring(0,9);
-                            String str_next = parts[0].substring(9,parts[0].length());
+                        if (parts[0].length() > 9) {
+                            String str_first = parts[0].substring(0, 9);
+                            String str_next = parts[0].substring(9, parts[0].length());
                             printables.add(new Printable.PrintableBuilder()
                                     .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                     .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
@@ -1074,7 +1131,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                                     .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                     .setNewLinesAfter(1)
                                     .build());
-                        }else {
+                        } else {
                             printables.add(new Printable.PrintableBuilder()
                                     .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                     .setText(i + createSpace(Sl_NO, String.valueOf(i).length(), false) + parts[0] + createSpace(COMPANY_ITEM_DESCRIPTION, parts[0].length(), false) +
@@ -1104,7 +1161,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 String str_total_amount = decimalAdjust(t1);
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_TOTAL + createSpaceQty1() +getTotalItemQty()+createSpaceQty(String.valueOf(qty).length(), str_total_amount.length()) + str_total_amount)
+                        .setText(COMPANY_ITEM_TOTAL + createSpaceQty1() + getTotalItemQty() + createSpaceQty(String.valueOf(qty).length(), str_total_amount.length()) + str_total_amount)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(1)
                         .build());
@@ -1144,8 +1201,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                         .setNewLinesAfter(1)
                         .build());
 
-                if (selectedItem == "CASH"){
-                    if(!getString(edtChange).isEmpty()) {
+                if (selectedItem == "CASH") {
+                    if (!getString(edtChange).isEmpty()) {
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(PAID_AMOUNT + createSpace(PAID_AMOUNT.length(), String.valueOf(getString(edtChange)).length()) + getString(edtChange))
@@ -1205,6 +1262,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             }).start();
         }
     }
+
     private boolean bluetoothChecking() {
         if (!bluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -1340,49 +1398,56 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         float total = Float.parseFloat(getString(mFooterTotal));
         return Constants.round(total - vat, 2);
     }
+
     private String createSpaceQty1() {
 
-        int num =8 ;
+        int num = 8;
 
         return new String(new char[num]).replace('\0', ' ');
     }
+
     private String createSpaceQty() {
 
-        int num =18 ;
+        int num = 18;
 
         return new String(new char[num]).replace('\0', ' ');
     }
 
     private String createSpaceQtyPrinter(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 25 - firstLength ;
+        int num = 25 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
+
     private String createSpaceAmtPrinter(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 20 - firstLength ;
+        int num = 20 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
+
     private String createSpaceQty(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 19 - firstLength ;
+        int num = 19 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
+
     private String createSpace(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 32 - firstLength ;
+        int num = 32 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
+
     private String createSpacePrinter(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 48 - firstLength ;
+        int num = 48 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
+
     private String createSpace11(String item, int length, boolean isBluetooth) {
         int total;
         int num;
@@ -1395,19 +1460,19 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
 
-                num = 20-length;
+                num = 20 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_QUANTITY:
 
-                num = 5-length;
+                num = 5 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_PRICE:
 
-                num = 10-length;
+                num = 10 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
@@ -1420,31 +1485,32 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         return null;
     }
+
     private String createSpace(String item, int length, boolean isBluetooth) {
         int total;
         int num;
         switch (item) {
             case Sl_NO:
-                total=!isBluetooth ? 5: 5;
+                total = !isBluetooth ? 5 : 5;
                 num = 3 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
                 total = !isBluetooth ? 19 : 48;
-                num = 10-length;
+                num = 10 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_QUANTITY:
                 total = !isBluetooth ? 5 : 7;
-                num = 4-length;
+                num = 4 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_PRICE:
                 total = !isBluetooth ? 10 : 15;
-                num = 8-length;
+                num = 8 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
@@ -1457,12 +1523,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         return null;
     }
+
     private String createSpace3(String item, int length, boolean isBluetooth) {
         int total;
         int num;
         switch (item) {
             case Sl_NO:
-                total=!isBluetooth ? 3: 5;
+                total = !isBluetooth ? 3 : 5;
                 num = 1;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
@@ -1484,12 +1551,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         return null;
     }
+
     private String createSpace33(String item, int length, boolean isBluetooth) {
         int total;
         int num;
         switch (item) {
             case Sl_NO:
-                total=!isBluetooth ? 5: 5;
+                total = !isBluetooth ? 5 : 5;
                 num = 1;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
@@ -1511,12 +1579,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         return null;
     }
+
     private String createSpace2(String item, int length, boolean isBluetooth) {
         int total;
         int num;
         switch (item) {
             case Sl_NO:
-                total=!isBluetooth ? 5: 5;
+                total = !isBluetooth ? 5 : 5;
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
@@ -1538,12 +1607,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         return null;
     }
+
     private String createSpace12(String item, int length, boolean isBluetooth) {
         int total;
         int num;
         switch (item) {
             case Sl_NO:
-                total=!isBluetooth ? 5: 4;
+                total = !isBluetooth ? 5 : 4;
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
@@ -1565,12 +1635,13 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         return null;
     }
+
     private String createSpace1(String item, int length, boolean isBluetooth) {
         int total;
         int num;
         switch (item) {
             case Sl_NO:
-                total=!isBluetooth ? 4: 4;
+                total = !isBluetooth ? 4 : 4;
                 num = total - length;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
@@ -1613,7 +1684,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             transaction.setItemName(item.getItemName());
             transaction.setInvoiceDate(Constants.getCurrentDate());
             transaction.setGrandTotal(item.getQty() * item.getPrice());
-
+            if(isSaleReturned)
+                transaction.setName(strRefInv);
 
 
             String category = mDatabase.mCategoryDao().getCategoryById(item.getCategoryId());
@@ -1635,24 +1707,25 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
 
     @Override
     public void onClickedPlus(Items item) {
-       if(!Constants.disableDelete){
-        int qty = item.getQty();
-        qty += 1;
-        float price = item.getPrice() * qty;
-        for (int i = 0; i < mCart.getCartItems().size(); i++) {
-            if (item.getItemId() == mCart.getCartItems().get(i).getItemId()) {
-                mCart.getCartItems().get(i).setTotalItemPrice(price);
-                mCart.getCartItems().get(i).setQty(qty);
-                mCheckoutAdapter.notifyDataSetChanged();
-                calculateTotal();
-                return;
+        if (!Constants.disableDelete) {
+            int qty = item.getQty();
+            qty += 1;
+            float price = item.getPrice() * qty;
+            for (int i = 0; i < mCart.getCartItems().size(); i++) {
+                if (item.getItemId() == mCart.getCartItems().get(i).getItemId()) {
+                    mCart.getCartItems().get(i).setTotalItemPrice(price);
+                    mCart.getCartItems().get(i).setQty(qty);
+                    mCheckoutAdapter.notifyDataSetChanged();
+                    calculateTotal();
+                    return;
+                }
             }
-        }}
+        }
     }
 
     @Override
     public void onClickedMinus(Items item) {
-        if(!Constants.disableDelete) {
+        if (!Constants.disableDelete) {
             if (item.getQty() > 1) {
                 int qty = item.getQty();
                 qty -= 1;
@@ -1671,6 +1744,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             }
         }
     }
+
     int getTotalItemQty() {
         int qty = 0;
         for (Items item : mItemsList) {
@@ -1678,6 +1752,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         }
         return qty;
     }
+
     float calculateTotal() {
 
         String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
@@ -1690,13 +1765,14 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             vat = vat + calculateVat(items.getVat(), items.getPrice(), items.getQty());
         }
 
-        textTotal.setText("Gross Amount : "+String.valueOf(Constants.round(total,2)));
-        String disString ="";
-        if(getString(mFooterDiscount).equalsIgnoreCase("-"))
+        textTotal.setText("Gross Amount : " + String.valueOf(Constants.round(total, 2)));
+        String disString = "";
+        if (getString(mFooterDiscount).equalsIgnoreCase("-"))
             disString = "-1";
         else
-        disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
-        float discount = 0;float discountVat = 0;
+            disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
+        float discount = 0;
+        float discountVat = 0;
 
       /*  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
             total = total + vat;*/
@@ -1710,15 +1786,14 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             total = total - discount;
 
         }
-        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive))){
-            if(discount > 0) {
+        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive))) {
+            if (discount > 0) {
                 discountVat = total * itemVat / 100;
                 total = total + discountVat;
                 vat = discountVat;
             } else
                 total = total + vat;
         }
-
 
 
         Constants.round(vat, 2);
@@ -1736,7 +1811,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         if (qty == 0) {
             if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
                 price = price * vat / 100;
-            else  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+            else if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
                 price = price * vat / (100 + vat);
             else
                 price = 0;
@@ -1744,7 +1819,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         } else {
             if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
                 price = (qty * price) * vat / 100;
-            else  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+            else if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
                 price = (qty * price) * vat / (100 + vat);
             else
                 price = 0;
@@ -1753,14 +1828,16 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     }
 
     void updateFooters(float vat, float discount, float total) {
-        String totalStirng = String.valueOf(Constants.round(total,2));
-        String vatString = String.valueOf(Constants.round(vat,2));
+        String totalStirng = String.valueOf(Constants.round(total, 2));
+        String vatString = String.valueOf(Constants.round(vat, 2));
         if (totalStirng == null) totalStirng = String.valueOf(total);
         if (vatString == null) vatString = String.valueOf(vat);
         mFooterTotal.setText(totalStirng);
         mFooterVat.setText(vatString);
+        if (selectedItem == "CASH")
         mCash.setText(totalStirng);
-
+        if (selectedItem == "CARD")
+            mCard.setText(totalStirng);
 //        mFooterDiscount.setText(String.valueOf(discount));
     }
 
@@ -1793,7 +1870,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
        /* if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.PRINTER_TYPE,Constants.FEASYCOM).equals(Constants.FEASYCOM))
             printViaBluetoothPrinter();
         else*/
-            printViaBluetoothPrinter1(isForCustomer);
+        printViaBluetoothPrinter1(isForCustomer);
 
     }
 
