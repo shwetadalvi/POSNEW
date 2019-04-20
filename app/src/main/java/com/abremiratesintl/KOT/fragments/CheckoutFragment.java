@@ -152,6 +152,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     private boolean isSaleReturned = false;
     int transactionMasterMaxId;
     private String strRefInv = "";
+    float discount = 0;
     //private boolean disableDelete = false;
     /*
    * private String decimalAdjust(float value) {
@@ -749,7 +750,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                                 COMPANY_ITEM_PRICE + createSpace3(COMPANY_ITEM_PRICE, COMPANY_ITEM_PRICE.length(), false) +
                                 COMPANY_ITEM_AMOUNT + createSpace3(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
+                        .setNewLinesAfter(1)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
@@ -861,7 +862,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 if (!getString(mFooterDiscount).isEmpty()) {
                     printables.add(new Printable.PrintableBuilder()
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(COMPANY_ITEM_DISCOUNT + createSpacePrinter(COMPANY_ITEM_DISCOUNT.length(), String.valueOf(getString(mFooterDiscount)).length()) + getString(mFooterDiscount))
+                            .setText(COMPANY_ITEM_DISCOUNT + createSpacePrinter(COMPANY_ITEM_DISCOUNT.length(), String.valueOf(discount).length()) + discount)
                             .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());
@@ -1771,7 +1772,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             disString = "-1";
         else
             disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
-        float discount = 0;
+
         float discountVat = 0;
 
       /*  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))

@@ -760,7 +760,7 @@ private List<TransactionMaster> mTransactionMasterList;
                                 COMPANY_ITEM_PAYMENT + createSpaceAmtPrinter(COMPANY_ITEM_PAYMENT.length(), COMPANY_ITEM_AMOUNT.length()) +
                                 COMPANY_ITEM_AMOUNT + createSpacePrinterHeading(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
+                        .setNewLinesAfter(1)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())

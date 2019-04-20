@@ -95,7 +95,7 @@ import static com.abremiratesintl.KOT.utils.Constants.Sl_NO;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelectedListener, ClickListeners.BtResponseListener,CustomSpinner.OnSpinnerEventsListener, ClickListeners.ItemClick<Items>, ClickListeners.OnItemChangedListener {
+public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelectedListener, ClickListeners.BtResponseListener, CustomSpinner.OnSpinnerEventsListener, ClickListeners.ItemClick<Items>, ClickListeners.OnItemChangedListener {
     private BluetoothAdapter bluetoothAdapter;
     @BindView(R.id.addNewItemspinnerCategory)
     CustomSpinner addNewItemSpinnerCategory;
@@ -127,20 +127,22 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
     private Category mSelectedCategory;
     private List<Items> mItemList;
     public List<Items> mCartItems = new ArrayList<>();
+    public List<Items> mCartItemsForSaleReturn = new ArrayList<>();
     private float currentVat = 0;
     private float currentTotal;
     int totalItemCount = 0, menuReturnClickCount = 0;
     float totalItemPrice = 0;
     CartItems cartItem = new CartItems();
     POSRecyclerAdapter mItemsAdapter;
-    private  AudioManager audioManager;
+    private AudioManager audioManager;
     private Cashier cashier = new Cashier();
     private PrefUtils mPrefUtils;
     private boolean isCashier = false;
-    TransactionMaster invTransactionMaster=new TransactionMaster();
+    TransactionMaster invTransactionMaster = new TransactionMaster();
     List<Transaction> invTransactionList = new ArrayList<>();
-    private String invNo ="";
+    private String invNo = "";
     private boolean isSaleReturned = false;
+
     public AddNewItem() {
         // Required empty public constructor
     }
@@ -164,6 +166,16 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
             int qty = 0;
             float price = 0;
             mCartItems = cartItem.getCartItems();
+          /*  mCartItemsForSaleReturn = new ArrayList<>();
+            for (Items item : mCartItems) {
+                if (item.isSaleReturned()) {
+                    mCartItemsForSaleReturn.add(item);
+                    mCartItems.remove(item);
+                }
+
+
+            }
+            mCartItemsForSaleReturn = cartItem.getCartItems();*/
             for (Items item : cartItem.getCartItems()) {
                 qty = qty + item.getQty();
                 price = price + item.getTotalItemPrice();
@@ -177,7 +189,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
             itemCount.setText(String.valueOf(totalItemCount));
             totalAmount.setText(String.valueOf(totalItemPrice));
         }
-        if(mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS,Constants.USER_TYPE,Constants.CASHIER).equals(Constants.CASHIER))
+        if (mPrefUtils.getStringPrefrence(Constants.DEAFULT_PREFS, Constants.USER_TYPE, Constants.CASHIER).equals(Constants.CASHIER))
             isCashier = true;
         editInvoiceNo.addTextChangedListener(new TextWatcher() {
             @Override
@@ -206,13 +218,13 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
         btnInvoicePrint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(getString(editInvoiceNo) != null){
+                if (getString(editInvoiceNo) != null) {
                     invNo = getString(editInvoiceNo);
 
-                   if( invTransactionMaster.getName()== null)
-                     isSaleReturned = false;
-                   else
-                       isSaleReturned = true;
+                    if (invTransactionMaster.getName() == null)
+                        isSaleReturned = false;
+                    else
+                        isSaleReturned = true;
 //                    getTransactionByInvId(getString(editInvoiceNo));
 //                    getItemsbyInvId(getString(editInvoiceNo));
 
@@ -247,7 +259,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                             break;
                     }
 
-            }
+                }
             }
         });
 
@@ -259,6 +271,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
         //   Log.e("cashier nmae :","cat :"+cashier.isCategoryView() +"name :"+cashier.getCashierName());
         return view;
     }
+
     private void printReciptBluetooth() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothChecking()) {
@@ -268,6 +281,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
             printInvoice();
         }
     }
+
     private boolean bluetoothChecking() {
         if (!bluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -287,6 +301,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
         }
         return false;
     }
+
     @Override
     public void interacterOne(BtDevice btDevice) {
         Printooth.INSTANCE.setPrinter(btDevice.getDeviceName(), btDevice.getDeviceMac());
@@ -296,6 +311,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
         printInvoice();
 
     }
+
     private List<BtDevice> getPairedDevices() {
 
         // Get a set of currently paired devices
@@ -315,11 +331,12 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
         }
         return devices;
     }
+
     private void getItemsbyInvId(String string) {
         int id = Integer.parseInt(string);
         LiveData<List<Transaction>> transactionLiveData = mDatabase.mTransactionDao().getItemsByItemInvId(id);
         transactionLiveData.observe(this, transaction -> {
-            if (transaction == null ) {
+            if (transaction == null) {
                 return;
             }
             invTransactionList = transaction;
@@ -348,13 +365,13 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText("Email : "+COMPANY_Email)
+                        .setText("Email : " + COMPANY_Email)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText("Tel No : "+COMPANY_TELE)
+                        .setText("Tel No : " + COMPANY_TELE)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -367,7 +384,7 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
-                        .setText("TRN : "+COMPANY_TRN)
+                        .setText("TRN : " + COMPANY_TRN)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(3)
                         .build());
@@ -384,15 +401,15 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-                if(isSaleReturned) {
+                if (isSaleReturned) {
                     printables.add(new Printable.PrintableBuilder()
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                             .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
-                            .setText(COMPANY_ORDER_NO + invNo+"  (Ref "+invTransactionMaster.getName()+")")
+                            .setText(COMPANY_ORDER_NO + invNo + "  (Ref " + invTransactionMaster.getName() + ")")
                             .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());
-                }else{
+                } else {
                     printables.add(new Printable.PrintableBuilder()
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                             .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
@@ -419,12 +436,12 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASISED_MODE_BOLD())
-                        .setText(Sl_NO  + createSpace3(Sl_NO, Sl_NO.length(), false) +COMPANY_ITEM_DESCRIPTION+ createSpace3(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
+                        .setText(Sl_NO + createSpace3(Sl_NO, Sl_NO.length(), false) + COMPANY_ITEM_DESCRIPTION + createSpace3(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
                                 COMPANY_ITEM_QUANTITY + createSpace3(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
                                 COMPANY_ITEM_PRICE + createSpace3(COMPANY_ITEM_PRICE, COMPANY_ITEM_PRICE.length(), false) +
                                 COMPANY_ITEM_AMOUNT + createSpace3(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
+                        .setNewLinesAfter(1)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
@@ -433,44 +450,44 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                         .setNewLinesAfter(2)
                         .build());
                 int i = 0;
-                String[] items ={};
+                String[] items = {};
 
                 for (Transaction order : invTransactionList) {
 
                     String item_name = order.getItemName();
 
-                    if(item_name.length() > 19)
+                    if (item_name.length() > 19)
                         items = item_name.split(" ");
-                    Log.e("Print :","Item length :"+items.length);
+                    Log.e("Print :", "Item length :" + items.length);
                    /* for(int j = 0 ;j<= items.length;j++){
 
                     }*/
-                    i+= 1;
+                    i += 1;
 
                     String price = decimalAdjust(order.getPrice());
                     String totalprice = decimalAdjust(order.getGrandTotal());
                     if (price == null) price = String.valueOf(order.getPrice());
                     if (totalprice == null) totalprice = String.valueOf(order.getGrandTotal());
-                    if(item_name.length() <= 19 && items.length == 0){
-                        Log.d("Inside :","Inside 1 :"+items.length);
+                    if (item_name.length() <= 19 && items.length == 0) {
+
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + item_name + createSpace11(COMPANY_ITEM_DESCRIPTION, item_name.length(), false) +
                                         order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                        price+ createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getGrandTotal()).length())
-                                        +totalprice )
+                                        price + createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getGrandTotal()).length())
+                                        + totalprice)
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(2)
                                 .build());
-                    }else if(item_name.length() > 19 && items.length == 1) {
+                    } else if (item_name.length() > 19 && items.length == 1) {
 
-                        String str_first = item_name.substring(0,19);
-                        String str_next = item_name.substring(19,item_name.length());
+                        String str_first = item_name.substring(0, 19);
+                        String str_next = item_name.substring(19, item_name.length());
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace11(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
                                         order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                        price+ createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getGrandTotal()).length())+
+                                        price + createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getGrandTotal()).length()) +
                                         totalprice)
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
 
@@ -481,12 +498,12 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(2)
                                 .build());
-                    }else{
-                        Log.d("Inside :","Inside 3 :"+items.length);
+                    } else {
+
                         String parts[] = item_name.split(" ", 2);
-                        if(parts[0].length() > 19 ) {
-                            String str_first = parts[0].substring(0,19);
-                            String str_next = parts[0].substring(19,parts[0].length());
+                        if (parts[0].length() > 19) {
+                            String str_first = parts[0].substring(0, 19);
+                            String str_next = parts[0].substring(19, parts[0].length());
                             printables.add(new Printable.PrintableBuilder()
                                     .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                     .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpace11(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
@@ -502,12 +519,12 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                                     .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                     .setNewLinesAfter(2)
                                     .build());
-                        }else {
+                        } else {
                             printables.add(new Printable.PrintableBuilder()
                                     .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                     .setText(i + createSpace11(Sl_NO, String.valueOf(i).length(), false) + parts[0] + createSpace11(COMPANY_ITEM_DESCRIPTION, parts[0].length(), false) +
                                             order.getQty() + createSpace11(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                            price+ createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getGrandTotal()).length())+
+                                            price + createSpaceAmtPrinter(String.format("%.2f", order.getPrice()).length(), String.format("%.2f", order.getGrandTotal()).length()) +
                                             totalprice)
                                     .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
 
@@ -527,17 +544,17 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-             float t1 = invTransactionMaster.getItemTotalAmount();
-            int qty = invTransactionMaster.getTotalQty();
+                float t1 = invTransactionMaster.getItemTotalAmount();
+                int qty = invTransactionMaster.getTotalQty();
 
-              String str_total_amount = decimalAdjust(t1);
+                String str_total_amount = decimalAdjust(t1);
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_TOTAL + createSpaceQty() +qty+createSpaceQtyPrinter(String.valueOf(qty).length(), str_total_amount.length()) + str_total_amount)
+                        .setText(COMPANY_ITEM_TOTAL + createSpaceQty() + qty + createSpaceQtyPrinter(String.valueOf(qty).length(), str_total_amount.length()) + str_total_amount)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAmount());
+                Log.d("Inside :", "Inside getDiscountAmount :" + invTransactionMaster.getDiscountAmount());
                 if (invTransactionMaster.getDiscountAmount() != 0) {
                     printables.add(new Printable.PrintableBuilder()
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
@@ -555,14 +572,14 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
 
                 float t2 = invTransactionMaster.getItemTotalAmount();
                 if (invTransactionMaster.getDiscountAmount() != 0)
-                    t2 = t2-invTransactionMaster.getDiscountAmount();
+                    t2 = t2 - invTransactionMaster.getDiscountAmount();
 
-                    printables.add(new Printable.PrintableBuilder()
-                            .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpacePrinter(COMPANY_ITEM_GROSS_AMOUNT.length(), String.valueOf(t2).length()) +t2)
-                            .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                            .setNewLinesAfter(2)
-                            .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(COMPANY_ITEM_GROSS_AMOUNT + createSpacePrinter(COMPANY_ITEM_GROSS_AMOUNT.length(), String.valueOf(t2).length()) + t2)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
 
 
                 printables.add(new Printable.PrintableBuilder()
@@ -624,6 +641,7 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
         }
 
     }
+
     private String decimalAdjust(float value) {
         String stringValue = String.valueOf(value);
         if (stringValue.substring(stringValue.length() - 1).equals("0")) {
@@ -635,7 +653,7 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
     private void getTransactionByInvId(String string) {
         LiveData<TransactionMaster> transactionMasterLiveData = mDatabase.mTransactionMasterDao().findByInvNo(getString(editInvoiceNo));
         transactionMasterLiveData.observe(this, transactionMaster -> {
-            if (transactionMaster == null ) {
+            if (transactionMaster == null) {
                 return;
             }
             invTransactionMaster = transactionMaster;
@@ -644,8 +662,7 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
     }
 
 
-
-    private void fillFields(Cashier cashier1){
+    private void fillFields(Cashier cashier1) {
         cashier = new Cashier();
         cashier.setCashierName(cashier1.getCashierName());
         cashier.setItemView(cashier1.isItemView());
@@ -679,8 +696,6 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
         cashier.setInventoryReportExport(cashier1.isInventoryReportExport());
 
 
-
-
     }
 
     private void getCategoryList() {
@@ -707,7 +722,7 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
     private void setUpRecyclerViews() {
         if (mItemList != null || mItemList.size() > 0) {
             int selectedCategoryId = mSelectedCategory.getCategoryId();
-             mItemsAdapter = new POSRecyclerAdapter(mItemList, this);
+            mItemsAdapter = new POSRecyclerAdapter(mItemList, this);
             addNewItemRecyclerView.setAdapter(mItemsAdapter);
         }
     }
@@ -749,8 +764,8 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
     @Override
     public void onClickedItem(Items item) {
 
-        if((isCashier &&  (cashier== null )) || (isCashier && cashier!= null && (!cashier.isPOSInsert())) )
-            showSnackBar(getView(),"Not Allowed!!",1000);
+        if ((isCashier && (cashier == null)) || (isCashier && cashier != null && (!cashier.isPOSInsert())))
+            showSnackBar(getView(), "Not Allowed!!", 1000);
         else {
             audioManager.playSoundEffect(SoundEffectConstants.CLICK);
             audioManager.playSoundEffect(SoundEffectConstants.CLICK, 0.5F);
@@ -760,17 +775,19 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
             float mTotalItemAmount = 0;
             if (menuReturnClickCount == 1) {
 
-
-                for (int i = 0; i < mCartItems.size(); i++) {
-                    mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
-                    mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;
+                if (mCartItems.size() != 0) {
+                    for (int i = 0; i < mCartItems.size(); i++) {
+                        mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
+                        mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
                    /* if (item.getItemId() == mCartItems.get(i).getItemId()) {
                         item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
                         item.setQty(mCartItems.get(i).getQty());
                     }*/
+                        Log.d("Sale", "Inside sale return8"+mItemCountCount);
+                    }
                 }
                 if (mCartItems.size() == 0) {
-                    mTotalItemAmount = item.getPrice();
+                    mTotalItemAmount = (item.getPrice());
                     mItemCountCount = 1;
                 }
                 mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
@@ -804,39 +821,74 @@ Log.d("Inside :","Inside getDiscountAmount :"+invTransactionMaster.getDiscountAm
                             t.start();
 
                             dialog.dismiss();
+
+
+                 /*           boolean isItemReturn = true;
+                            if (mCartItems.size() != 0) {
+                                for (int i = 0; i < mCartItems.size(); i++) {
+                                    if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
+                                        Log.d("Sale", "Inside sale return1");
+                                        isItemReturn = false;
+                                        item.setSaleReturned(false);
+                                        addItem(item);
+                                        return;
+                                    }
+                                    if (!isItemReturn) {
+                                        Log.d("Sale", "Inside sale return2");
+                                        item.setQty(0);
+                                        item.setSaleReturned(false);
+                                        addItem(item);
+                                    }
+
+                                }
+
+
+                            }
+
+                            item.setQty(0);
+                            item.setSaleReturned(false);*/
                             addItem(item);
                         }
                     });
 
                     dialog.show();
                 } else {
+     /*               boolean isItemReturn = true;
+                    if (mCartItems.size() != 0) {
+                        for (int i = 0; i < mCartItems.size(); i++) {
+                            if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
+                                Log.d("Sale","Inside sale return1");
+                                isItemReturn = false;
+                                item.setSaleReturned(false);
+                                addItem(item);
+                                return;
+                            }
+                            if(!isItemReturn) {
+                                Log.d("Sale", "Inside sale return2");
+                               // item.setQty(0);
+                                item.setSaleReturned(false);
+                                addItem(item);
+                            }
+
+                        }
+
+
+                    }
+
+                    //item.setQty(0);
+                   item.setSaleReturned(false);*/
                     addItem(item);
                 }
             }
         }
     }
-void addItem(Items item){
-    int mItemCountCount = 0;
-    float mTotalItemAmount = 0;
-    for (int i = 0; i < mCartItems.size(); i++) {
-        mTotalItemAmount = Float.valueOf(getString(totalAmount)) + mCartItems.get(i).getPrice();
-        mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
-        if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
-            item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
-            item.setQty(mCartItems.get(i).getQty());
-        }
-    }
-    if (mCartItems.size() == 0) {
-        mTotalItemAmount = item.getPrice();
-        mItemCountCount = 1;
-    }
-    mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
-    insertToList(item);
-    setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
-}
+
+
     void setFooterAndVat(Items item, float mTotalItemAmount, int mItemCountCount) {
+        Log.d("Sale", "Inside sale return9"+mItemCountCount);
+
         calculateVat(item.getVat(), item.getPrice());
-        currentItemAndCount.setText(item.getItemName() + " x " + item.getQty());
+        currentItemAndCount.setText(item.getItemName() + " x " + 1);
         totalAmount.setText(String.format("%.2f", mTotalItemAmount));
         itemCount.setText(String.valueOf(mItemCountCount));
     }
@@ -859,44 +911,48 @@ void addItem(Items item){
         super.onPause();
 
     }
+
     private String createSpaceQty() {
 
-        int num =18 ;
+        int num = 18;
 
         return new String(new char[num]).replace('\0', ' ');
     }
 
     private String createSpaceQtyPrinter(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 25 - firstLength ;
+        int num = 25 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
 
     private String createSpaceQty(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 19 - firstLength ;
+        int num = 19 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
+
     private String createSpaceAmtPrinter(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 20 - firstLength ;
+        int num = 20 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
+
     private String createSpacePrinter(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 48 - firstLength ;
+        int num = 48 - firstLength;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
+
     private String createSpace3(String item, int length, boolean isBluetooth) {
         int total;
         int num;
         switch (item) {
             case Sl_NO:
-                total=!isBluetooth ? 3: 5;
+                total = !isBluetooth ? 3 : 5;
                 num = 1;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
@@ -918,6 +974,7 @@ void addItem(Items item){
         }
         return null;
     }
+
     private String createSpace11(String item, int length, boolean isBluetooth) {
         int total;
         int num;
@@ -930,19 +987,19 @@ void addItem(Items item){
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
 
-                num = 20-length;
+                num = 20 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_QUANTITY:
 
-                num = 5-length;
+                num = 5 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_PRICE:
 
-                num = 10-length;
+                num = 10 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
@@ -955,38 +1012,105 @@ void addItem(Items item){
         }
         return null;
     }
-    void insertToList(Items item) {
+
+    void addItem(Items item) {
+        int mItemCountCount = 0;
+        float mTotalItemAmount = 0;
+        for (int i = 0; i < mCartItems.size(); i++) {
+            Log.d("Sale", "Inside addItem");
+            mTotalItemAmount = Float.valueOf(getString(totalAmount)) + mCartItems.get(i).getPrice();
+            mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
+           /* if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
+                item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
+                item.setQty(mCartItems.get(i).getQty());
+            }*/
+        }
+        if (mCartItems.size() == 0) {
+            mTotalItemAmount = item.getPrice();
+            mItemCountCount = 1;
+        }
+        mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
+        insertToList(item);
+        setFooterAndVat(item, mTotalItemAmount, mItemCountCount);
+    }
+
+    void insertToList(Items item1) {
+        Items item = new Items();
+        item.setQty(item1.getQty());
+        item.setPrice(item1.getPrice());
+        item.setItemId(item1.getItemId());
+        item.setItemName(item1.getItemName());
+        item.setOpen(item1.isOpen());
+        item.setVat(item1.getVat());
+        item.setCategoryId(item1.getCategoryId());
+        item.setImagePath(item1.getImagePath());
+        item.setChecked(item1.isChecked());
+        Log.d("Sale", "Inside sale return"+item.getQty());
         int qty = item.getQty();
 
         qty += 1;
-        float price = item.getPrice() * qty;
+        float price = item1.getPrice() * qty;
+        int saleReturn = 0;
         if (mCartItems.size() != 0) {
             for (int i = 0; i < mCartItems.size(); i++) {
-                if (item.getItemId() == mCartItems.get(i).getItemId() && !item.isSaleReturned()) {
+
+                if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
+                    Log.d("Sale", "Inside sale return1"+item.getQty());
+                    qty = mCartItems.get(i).getQty() + 1;
+                    price = qty * mCartItems.get(i).getPrice();
+                    saleReturn = 1;
                     mCartItems.get(i).setTotalItemPrice(price);
                     mCartItems.get(i).setQty(qty);
+                    mCartItems.get(i).setSaleReturned(false);
                     return;
                 }
+
+                }
+            if (saleReturn != 1) {
+                Log.d("Sale", "Inside sale return2"+item.getPrice());
+
+item.setTotalItemPrice(price);
+                item.setPrice(price);
+                item.setQty(1);
+                item.setSaleReturned(false);
+                mCartItems.add(item);
             }
-            item.setQty(qty);
+           /* item.setQty(1);
             item.setTotalItemPrice(price);
-            mCartItems.add(item);
+            item.setSaleReturned(false);
+            mCartItems.add(item);*/
         } else {
-            item.setQty(item.getQty() + 1);
-            item.setTotalItemPrice(price);
+            Log.d("Sale", "Inside sale return3"+item.getQty());
+            item.setQty(1);
+            item.setTotalItemPrice(item.getPrice());
+            item.setSaleReturned(false);
             mCartItems.add(item);
         }
     }
 
-    void returnFromList(Items item) {
-
+    void returnFromList(Items item1) {
+        Log.d("Sale", "Inside sale return4"+item1.getQty());
+Items item = new Items();
+item.setQty(item1.getQty());
+        item.setPrice(item1.getPrice());
+        item.setItemId(item1.getItemId());
+        item.setItemName(item1.getItemName());
+        item.setOpen(item1.isOpen());
+        item.setVat(item1.getVat());
+        item.setCategoryId(item1.getCategoryId());
+        item.setImagePath(item1.getImagePath());
+        item.setChecked(item1.isChecked());
+//item = item1;
         int qty = -1;
         float price = item.getPrice() * qty;
         item.setQty(qty);
         item.setTotalItemPrice(price);
         item.setSaleReturned(true);
         mCartItems.add(item);
-
+        // mCartItemsForSaleReturn.add(item);
+       // item1.setQty(0);
+        Log.d("Sale", "Inside sale return5"+item1.getQty());
+        Log.d("Sale", "Inside sale return6"+item.getQty());
     }
 
     @Override
@@ -1004,8 +1128,8 @@ void addItem(Items item){
                 menuClickCount++;
                 if (menuClickCount % 2 == 0) {
 
-                 editInvoiceNo.setVisibility(View.GONE);
-                 btnInvoicePrint.setVisibility(View.GONE);
+                    editInvoiceNo.setVisibility(View.GONE);
+                    btnInvoicePrint.setVisibility(View.GONE);
                 } else {
 
                     editInvoiceNo.setVisibility(View.VISIBLE);
@@ -1028,13 +1152,17 @@ void addItem(Items item){
     public void onClickedProceed(View view) {
         totalItemCount = Integer.valueOf(getString(itemCount));
         totalItemPrice = Float.valueOf(getString(totalAmount));
+      /*  if (mCartItemsForSaleReturn != null && mCartItemsForSaleReturn.size() != 0) {
+
+            mCartItems.addAll(mCartItemsForSaleReturn);
+        }*/
         cartItem.setCartItems(mCartItems);
         Navigation.findNavController(view).navigate(AddNewItemDirections.actionAddNewItemToCheckoutFragment(cartItem));
     }
 
     @Override
     public void itemChanged(List<Items> list) {
-        mItemList = list;
+       // mItemList = list;
         int count = 0;
         float total = 0;
 

@@ -298,7 +298,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                                 REPORT_DATE + createSpaceAmtPrinter(REPORT_DATE.length(), COMPANY_ITEM_AMOUNT.length()) +
                                 COMPANY_ITEM_AMOUNT )
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
-                        .setNewLinesAfter(2)
+                        .setNewLinesAfter(1)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
