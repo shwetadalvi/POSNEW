@@ -66,6 +66,8 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
+import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -142,12 +144,12 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
         header.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
         reportRecyclerview.setVisibility(View.VISIBLE);
-        VATwiseReportAdapter adapter = new VATwiseReportAdapter(transactionMasterList, this);
+        VATwiseReportAdapter adapter = new VATwiseReportAdapter(getActivity(),transactionMasterList, this);
         reportRecyclerview.setAdapter(adapter) ;
         setFooterValues(transactionMasterList);
     }
     private void setFooterValues(List<TransactionMaster> transactionMasterList) {
-
+        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
         float total = 0,vat = 0,vatable_amt=0;
         for (TransactionMaster items : transactionMasterList) {
 
@@ -156,7 +158,10 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
           /*  if(items.getDiscountAmount() > 0)
                 vatable_amt = vatable_amt + items.getItemTotalAmount() - items.getDiscountAmount();
             else*/
-            vatable_amt = vatable_amt + items.getItemTotalAmount();
+            if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+            vatable_amt = vatable_amt + items.getItemTotalAmount() - items.getVatAmount();
+            else
+                vatable_amt = vatable_amt + items.getItemTotalAmount();
         }
 
         textTotal.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(total,2)));

@@ -775,20 +775,23 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
             float mTotalItemAmount = 0;
             if (menuReturnClickCount == 1) {
 
-                if (mCartItems.size() != 0) {
+               /* if (mCartItems.size() != 0) {
                     for (int i = 0; i < mCartItems.size(); i++) {
                         mTotalItemAmount = Float.valueOf(getString(totalAmount)) - mCartItems.get(i).getPrice();
                         mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
-                   /* if (item.getItemId() == mCartItems.get(i).getItemId()) {
+                   *//* if (item.getItemId() == mCartItems.get(i).getItemId()) {
                         item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
                         item.setQty(mCartItems.get(i).getQty());
-                    }*/
+                    }*//*
                         Log.d("Sale", "Inside sale return8"+mItemCountCount);
                     }
-                }
+                }*/
                 if (mCartItems.size() == 0) {
                     mTotalItemAmount = (item.getPrice());
                     mItemCountCount = 1;
+                }else{
+                    mTotalItemAmount = Float.valueOf(getString(totalAmount)) - item.getPrice();
+                    mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;
                 }
                 mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
                 returnFromList(item);
@@ -813,10 +816,11 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                         @Override
                         public void onClick(View v) {
                             if (getString(editOpenPrice) != null)
+
                                 item.setPrice(Float.parseFloat(getString(editOpenPrice)));
                             mItemsAdapter.notifyDataSetChanged();
                             Thread t = new Thread(() -> {
-                                mDatabase.mItemsDao().insertNewItems(item);
+                                mDatabase.mItemsDao().editItemsPriceById(Float.parseFloat(getString(editOpenPrice)),item.getItemId());
                             });
                             t.start();
 
@@ -1016,18 +1020,22 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
     void addItem(Items item) {
         int mItemCountCount = 0;
         float mTotalItemAmount = 0;
-        for (int i = 0; i < mCartItems.size(); i++) {
-            Log.d("Sale", "Inside addItem");
+      /*  for (int i = 0; i < mCartItems.size(); i++) {
+            Log.d("Sale", "Inside addItem555");
             mTotalItemAmount = Float.valueOf(getString(totalAmount)) + mCartItems.get(i).getPrice();
             mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
-           /* if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
+           *//* if (item.getItemId() == mCartItems.get(i).getItemId() && !mCartItems.get(i).isSaleReturned()) {
                 item.setTotalItemPrice(mCartItems.get(i).getQty() * mCartItems.get(i).getPrice());
                 item.setQty(mCartItems.get(i).getQty());
-            }*/
-        }
+            }*//*
+        }*/
+
         if (mCartItems.size() == 0) {
             mTotalItemAmount = item.getPrice();
             mItemCountCount = 1;
+        }else{
+            mTotalItemAmount = Float.valueOf(getString(totalAmount)) + item.getPrice();
+            mItemCountCount = Integer.valueOf(getString(itemCount)) + 1;
         }
         mTotalItemAmount = Constants.round(mTotalItemAmount, 2);
         insertToList(item);

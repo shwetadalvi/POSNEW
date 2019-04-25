@@ -1,5 +1,6 @@
 package com.abremiratesintl.KOT.adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import com.abremiratesintl.KOT.R;
 import com.abremiratesintl.KOT.interfaces.ClickListeners;
 import com.abremiratesintl.KOT.models.TransactionMaster;
+import com.abremiratesintl.KOT.utils.Constants;
+import com.abremiratesintl.KOT.utils.PrefUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +20,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
+
 public class VATwiseReportAdapter extends RecyclerView.Adapter<VATwiseReportAdapter.ViewHolder> {
 
     List<TransactionMaster> mTransactionMasterList = new ArrayList<>();
     private ClickListeners.ItemClick<TransactionMaster> mTransactionMasterItemClick;
-
-    public VATwiseReportAdapter(List<TransactionMaster> transactionMasterList, ClickListeners.ItemClick<TransactionMaster> transactionMasterItemClick) {
+    Context context;
+    private PrefUtils mPrefUtils;
+    public VATwiseReportAdapter(Context context,List<TransactionMaster> transactionMasterList, ClickListeners.ItemClick<TransactionMaster> transactionMasterItemClick) {
+        this.context = context;
         mTransactionMasterList = transactionMasterList ;
         mTransactionMasterItemClick = transactionMasterItemClick;
     }
@@ -60,6 +67,7 @@ public class VATwiseReportAdapter extends RecyclerView.Adapter<VATwiseReportAdap
 
         void bind(TransactionMaster transactionMaster) {
             float vat_amt1 = 0;
+            mPrefUtils = new PrefUtils(context);
             slNo.setText(String.valueOf(getAdapterPosition() + 1));
             if(transactionMaster.getName()==null)
                 inv_no.setText(transactionMaster.getInvoiceNo());
@@ -71,7 +79,13 @@ public class VATwiseReportAdapter extends RecyclerView.Adapter<VATwiseReportAdap
                 vat_amt1 = transactionMaster.getItemTotalAmount() - transactionMaster.getDiscountAmount();
             else*/
                 vat_amt1 = transactionMaster.getItemTotalAmount();
-            vatable_amt.setText(String.valueOf(transactionMaster.getItemTotalAmount()));
+            String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, context.getResources().getString(R.string.vat_exclusive));
+
+              if (str_vat.equals(context.getResources().getString(R.string.vat_inclusive))) {
+                  float vatable_amt1 = transactionMaster.getItemTotalAmount() - transactionMaster.getVatAmount();
+                  vatable_amt.setText(String.valueOf(vatable_amt1));
+              }else
+                  vatable_amt.setText(String.valueOf(transactionMaster.getItemTotalAmount()));
             vat_amt.setText(String.valueOf(transactionMaster.getVatAmount()));
             net_amt.setText(String.valueOf(transactionMaster.getGrandTotal()));
             //itemView.setOnClickListener(view -> mTransactionMasterItemClick.onClickedItem(transactionMaster));

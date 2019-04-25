@@ -31,7 +31,7 @@ public interface ItemsDao {
     @Query("UPDATE Items SET itemName = :itemName WHERE itemId = :itemId") void editItemsNameById(String itemName, int itemId);
 
     @Query("UPDATE Items SET isDeleted = :isDelete WHERE itemId = :itemId") void editItemsDeleteById(boolean isDelete, int itemId);
-
+    @Query("UPDATE Items SET price = :price WHERE itemId = :itemId") void editItemsPriceById(float price, int itemId);
     @Update() void updateItem(Items item);
 
     @Delete() void deleteItem(Items item);

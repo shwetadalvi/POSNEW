@@ -1795,6 +1795,14 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             } else
                 total = total + vat;
         }
+        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive))) {
+            if (discount > 0) {
+                discountVat = total * itemVat / (100+itemVat);
+                total = total ;
+                vat = discountVat;
+            } else
+                total = total ;
+        }
 
 
         Constants.round(vat, 2);
