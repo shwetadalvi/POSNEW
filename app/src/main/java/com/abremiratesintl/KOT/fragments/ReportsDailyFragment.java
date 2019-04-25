@@ -94,8 +94,14 @@ import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TELE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TOTAL_ITEM;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_TRN;
 import static com.abremiratesintl.KOT.utils.Constants.DEAFULT_PREFS;
+import static com.abremiratesintl.KOT.utils.Constants.DISCOUNT;
+import static com.abremiratesintl.KOT.utils.Constants.INV_NO;
+import static com.abremiratesintl.KOT.utils.Constants.ITEM_PAYMENT_TYPE;
 import static com.abremiratesintl.KOT.utils.Constants.REQUEST_CODE_ENABLE_BLUETOOTH;
 import static com.abremiratesintl.KOT.utils.Constants.Sl_NO;
+import static com.abremiratesintl.KOT.utils.Constants.TOTAL;
+import static com.abremiratesintl.KOT.utils.Constants.TOTAL_CARD;
+import static com.abremiratesintl.KOT.utils.Constants.TOTAL_CASH;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -319,7 +325,11 @@ private List<TransactionMaster> mTransactionMasterList;
 
                 sheet.addCell(new Label(2, 0, Constants.COMPANY_ITEM_QUANTITY));
                 sheet.addCell(new Label(3, 0, Constants.COMPANY_ITEM_PAYMENT));
-                sheet.addCell(new Label(4, 0, Constants.COMPANY_ITEM_AMOUNT));
+                sheet.addCell(new Label(4, 0, Constants.CASH));
+                sheet.addCell(new Label(5, 0, Constants.CARD));
+                sheet.addCell(new Label(6, 0, Constants.TOTAL));
+                sheet.addCell(new Label(7, 0, Constants.DISCOUNT));
+                sheet.addCell(new Label(8, 0, Constants.COMPANY_ITEM_AMOUNT));
 
                 int i = 0;
 
@@ -330,7 +340,11 @@ private List<TransactionMaster> mTransactionMasterList;
                     sheet.addCell(new Label(1, i, String.valueOf(item.getInvoiceNo())));
                     sheet.addCell(new Label(2, i, String.valueOf(item.getTotalQty())));
                     sheet.addCell(new Label(3, i,item.getType()));
-                    sheet.addCell(new Label(4, i, String.valueOf(item.getGrandTotal())));
+                    sheet.addCell(new Label(4, i, String.valueOf(item.getCash())));
+                    sheet.addCell(new Label(5, i, String.valueOf(item.getCard())));
+                    sheet.addCell(new Label(6, i, String.valueOf(item.getItemTotalAmount())));
+                    sheet.addCell(new Label(7, i, String.valueOf(item.getDiscountAmount())));
+                    sheet.addCell(new Label(8, i, String.valueOf(item.getGrandTotal())));
                 }
 
             } catch (IOException e) {
@@ -755,10 +769,14 @@ private List<TransactionMaster> mTransactionMasterList;
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(Sl_NO  + createSpacePrinterHeading(Sl_NO, Sl_NO.length(), false)+COMPANY_INV_NO + createSpacePrinterHeading(COMPANY_INV_NO, COMPANY_INV_NO.length(), false) +
+                        .setText(Sl_NO  + createSpacePrinterHeading(Sl_NO, Sl_NO.length(), false)+INV_NO + createSpacePrinterHeading(INV_NO, INV_NO.length(), false) +
                                 COMPANY_ITEM_QUANTITY + createSpacePrinterHeading(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
-                                COMPANY_ITEM_PAYMENT + createSpaceAmtPrinter(COMPANY_ITEM_PAYMENT.length(), COMPANY_ITEM_AMOUNT.length()) +
-                                COMPANY_ITEM_AMOUNT + createSpacePrinterHeading(COMPANY_ITEM_AMOUNT, COMPANY_ITEM_AMOUNT.length(), false))
+                                ITEM_PAYMENT_TYPE + createSpacePrinterHeading(ITEM_PAYMENT_TYPE, ITEM_PAYMENT_TYPE.length(), false) +
+                                CASH + createSpacePrinterHeading(CASH, CASH.length(), false) +
+                                CARD + createSpacePrinterHeading(CARD, CARD.length(), false) +
+                                TOTAL + createSpacePrinterHeading(TOTAL, TOTAL.length(), false) +
+                                DISCOUNT + createSpaceAmtPrinter(DISCOUNT.length(), COMPANY_ITEM_AMOUNT.length()) +
+                                COMPANY_ITEM_AMOUNT)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(1)
                         .build());
@@ -782,10 +800,14 @@ private List<TransactionMaster> mTransactionMasterList;
 
                     printables.add(new Printable.PrintableBuilder()
                             .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                            .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) +order.getInvoiceNo() + createSpacePrinterData(COMPANY_INV_NO, String.valueOf(order.getInvoiceNo()).length(), false) +
+                            .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) +order.getInvoiceNo() + createSpacePrinterData(INV_NO, String.valueOf(order.getInvoiceNo()).length(), false) +
                                     order.getTotalQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getTotalQty()).length(), false) +
-                                    order.getType() + createSpaceAmtPrinter(String.valueOf(order.getType()).length(), String.format("%.2f", order.getGrandTotal()).length()) +
-                                    order.getGrandTotal() + createSpacePrinterData(COMPANY_ITEM_AMOUNT, String.format("%.2f", order.getGrandTotal()).length(), false))
+                                    order.getType() + createSpacePrinterData(ITEM_PAYMENT_TYPE, order.getType().length(),false) +
+                                    order.getCash() + createSpacePrinterData(CASH, String.format("%.2f", order.getCash()).length(), false) +
+                                    order.getCard() + createSpacePrinterData(CARD, String.format("%.2f", order.getCard()).length(), false) +
+                                    order.getItemTotalAmount() + createSpacePrinterData(TOTAL, String.format("%.2f", order.getItemTotalAmount()).length(), false) +
+                                    order.getDiscountAmount() + createSpaceAmtPrinter(String.format("%.2f", order.getDiscountAmount()).length(), String.format("%.2f", order.getGrandTotal()).length()) +
+                                    order.getGrandTotal())
                             .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                             .setNewLinesAfter(2)
                             .build());
@@ -793,8 +815,8 @@ private List<TransactionMaster> mTransactionMasterList;
                 String str_total = decimalAdjust(total);
                 float cash = getTotalCash();
                 float card = getTotalCard();
-             //   String str_cash = decimalAdjust(cash);
-                //String str_card = decimalAdjust(card);
+             //  String str_cash = decimalAdjust(cash);
+              //  String str_card = decimalAdjust(card);
 
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_CENTER())
@@ -802,18 +824,18 @@ private List<TransactionMaster> mTransactionMasterList;
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-               /* printables.add(new Printable.PrintableBuilder()
+                printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(CASH +createSpacePrinter(CASH.length(),String.valueOf(cash).length())+cash)
+                        .setText(TOTAL_CASH +createSpacePrinter(CASH.length(),String.format("%.2f", cash).length())+cash)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(CARD +createSpacePrinter(CARD.length(),String.valueOf(card).length())+card)
+                        .setText(TOTAL_CARD +createSpacePrinter(CARD.length(),String.format("%.2f", card).length())+card)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
-                        .build());*/
+                        .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText(COMPANY_ITEM_TOTAL +createSpacePrinter(COMPANY_ITEM_TOTAL.length(),String.format("%.2f", total).length())+total)
@@ -927,7 +949,7 @@ private List<TransactionMaster> mTransactionMasterList;
     }*/
     private String createSpaceAmtPrinter(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 23 - firstLength ;
+        int num = 15 - firstLength ;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
@@ -964,27 +986,105 @@ private List<TransactionMaster> mTransactionMasterList;
         switch (item) {
             case Sl_NO:
                 total=!isBluetooth ? 5: 5;
-                num = 2;
+                num = 1;
                 return new String(new char[num]).replace('\0', ' ');
-            case COMPANY_INV_NO:
+            case INV_NO:
                 total = !isBluetooth ? 19 : 48;
-                num = 4;
+                num = 1;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_QUANTITY:
                 total = !isBluetooth ? 5 : 7;
-                num = 7;
+                num = 1;
                 return new String(new char[num]).replace('\0', ' ');
-            case COMPANY_ITEM_PAYMENT:
+            case ITEM_PAYMENT_TYPE:
                 total = !isBluetooth ? 10 : 15;
-                num = 3;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case CASH:
+                total = !isBluetooth ? 10 : 15;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case CARD:
+                total = !isBluetooth ? 10 : 15;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case DISCOUNT:
+                total = !isBluetooth ? 10 : 15;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case TOTAL:
+                total = !isBluetooth ? 10 : 15;
+                num = 1;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_AMOUNT:
                 total = !isBluetooth ? 10 : 10;
-                num = 7;
+                num = 0;
                 return new String(new char[num]).replace('\0', ' ');
         }
         return null;
     }
+    private String createSpacePrinterData(String item, int length, boolean isBluetooth) {
+        int total;
+        int num;
+        switch (item) {
+            case Sl_NO:
+
+                num = 3 - length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case INV_NO:
+
+                num = 5-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_QUANTITY:
+
+                num = 4-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case ITEM_PAYMENT_TYPE:
+
+                num = 5-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case CASH:
+                total = !isBluetooth ? 5 : 7;
+                num = 5-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case CARD:
+                total = !isBluetooth ? 5 : 7;
+                num = 5-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case DISCOUNT:
+                total = !isBluetooth ? 5 : 7;
+                num = 9-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case TOTAL:
+                total = !isBluetooth ? 5 : 7;
+                num = 6-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_AMOUNT:
+                total = !isBluetooth ? 10 : 10;
+                num = 6 - length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+        }
+        return null;
+    }
+
     private String createSpace11(String item, int length, boolean isBluetooth) {
         int total;
         int num;
@@ -1013,46 +1113,10 @@ private List<TransactionMaster> mTransactionMasterList;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
+
             case COMPANY_ITEM_AMOUNT:
                 total = !isBluetooth ? 10 : 10;
                 num = 10 - length;
-                if (num < 0)
-                    num = 0;
-                return new String(new char[num]).replace('\0', ' ');
-        }
-        return null;
-    }
-    private String createSpacePrinterData(String item, int length, boolean isBluetooth) {
-        int total;
-        int num;
-        switch (item) {
-            case Sl_NO:
-
-                num = 5 - length;
-                if (num < 0)
-                    num = 0;
-                return new String(new char[num]).replace('\0', ' ');
-            case COMPANY_INV_NO:
-
-                num = 10-length;
-                if (num < 0)
-                    num = 0;
-                return new String(new char[num]).replace('\0', ' ');
-            case COMPANY_ITEM_QUANTITY:
-
-                num = 10-length;
-                if (num < 0)
-                    num = 0;
-                return new String(new char[num]).replace('\0', ' ');
-            case COMPANY_ITEM_PAYMENT:
-
-                num = 10-length;
-                if (num < 0)
-                    num = 0;
-                return new String(new char[num]).replace('\0', ' ');
-            case COMPANY_ITEM_AMOUNT:
-                total = !isBluetooth ? 10 : 10;
-                num = 13 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');

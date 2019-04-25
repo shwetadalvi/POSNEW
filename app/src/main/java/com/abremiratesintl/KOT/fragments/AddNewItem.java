@@ -787,8 +787,8 @@ public class AddNewItem extends BaseFragment implements AdapterView.OnItemSelect
                     }
                 }*/
                 if (mCartItems.size() == 0) {
-                    mTotalItemAmount = (item.getPrice());
-                    mItemCountCount = 1;
+                    mTotalItemAmount = -1 *(item.getPrice());
+                    mItemCountCount = -1;
                 }else{
                     mTotalItemAmount = Float.valueOf(getString(totalAmount)) - item.getPrice();
                     mItemCountCount = Integer.valueOf(getString(itemCount)) - 1;

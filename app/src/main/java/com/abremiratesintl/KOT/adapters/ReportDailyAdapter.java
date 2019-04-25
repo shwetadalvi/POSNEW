@@ -47,6 +47,14 @@ public class ReportDailyAdapter extends RecyclerView.Adapter<ReportDailyAdapter.
         TextView payment;
         @BindView(R.id.total)
         TextView total;
+        @BindView(R.id.cash)
+        TextView cash;
+        @BindView(R.id.card)
+        TextView card;
+        @BindView(R.id.net)
+        TextView net;
+        @BindView(R.id.discount)
+        TextView discount;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -62,7 +70,11 @@ public class ReportDailyAdapter extends RecyclerView.Adapter<ReportDailyAdapter.
                 invoiceNo.setText(transactionMaster.getInvoiceNo()+" (Ref "+transactionMaster.getName()+")");
             payment.setText(transactionMaster.getType());
             totalItem.setText(String.valueOf(transactionMaster.getTotalQty()));
-            total.setText(String.valueOf(transactionMaster.getGrandTotal()));
+            total.setText(String.valueOf(transactionMaster.getItemTotalAmount()));
+            discount.setText(String.valueOf(transactionMaster.getDiscountAmount()));
+            net.setText(String.valueOf(transactionMaster.getGrandTotal()));
+            card.setText(String.valueOf(transactionMaster.getCard()));
+            cash.setText(String.valueOf(transactionMaster.getCash()));
             itemView.setOnClickListener(view -> mTransactionMasterItemClick.onClickedItem(transactionMaster));
         }
     }

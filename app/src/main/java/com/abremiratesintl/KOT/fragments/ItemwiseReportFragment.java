@@ -137,6 +137,8 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     private boolean isCashier = false;
     PrefUtils mPrefUtils ;
     private BluetoothAdapter bluetoothAdapter;
+    private boolean isAllSelected= true;
+    String selFromDate,selToDate;
     public ItemwiseReportFragment() {
         // Required empty public constructor
     }
@@ -192,7 +194,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         fetchTransactions();
     }
     private void fetchTransactions() {
-
+        Log.e("INSERTION MASTER1", "inside22"+Constants.getCurrentDate());
         LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getTodaysAllItems(Constants.getCurrentDate());
 
         listLiveData.observe(this, this::setUpRecycler);
@@ -629,10 +631,12 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         String date = year + "-" + getProperDate(++month) + "-" + getProperDate(dayOfMonth);
         switch (mSelectedDateView.getId()) {
             case R.id.fromDate:
+                selFromDate = date;
                 fromDate.setText(date);
                 sortedItem(getString(fromDate), getString(toDate));
                 break;
             case R.id.toDate:
+                selToDate = date;
                 toDate.setText(date);
                 sortedItem(getString(fromDate), getString(toDate));
                 break;
@@ -642,13 +646,25 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     private void sortedItem(String fromDate, String toDate) {
         if (toDate.equals(getStringfromResource(R.string.present))) {
             toDate = Constants.getCurrentDate();
+            selToDate = Constants.getCurrentDate();
         }
        /* if (fromDate.equals("")){
             showSnackBar(getView(),getStringfromResource(R.string.present),1000);
             return;
         }*/
-        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByItemIdBetween(fromDate, toDate,mSelectedItem.getItemId());
-        listLiveData.observe(this, this::setUpRecycler);
+
+       if(mSelectedItem.getItemId() == -1)
+           isAllSelected= true;
+       else
+           isAllSelected = false;
+       if(isAllSelected){
+           LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findAllItemsByItemIdBetween(fromDate, toDate);
+           listLiveData.observe(this, this::setUpRecycler);
+       }else {
+
+           LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByItemIdBetween(fromDate, toDate, mSelectedItem.getItemId());
+           listLiveData.observe(this, this::setUpRecycler);
+       }
     }
 
     private String getProperDate(int dayOrMonth) {
@@ -666,11 +682,22 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mSelectedItem = mItemsList.get(position);
         if(mSelectedItem.getItemId() == -1){
-            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getTodaysAllItems(Constants.getCurrentDate());
-            listLiveData.observe(this, this::setUpRecycler);
+            if(filter.getVisibility() == View.VISIBLE){
+                LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findAllItemsByItemIdBetween(selFromDate, selToDate);
+                listLiveData.observe(this, this::setUpRecycler);
+            }else {
+                LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getTodaysAllItems(Constants.getCurrentDate());
+                listLiveData.observe(this, this::setUpRecycler);
+            }
         }else {
-            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getItemsByItemId(mSelectedItem.getItemId());
-            listLiveData.observe(this, this::setUpRecycler);
+            if(filter.getVisibility() == View.VISIBLE) {
+                LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByItemIdBetween(selFromDate, selToDate, mSelectedItem.getItemId());
+                listLiveData.observe(this, this::setUpRecycler);
+            }else {
+                LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getItemsByItemId(mSelectedItem.getItemId());
+
+                listLiveData.observe(this, this::setUpRecycler);
+            }
         }
     }
 

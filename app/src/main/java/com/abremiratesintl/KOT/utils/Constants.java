@@ -32,6 +32,7 @@ public class Constants {
     public static final String COMPANY_ITEM_VAT = "VAT";
     public static final String COMPANY_ITEM_NET_AMOUNT = "Net Amount";
     public static final String COMPANY_ITEM_PAYMENT = "Payment";
+    public static final String ITEM_PAYMENT_TYPE = "Type";
     public static final String COMPANY_TOTAL_ITEM = "Total Item";
     public static final String CATEGORY = "Categort";
     public static final String VAT_EXCLUSIVE = "";
@@ -49,15 +50,19 @@ public class Constants {
     public static final String IS_VERIFIED = "IS_VERIFIED";
     public static boolean disableDelete = false ;
     public static final String COMPANY_INV_NO = "Inv No";
-        public static final String COMPANY_SL_NO = "Sl No.";
-    public static final String CARD = "Total Card : ";
-    public static final String CASH = "Total Cash :";
+    public static final String INV_NO = "InNo";
+    public static final String COMPANY_SL_NO = "Sl No.";
+    public static final String CARD = "Card";
+    public static final String CASH = "Cash";
+    public static final String TOTAL_CARD = "Total Card : ";
+    public static final String TOTAL_CASH = "Total Cash : ";
     public static final String PERMISSION_STORAGE_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final String PERMISSION_STORAGE_READ = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final int REQUEST_CODE_PERMISSION_STORAGE = 0x123;
     public static final int REQUEST_CODE_IMAGE = 0x124;
     public static final int REQUEST_CODE_ENABLE_BLUETOOTH = 0x125;
-
+    public static final String DISCOUNT = "Discount";
+    public static final String TOTAL = "Total";
     public static String getCurrentDate() {
         return new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime());
     }

@@ -194,8 +194,9 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
 
                 sheet.addCell(new Label(2, 0, Constants.COMPANY_ITEM_QUANTITY));
                 sheet.addCell(new Label(3, 0, "Vat Amount"));
-
-                sheet.addCell(new Label(4, 0, Constants.COMPANY_ITEM_AMOUNT));
+                sheet.addCell(new Label(4, 0, Constants.TOTAL));
+                sheet.addCell(new Label(5, 0, Constants.DISCOUNT));
+                sheet.addCell(new Label(6, 0, Constants.COMPANY_ITEM_AMOUNT));
 
                 int i = 0;
 
@@ -206,7 +207,9 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
                     sheet.addCell(new Label(1, i, String.valueOf(item.getInvoiceNo())));
                     sheet.addCell(new Label(2, i, String.valueOf(item.getTotalQty())));
                     sheet.addCell(new Label(3, i, String.valueOf(item.getVatAmount())));
-                    sheet.addCell(new Label(4, i, String.valueOf(item.getGrandTotal())));
+                    sheet.addCell(new Label(4, i, String.valueOf(item.getItemTotalAmount())));
+                    sheet.addCell(new Label(5, i, String.valueOf(item.getDiscountAmount())));
+                    sheet.addCell(new Label(6, i, String.valueOf(item.getGrandTotal())));
                 }
 
             } catch (IOException e) {

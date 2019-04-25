@@ -76,7 +76,7 @@
                 android:background="@color/brown"
                 android:orientation="horizontal"
                 android:padding="5dp"
-                android:weightSum="5"
+                android:weightSum="9"
 
                android:layout_below="@+id/filter" >
 
@@ -112,7 +112,7 @@
                    />
 
                 <TextView
-                    android:id="@+id/checkoutQty2"
+                    android:id="@+id/t1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -121,6 +121,46 @@
                     android:textColor="#FFFFFF"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     />
+                <TextView
+                    android:id="@+id/t2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text="Cash"
+                    android:textColor="#FFFFFF"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    />
+
+                <TextView
+                    android:id="@+id/checkoutQty2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text="Card"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textColor="#FFFFFF" />
+                <TextView
+                    android:id="@+id/t22"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text="Total"
+                    android:textColor="#FFFFFF"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    />
+
+                <TextView
+                    android:id="@+id/checkoutQty22"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:text="Discount"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textColor="#FFFFFF" />
 
                 <TextView
                     android:id="@+id/chekoutPrice2"
@@ -129,7 +169,7 @@
                     android:layout_weight="1"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:padding="5dp"
-                    android:text="@string/amount"
+                    android:text="Net"
                     android:textColor="#FFFFFF"
                   />
 

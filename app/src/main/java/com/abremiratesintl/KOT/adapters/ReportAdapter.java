@@ -50,6 +50,10 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
         TextView total;
         @BindView(R.id.total_no_items)
         TextView totalNoItems;
+        @BindView(R.id.discount)
+        TextView discount;
+        @BindView(R.id.net)
+        TextView net;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -64,7 +68,9 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
 
             invoiceDate.setText(transactionMaster.getInvoiceDate());
             invoiceVat.setText(String.valueOf(transactionMaster.getVatAmount()));
-            total.setText(String.valueOf(transactionMaster.getGrandTotal()));
+            total.setText(String.valueOf(transactionMaster.getItemTotalAmount()));
+            discount.setText(String.valueOf(transactionMaster.getDiscountAmount()));
+            net.setText(String.valueOf(transactionMaster.getGrandTotal()));
             totalNoItems.setText(String.valueOf(transactionMaster.getTotalQty()));
             itemView.setOnClickListener(view -> mTransactionMasterItemClick.onClickedItem(transactionMaster));
         }

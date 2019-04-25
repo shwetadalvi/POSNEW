@@ -102,6 +102,7 @@ private List<Transaction> mTransactionList;
     private Cashier cashier = new Cashier();
     private boolean isCashier = false;
     PrefUtils mPrefUtils ;
+    String selFromDate,selToDate;
     public CategoryReportFragment() {
         // Required empty public constructor
     }
@@ -350,10 +351,12 @@ private List<Transaction> mTransactionList;
         String date = year + "-" + getProperDate(++month) + "-" + getProperDate(dayOfMonth);
         switch (mSelectedDateView.getId()) {
             case R.id.fromDate:
+                selFromDate = date;
                 fromDate.setText(date);
                 sortedItem(getString(fromDate), getString(toDate));
                 break;
             case R.id.toDate:
+                selToDate = date;
                 toDate.setText(date);
                 sortedItem(getString(fromDate), getString(toDate));
                 break;
@@ -363,13 +366,19 @@ private List<Transaction> mTransactionList;
     private void sortedItem(String fromDate, String toDate) {
         if (toDate.equals(getStringfromResource(R.string.present))) {
             toDate = Constants.getCurrentDate();
+            selFromDate = Constants.getCurrentDate();
         }
        /* if (fromDate.equals("")) {
             showSnackBar(getView(), getStringfromResource(R.string.present), 1000);
             return;
         }*/
-        LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByCategoryBetween(fromDate, toDate, mSelectedItem.getCategoryName());
-        listLiveData.observe(this, this::setUpRecycler);
+        if(mSelectedItem.getCategoryId() == -1) {
+            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findAllItemsByCategoryBetween(fromDate, toDate);
+            listLiveData.observe(this, this::setUpRecycler);
+        }else {
+            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByCategoryBetween(fromDate, toDate, mSelectedItem.getCategoryName());
+            listLiveData.observe(this, this::setUpRecycler);
+        }
     }
 
     private String getProperDate(int dayOrMonth) {
@@ -389,11 +398,21 @@ private List<Transaction> mTransactionList;
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         mSelectedItem = mItemsList.get(position);
         if(mSelectedItem.getCategoryId() == -1) {
-            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getTodaysAllItems(Constants.getCurrentDate());
-            listLiveData.observe(this, this::setUpRecycler);
+            if(filter.getVisibility() == View.VISIBLE) {
+                LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findAllItemsByCategoryBetween(selFromDate, selToDate);
+                listLiveData.observe(this, this::setUpRecycler);
+            }else{
+                LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getTodaysAllItems(Constants.getCurrentDate());
+                listLiveData.observe(this, this::setUpRecycler);
+            }
         }else {
-            LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getAllItemsByCategoryName(mSelectedItem.getCategoryName());
-            listLiveData.observe(this, this::setUpRecycler);
+            if(filter.getVisibility() == View.VISIBLE) {
+                LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().findItemsByCategoryBetween(selFromDate, selToDate, mSelectedItem.getCategoryName());
+                listLiveData.observe(this, this::setUpRecycler);
+            }else{
+                LiveData<List<Transaction>> listLiveData = mDatabase.mTransactionDao().getAllItemsByCategoryName(mSelectedItem.getCategoryName());
+                listLiveData.observe(this, this::setUpRecycler);
+            }
         }
     }
 
