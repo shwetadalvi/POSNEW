@@ -14,6 +14,7 @@ public interface TransactionMasterDao {
     @Query("DELETE FROM TransactionMaster") void deleteAll();
 
     @Query("SELECT * FROM TransactionMaster") LiveData<List<TransactionMaster>> getAllItems();
+    @Query("SELECT * FROM TransactionMaster where invoiceDate =:date") LiveData<List<TransactionMaster>> getTodaysAllItems(String date);
 
     @Query("SELECT * FROM  TransactionMaster WHERE invoiceNo=:invNo") LiveData<TransactionMaster> findByInvNo(String invNo) ;
 

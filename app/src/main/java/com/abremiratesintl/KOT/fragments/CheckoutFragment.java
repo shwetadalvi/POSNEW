@@ -71,6 +71,8 @@ import butterknife.OnCheckedChanged;
 import butterknife.Unbinder;
 import vpos.apipackage.PosApiHelper;
 
+import static com.abremiratesintl.KOT.utils.Constants.CARD;
+import static com.abremiratesintl.KOT.utils.Constants.CASH;
 import static com.abremiratesintl.KOT.utils.Constants.CHANGE;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ADDRESS;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_DATE;
@@ -569,8 +571,8 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         float card = Float.parseFloat((getString(mCard).isEmpty() ? "0" : getString(mCard)));
         String ptype = (mSpinner.getSelectedItem().toString());
 
-        if (itemDiscount > 0)
-            itemAmount = itemAmount - itemDiscount;
+        /*if (itemDiscount > 0)
+            itemAmount = itemAmount - itemDiscount;*/
         String invoiceDate = Constants.getCurrentDate();
         transactionMaster.setDiscountAmount(itemDiscount);
         transactionMaster.setInvoiceDate(invoiceDate);
@@ -891,6 +893,19 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText(COMPANY_ITEM_NET_AMOUNT + createSpacePrinter(COMPANY_ITEM_NET_AMOUNT.length(), String.valueOf(getString(mFooterTotal)).length()) + getString(mFooterTotal))
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(CASH + createSpacePrinter(CASH.length(), String.valueOf(getString(mCash)).length()) + getString(mCash))
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(CARD + createSpacePrinter(CARD.length(), String.valueOf(getString(mCard)).length()) + getString(mCard))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -1668,7 +1683,10 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
     int getTotalItemCount() {
         int totalCount = 0;
         for (Items item : mItemsList) {
-            totalCount = totalCount + item.getQty();
+            int qty = item.getQty();
+            if(qty < 0)
+                qty = qty * -1;
+            totalCount = totalCount + qty;
         }
         return totalCount;
     }

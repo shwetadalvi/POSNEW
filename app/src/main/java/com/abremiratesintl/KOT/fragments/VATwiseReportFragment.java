@@ -159,9 +159,9 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
                 vatable_amt = vatable_amt + items.getItemTotalAmount() - items.getDiscountAmount();
             else*/
             if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
-            vatable_amt = vatable_amt + items.getItemTotalAmount() - items.getVatAmount();
+            vatable_amt = vatable_amt + items.getItemTotalAmount() - items.getVatAmount()-items.getDiscountAmount();
             else
-                vatable_amt = vatable_amt + items.getItemTotalAmount();
+                vatable_amt = vatable_amt + items.getItemTotalAmount()-items.getDiscountAmount();
         }
 
         textTotal.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(total,2)));
@@ -247,12 +247,23 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
                 int i = 0;
 
                 Log.e("Inside123"," data"+mTransactionMasterList.size());
+                String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
+                float vatable_amt1;
                 for (TransactionMaster item : mTransactionMasterList) {
+
+
+                    if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive))) {
+                         vatable_amt1 = item.getItemTotalAmount() - item.getVatAmount()-item.getDiscountAmount();
+
+                    }else {
+                         vatable_amt1 = item.getItemTotalAmount() - item.getDiscountAmount();
+
+                    }
                     i = i + 1;
                     sheet.addCell(new Label(0, i, String.valueOf(i)));
                     sheet.addCell(new Label(1, i, String.valueOf(item.getInvoiceNo())));
                     sheet.addCell(new Label(2, i, String.valueOf(item.getInvoiceDate())));
-                    sheet.addCell(new Label(3, i,String.valueOf(item.getItemTotalAmount())));
+                    sheet.addCell(new Label(3, i,String.valueOf(vatable_amt1)));
                     sheet.addCell(new Label(4, i, String.valueOf(item.getVatAmount())));
                     sheet.addCell(new Label(5, i, String.valueOf(item.getGrandTotal())));
                 }

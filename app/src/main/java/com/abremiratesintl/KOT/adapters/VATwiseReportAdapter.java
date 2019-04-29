@@ -82,10 +82,12 @@ public class VATwiseReportAdapter extends RecyclerView.Adapter<VATwiseReportAdap
             String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, context.getResources().getString(R.string.vat_exclusive));
 
               if (str_vat.equals(context.getResources().getString(R.string.vat_inclusive))) {
-                  float vatable_amt1 = transactionMaster.getItemTotalAmount() - transactionMaster.getVatAmount();
+                  float vatable_amt1 = transactionMaster.getItemTotalAmount() - transactionMaster.getVatAmount()-transactionMaster.getDiscountAmount();
                   vatable_amt.setText(String.valueOf(vatable_amt1));
-              }else
-                  vatable_amt.setText(String.valueOf(transactionMaster.getItemTotalAmount()));
+              }else {
+                  float vatable_amt1 = transactionMaster.getItemTotalAmount() - transactionMaster.getDiscountAmount();
+                  vatable_amt.setText(String.valueOf(vatable_amt1));
+              }
             vat_amt.setText(String.valueOf(transactionMaster.getVatAmount()));
             net_amt.setText(String.valueOf(transactionMaster.getGrandTotal()));
             //itemView.setOnClickListener(view -> mTransactionMasterItemClick.onClickedItem(transactionMaster));

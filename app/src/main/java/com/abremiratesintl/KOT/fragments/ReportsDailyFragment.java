@@ -772,8 +772,8 @@ private List<TransactionMaster> mTransactionMasterList;
                         .setText(Sl_NO  + createSpacePrinterHeading(Sl_NO, Sl_NO.length(), false)+INV_NO + createSpacePrinterHeading(INV_NO, INV_NO.length(), false) +
                                 COMPANY_ITEM_QUANTITY + createSpacePrinterHeading(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
                                 ITEM_PAYMENT_TYPE + createSpacePrinterHeading(ITEM_PAYMENT_TYPE, ITEM_PAYMENT_TYPE.length(), false) +
-                                CASH + createSpacePrinterHeading(CASH, CASH.length(), false) +
-                                CARD + createSpacePrinterHeading(CARD, CARD.length(), false) +
+//                                CASH + createSpacePrinterHeading(CASH, CASH.length(), false) +
+//                                CARD + createSpacePrinterHeading(CARD, CARD.length(), false) +
                                 TOTAL + createSpacePrinterHeading(TOTAL, TOTAL.length(), false) +
                                 DISCOUNT + createSpaceAmtPrinter(DISCOUNT.length(), COMPANY_ITEM_AMOUNT.length()) +
                                 COMPANY_ITEM_AMOUNT)
@@ -803,8 +803,8 @@ private List<TransactionMaster> mTransactionMasterList;
                             .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) +order.getInvoiceNo() + createSpacePrinterData(INV_NO, String.valueOf(order.getInvoiceNo()).length(), false) +
                                     order.getTotalQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getTotalQty()).length(), false) +
                                     order.getType() + createSpacePrinterData(ITEM_PAYMENT_TYPE, order.getType().length(),false) +
-                                    order.getCash() + createSpacePrinterData(CASH, String.format("%.2f", order.getCash()).length(), false) +
-                                    order.getCard() + createSpacePrinterData(CARD, String.format("%.2f", order.getCard()).length(), false) +
+                                  //  order.getCash() + createSpacePrinterData(CASH, String.format("%.2f", order.getCash()).length(), false) +
+                                  //  order.getCard() + createSpacePrinterData(CARD, String.format("%.2f", order.getCard()).length(), false) +
                                     order.getItemTotalAmount() + createSpacePrinterData(TOTAL, String.format("%.2f", order.getItemTotalAmount()).length(), false) +
                                     order.getDiscountAmount() + createSpaceAmtPrinter(String.format("%.2f", order.getDiscountAmount()).length(), String.format("%.2f", order.getGrandTotal()).length()) +
                                     order.getGrandTotal())
@@ -826,13 +826,13 @@ private List<TransactionMaster> mTransactionMasterList;
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(TOTAL_CASH +createSpacePrinter(CASH.length(),String.format("%.2f", cash).length())+cash)
+                        .setText(TOTAL_CASH +createSpacePrinter(TOTAL_CASH.length(),String.format("%.2f", cash).length())+cash)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(TOTAL_CARD +createSpacePrinter(CARD.length(),String.format("%.2f", card).length())+card)
+                        .setText(TOTAL_CARD +createSpacePrinter(TOTAL_CARD.length(),String.format("%.2f", card).length())+card)
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -949,7 +949,7 @@ private List<TransactionMaster> mTransactionMasterList;
     }*/
     private String createSpaceAmtPrinter(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 15 - firstLength ;
+        int num = 18 - firstLength ;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
@@ -998,7 +998,7 @@ private List<TransactionMaster> mTransactionMasterList;
                 return new String(new char[num]).replace('\0', ' ');
             case ITEM_PAYMENT_TYPE:
                 total = !isBluetooth ? 10 : 15;
-                num = 1;
+                num = 6;
                 return new String(new char[num]).replace('\0', ' ');
             case CASH:
                 total = !isBluetooth ? 10 : 15;
@@ -1014,11 +1014,11 @@ private List<TransactionMaster> mTransactionMasterList;
                 return new String(new char[num]).replace('\0', ' ');
             case TOTAL:
                 total = !isBluetooth ? 10 : 15;
-                num = 1;
+                num = 3;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_AMOUNT:
                 total = !isBluetooth ? 10 : 10;
-                num = 0;
+                num = 3;
                 return new String(new char[num]).replace('\0', ' ');
         }
         return null;
@@ -1047,7 +1047,7 @@ private List<TransactionMaster> mTransactionMasterList;
                 return new String(new char[num]).replace('\0', ' ');
             case ITEM_PAYMENT_TYPE:
 
-                num = 5-length;
+                num = 10-length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
@@ -1071,13 +1071,13 @@ private List<TransactionMaster> mTransactionMasterList;
                 return new String(new char[num]).replace('\0', ' ');
             case TOTAL:
                 total = !isBluetooth ? 5 : 7;
-                num = 6-length;
+                num = 9-length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_AMOUNT:
                 total = !isBluetooth ? 10 : 10;
-                num = 6 - length;
+                num = 9 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');

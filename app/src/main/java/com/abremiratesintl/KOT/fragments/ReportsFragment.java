@@ -25,7 +25,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.abremiratesintl.KOT.BaseFragment;
 import com.abremiratesintl.KOT.MainActivity;
 import com.abremiratesintl.KOT.R;
@@ -36,13 +35,11 @@ import com.abremiratesintl.KOT.models.Cashier;
 import com.abremiratesintl.KOT.models.TransactionMaster;
 import com.abremiratesintl.KOT.utils.Constants;
 import com.abremiratesintl.KOT.utils.PrefUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -105,7 +102,7 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
     }
 
     private void fetchTransactions() {
-        LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionMasterDao().getAllItems();
+        LiveData<List<TransactionMaster>> listLiveData = mDatabase.mTransactionMasterDao().getTodaysAllItems(Constants.getCurrentDate());
         listLiveData.observe(this, this::setUpRecycler);
     }
 
@@ -115,6 +112,9 @@ public class ReportsFragment extends BaseFragment implements ClickListeners.Item
             emptyView.setVisibility(View.VISIBLE);
             reportRecyclerview.setVisibility(View.GONE);
             return;
+        }else{
+            emptyView.setVisibility(View.GONE);
+            reportRecyclerview.setVisibility(View.VISIBLE);
         }
         reportRecyclerview.setVisibility(View.VISIBLE);
         ReportAdapter adapter = new ReportAdapter(transactionMasterList, this);
