@@ -336,7 +336,7 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
                     total = total+ order.getGrandTotal();
                     vat_amt1 = vat_amt1 +order.getVatAmount();
                     String inv_no ;
-                    float vatable_amt;
+                    float vatable_amt=0;
                     if(order.getName()==null)
                         inv_no=order.getInvoiceNo();
                     else
