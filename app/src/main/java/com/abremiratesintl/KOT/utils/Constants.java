@@ -56,6 +56,10 @@ public class Constants {
     public static final String CASH = "Cash";
     public static final String TOTAL_CARD = "Total Card : ";
     public static final String TOTAL_CASH = "Total Cash : ";
+    public static final String VATABLE_AMT = "Vatable Amt";
+    public static final String VAT_AMT = "Vat Amt";
+    public static final String TOTAL_VATABLE_AMT = "Total Vatable Amt";
+    public static final String TOTAL_VAT_AMT = "Total Vat Amt";
     public static final String PERMISSION_STORAGE_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final String PERMISSION_STORAGE_READ = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     public static final int REQUEST_CODE_PERMISSION_STORAGE = 0x123;
