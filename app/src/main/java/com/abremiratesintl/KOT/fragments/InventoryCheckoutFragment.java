@@ -228,8 +228,10 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
             /*    if(s.length() == 1 && s.equals("-"))
                 {return;}
                 else if*/
-                if (s.length() > 0)
-                    calculateTotal();
+
+                    if (s.length() > 0)
+
+                        calculateTotal();
 
 
             }
@@ -453,11 +455,11 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
         editor.clear();
         editor.apply();
 
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
-        builder1.setMessage("Inventory Added Successfully");
-        builder1.setCancelable(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Inventory Added Successfully");
+        builder.setCancelable(true);
 
-        builder1.setPositiveButton(
+        builder.setPositiveButton(
                 "Ok",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -468,8 +470,8 @@ public class InventoryCheckoutFragment extends BaseFragment implements ClickList
                 });
 
 
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
+        AlertDialog alert = builder.create();
+        alert.show();
 
     }
 

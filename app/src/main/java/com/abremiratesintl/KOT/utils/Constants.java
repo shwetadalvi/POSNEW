@@ -28,6 +28,7 @@ public class Constants {
     public static final String COMPANY_ITEM_AMOUNT = "Amount";
     public static final String COMPANY_ITEM_TOTAL = "Total";
     public static final String COMPANY_ITEM_DISCOUNT = "Discount";
+    public static final String TOTAL_DISCOUNT = "Total Discount";
     public static final String COMPANY_ITEM_GROSS_AMOUNT = "Gross Amount";
     public static final String COMPANY_ITEM_VAT = "VAT";
     public static final String COMPANY_ITEM_NET_AMOUNT = "Net Amount";

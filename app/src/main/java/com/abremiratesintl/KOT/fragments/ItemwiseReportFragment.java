@@ -85,6 +85,8 @@ import static com.abremiratesintl.KOT.utils.Constants.COMPANY_Email;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_INV_NO;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_AMOUNT;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_DESCRIPTION;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_DISCOUNT;
+import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_NET_AMOUNT;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_PAYMENT;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_QUANTITY;
 import static com.abremiratesintl.KOT.utils.Constants.COMPANY_ITEM_TOTAL;
@@ -99,6 +101,8 @@ import static com.abremiratesintl.KOT.utils.Constants.Sl_NO;
 import static com.abremiratesintl.KOT.utils.Constants.REPORT_DATE;
 import static com.abremiratesintl.KOT.utils.Constants.CARD;
 import static com.abremiratesintl.KOT.utils.Constants.CASH;
+import static com.abremiratesintl.KOT.utils.Constants.TOTAL_DISCOUNT;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -109,6 +113,10 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     LinearLayout header;
     @BindView(R.id.textTotal)
     TextView textTotal;
+    @BindView(R.id.textDiscount)
+    TextView textDiscount;
+    @BindView(R.id.textNet)
+    TextView textNet;
     @BindView(R.id.spinItem)
     CustomSpinner spinItem;
     @BindView(R.id.spinner_arrow)
@@ -221,14 +229,18 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
 
     private void setFooterValues(List<Transaction> transactionList) {
 
-        float total = 0;
+        float total = 0,discount= 0,net = 0;
         for (Transaction items : transactionList) {
 
             total = total + items.getGrandTotal();
+            float net1 = items.getGrandTotal() - items.getDiscount();
+            discount = discount + items.getDiscount();
+            net = net + net1;
         }
 
         textTotal.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(total,2)));
-
+        textDiscount.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(discount,2)));
+        textNet.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(net,2)));
     }
     private void printViaBluetoothPrinter() {
         if (Printooth.INSTANCE.hasPairedPrinter()) {
@@ -297,7 +309,9 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText(Sl_NO  + createSpacePrinterHeading(Sl_NO, Sl_NO.length(), false)+COMPANY_ITEM_DESCRIPTION + createSpacePrinterHeading(COMPANY_ITEM_DESCRIPTION, COMPANY_ITEM_DESCRIPTION.length(), false) +
                                 COMPANY_ITEM_QUANTITY + createSpacePrinterHeading(COMPANY_ITEM_QUANTITY, COMPANY_ITEM_QUANTITY.length(), false) +
-                                REPORT_DATE + createSpaceAmtPrinter(REPORT_DATE.length(), COMPANY_ITEM_AMOUNT.length()) +
+                                REPORT_DATE + createSpacePrinterHeading(REPORT_DATE, REPORT_DATE.length(),false) +
+                                COMPANY_ITEM_TOTAL + createSpacePrinterHeading(COMPANY_ITEM_TOTAL, COMPANY_ITEM_TOTAL.length(),false) +
+                                COMPANY_ITEM_DISCOUNT + createSpaceAmtPrinter(COMPANY_ITEM_DISCOUNT.length(), COMPANY_ITEM_AMOUNT.length()) +
                                 COMPANY_ITEM_AMOUNT )
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(1)
@@ -308,32 +322,41 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
-                float total = 0;
+                float total = 0,net = 0,discount=0;
                 int i = 0;
                 for (Transaction order : mTransactionList) {
                     i += 1;
                     total = total+ order.getGrandTotal();
+                    discount = discount + order.getDiscount();
+                    float net1  = order.getGrandTotal() - order.getDiscount();
+                    net = net+ net1;
 
                     String item_name = order.getItemName();
-                    if(item_name.length() <= 19) {
+                    if(item_name.length() <= 8) {
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) + order.getItemName() + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, String.valueOf(order.getItemName()).length(), false) +
                                         order.getQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                        order.getInvoiceDate() + createSpaceAmtPrinter(String.valueOf(order.getInvoiceDate()).length(), String.format("%.2f", order.getPrice()).length()) +
-                                        order.getPrice())
+                                        order.getInvoiceDate() + createSpacePrinterData(REPORT_DATE, order.getInvoiceDate().length(), false) +
+                                        String.format("%.2f",order.getGrandTotal()) + createSpacePrinterData(COMPANY_ITEM_TOTAL, String.valueOf(order.getGrandTotal()).length(), false) +
+                                        String.format("%.2f",order.getDiscount()) + createSpaceAmtPrinter(String.format("%.2f",order.getDiscount()).length(), String.format("%.2f",net1).length()) +
+                                        String.format("%.2f",net1 ))
+
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(2)
                                 .build());
                     }else{
-                        String str_first = item_name.substring(0,19);
-                        String str_next = item_name.substring(19,item_name.length());
+                        String str_first = item_name.substring(0,8);
+                        String str_next = item_name.substring(8,item_name.length());
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                                .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, String.valueOf(str_first).length(), false) +
+                                .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
                                         order.getQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
-                                        order.getInvoiceDate() + createSpaceAmtPrinter(String.valueOf(order.getInvoiceDate()).length(), String.format("%.2f", order.getPrice()).length()) +
-                                        order.getPrice())
+                                        order.getInvoiceDate() + createSpacePrinterData(REPORT_DATE, order.getInvoiceDate().length(), false) +
+                                        String.format("%.2f",order.getGrandTotal()) + createSpacePrinterData(COMPANY_ITEM_TOTAL, String.valueOf(order.getGrandTotal()).length(), false) +
+                                        String.format("%.2f",order.getDiscount()) + createSpaceAmtPrinter(String.format("%.2f",order.getDiscount()).length(), String.format("%.2f",net1).length()) +
+                                        String.format("%.2f",net1 ))
+
                                 .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                                 .setNewLinesAfter(1)
                                 .build());
@@ -355,6 +378,18 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                         .setText(COMPANY_ITEM_TOTAL +createSpacePrinter(COMPANY_ITEM_TOTAL.length(),str_total.length())+str_total)
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(TOTAL_DISCOUNT +createSpacePrinter(TOTAL_DISCOUNT.length(),String.format("%.2f",discount).length())+String.format("%.2f",discount))
+                        .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+                        .setNewLinesAfter(2)
+                        .build());
+                printables.add(new Printable.PrintableBuilder()
+                        .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
+                        .setText(COMPANY_ITEM_NET_AMOUNT +createSpacePrinter(COMPANY_ITEM_NET_AMOUNT.length(),String.format("%.2f",net).length())+String.format("%.2f",net))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
@@ -559,7 +594,9 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 sheet.addCell(new Label(3, 0, Constants.CATEGORY));
                 sheet.addCell(new Label(4, 0, Constants.COMPANY_ITEM_QUANTITY));
                 sheet.addCell(new Label(5, 0, Constants.COMPANY_DATE));
-                sheet.addCell(new Label(6, 0, Constants.COMPANY_ITEM_AMOUNT));
+                sheet.addCell(new Label(6, 0, Constants.COMPANY_ITEM_TOTAL));
+                sheet.addCell(new Label(7, 0, Constants.COMPANY_ITEM_DISCOUNT));
+                sheet.addCell(new Label(8, 0, Constants.COMPANY_ITEM_AMOUNT));
 
 
                 int i = 0;
@@ -567,13 +604,16 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 Log.e("Inside123","live data"+mTransactionList.size());
                 for (Transaction item : mTransactionList) {
                     i = i + 1;
+                    float net = item.getGrandTotal() - item.getDiscount();
                     sheet.addCell(new Label(0, i, String.valueOf(i)));
                     sheet.addCell(new Label(1, i, String.valueOf(item.getTransactionId())));
                     sheet.addCell(new Label(2, i, item.getItemName()));
                     sheet.addCell(new Label(3, i, item.getCategory()));
                     sheet.addCell(new Label(4, i, String.valueOf(item.getQty())));
                     sheet.addCell(new Label(5, i, item.getInvoiceDate()));
-                    sheet.addCell(new Label(6, i, String.valueOf(item.getPrice())));
+                    sheet.addCell(new Label(6, i, String.valueOf(item.getGrandTotal())));
+                    sheet.addCell(new Label(7, i, String.valueOf(item.getDiscount())));
+                    sheet.addCell(new Label(8, i, String.valueOf(net)));
                 }
 
             } catch (IOException e) {
@@ -592,10 +632,10 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                             {
-                               /* Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
+                                Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
                                 Uri uri = Uri.parse (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
                                 intent.setDataAndType (uri, "resource/folder");
-                                startActivity (Intent.createChooser (intent, "Open folder"));*/
+                                startActivity (Intent.createChooser (intent, "Open folder"));
 
                             }
                         }
@@ -716,7 +756,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     }
     private String createSpaceAmtPrinter(int firstLength, int secondLegth) {
         //   int num = 32 - firstLength;
-        int num = 18 - firstLength ;
+        int num = 15 - firstLength ;
         num = num - secondLegth;
         return new String(new char[num]).replace('\0', ' ');
     }
@@ -731,13 +771,21 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
                 total = !isBluetooth ? 21 : 48;
-                num = 17;
+                num = 4;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_QUANTITY:
                 total = !isBluetooth ? 5 : 7;
-                num = 2;
+                num = 1;
                 return new String(new char[num]).replace('\0', ' ');
             case REPORT_DATE:
+                total = !isBluetooth ? 11 : 15;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_TOTAL:
+                total = !isBluetooth ? 11 : 15;
+                num = 1;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_DISCOUNT:
                 total = !isBluetooth ? 11 : 15;
                 num = 1;
                 return new String(new char[num]).replace('\0', ' ');
@@ -760,13 +808,13 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
 
-                num = 21-length;
+                num = 8-length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_QUANTITY:
 
-                num = 5-length;
+                num = 4-length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
@@ -776,8 +824,19 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_TOTAL:
+
+                num = 6-length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
+            case COMPANY_ITEM_DISCOUNT:
+                num = 9 - length;
+                if (num < 0)
+                    num = 0;
+                return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_AMOUNT:
-                num = 7 - length;
+                num = 6 - length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');

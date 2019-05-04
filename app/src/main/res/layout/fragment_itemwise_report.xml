@@ -120,7 +120,7 @@
         android:orientation="horizontal"
         android:layout_below="@+id/filter"
         android:padding="5dp"
-        android:weightSum="5"
+        android:weightSum="7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone">
@@ -166,6 +166,27 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="@string/date"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            />
+        <TextView
+            android:id="@+id/chekoutPrice1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:padding="5dp"
+            android:text="Total"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            />
+        <TextView
+            android:id="@+id/txtDiscount1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:text="Discount"
             android:textColor="@color/white"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             />
@@ -237,7 +258,7 @@
         android:layout_alignParentBottom="true"
         android:visibility="gone">
         <TextView
-            android:id="@+id/textCash"
+            android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Total :"
@@ -251,7 +272,45 @@
             android:layout_height="wrap_content"
             android:text="Card :"
             android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/textCash"
+            app:layout_constraintTop_toBottomOf="@+id/text"
+            android:layout_alignParentRight="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Discount :"
+            android:textColor="@color/white"
+            android:layout_below="@+id/text"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+        <TextView
+            android:id="@+id/textDiscount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Card :"
+            android:textColor="@color/white"
+         android:layout_below="@+id/text"
+            android:layout_alignParentRight="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Net :"
+            android:textColor="@color/white"
+            android:layout_below="@+id/text1"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+        <TextView
+            android:id="@+id/textNet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Card :"
+            android:textColor="@color/white"
+            android:layout_below="@+id/text1"
             android:layout_alignParentRight="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
     </RelativeLayout>

@@ -22,6 +22,7 @@ public class Transaction {
     private String category;
     private String invoiceDate;
     private String name;
+    private float discount;
 
     public int getTransactionId() {
         return transactionId;
@@ -125,5 +126,13 @@ public class Transaction {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public float getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(float discount) {
+        this.discount = discount;
     }
 }

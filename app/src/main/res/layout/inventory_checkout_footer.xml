@@ -31,7 +31,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:hint="@string/discount"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="#FFFFFF"
         android:textColorHint="@color/grey"

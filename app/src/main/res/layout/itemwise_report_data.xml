@@ -25,7 +25,7 @@ android:visibility="gone"
         android:layout_below="@+id/textCategory"
         android:orientation="horizontal"
         android:padding="5dp"
-        android:weightSum="5"
+        android:weightSum="7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -68,7 +68,24 @@ android:visibility="gone"
             android:text="CASH"
             android:textColor="@color/colorPrimary"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
-
+        <TextView
+            android:id="@+id/total"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:text=""
+            android:textColor="@color/colorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        <TextView
+            android:id="@+id/discount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:text=""
+            android:textColor="@color/colorPrimary"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
         <TextView
             android:id="@+id/amount"
             android:layout_width="0dp"
