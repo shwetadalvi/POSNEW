@@ -291,8 +291,31 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             /*    if(s.length() == 1 && s.equals("-"))
                 {return;}
                 else if*/
-                if (s.length() > 0)
-                    calculateTotal();
+
+                    if (s.length() > 0){
+                        if(mItemsList.size() != 1){
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setMessage("You can give discount only for single Item");
+                            builder.setCancelable(false);
+
+                            builder.setPositiveButton(
+                                    "Ok",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                            mFooterDiscount.setText("");
+                                        }
+                                    });
+
+
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        }else
+                            calculateTotal();
+
+                    }
+
 
 
             }
@@ -614,7 +637,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             for (Items item : mItemsList) {
                 item.getItemName();
 
-                insertTransactionMaster(true, item, transactionMasterMaxId);
+                insertTransactionMaster(true, item, transactionMasterMaxId,itemDiscount);
 
             }
             /*DialogFragment dialogFragment = BillSampleDialog.newInstance(newInvoiceNo,mItemsList);
@@ -1691,7 +1714,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         return totalCount;
     }
 
-    private void insertTransactionMaster(boolean b, Items item, Integer finalTransactionMasterMaxId) {
+    private void insertTransactionMaster(boolean b, Items item, Integer finalTransactionMasterMaxId,float discount) {
         if (b) {
 
             Transaction transaction = new Transaction();
@@ -1703,6 +1726,7 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             transaction.setItemName(item.getItemName());
             transaction.setInvoiceDate(Constants.getCurrentDate());
             transaction.setGrandTotal(item.getQty() * item.getPrice());
+            transaction.setDiscount(discount);
             if(isSaleReturned)
                 transaction.setName(strRefInv);
 
@@ -1772,6 +1796,87 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
         return qty;
     }
 
+/*    float calculateTotal() {
+
+        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
+        float total = 0;
+        float vat = 0;
+        float itemVat = 5;
+        for (Items items : mItemsList) {
+            itemVat = items.getVat();
+            total = total + items.getTotalItemPrice();
+            vat = vat + calculateVat(items.getVat(), items.getPrice(), items.getQty());
+        }
+
+        textTotal.setText("Gross Amount : " + String.valueOf(Constants.round(total, 2)));
+        String disString = "";
+        if (getString(mFooterDiscount).equalsIgnoreCase("-"))
+            disString = "-1";
+        else
+            disString = String.format("%.2f", Float.valueOf((getString(mFooterDiscount).isEmpty() ? "0" : getString(mFooterDiscount))));
+
+        float discountVat = 0;
+
+      *//*  if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+            total = total + vat;*//*
+        if (!mIsPercentage) {
+            discount = Float.parseFloat(disString);
+            total = total - discount;
+
+        } else {
+            discount = Float.parseFloat(disString);
+            discount = (total * discount) / 100;
+            total = total - discount;
+
+        }
+        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive))) {
+            if (discount > 0) {
+                discountVat = total * itemVat / 100;
+                total = total + discountVat;
+                vat = discountVat;
+            } else
+                total = total + vat;
+        }
+        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive))) {
+            if (discount > 0) {
+                discountVat = total * itemVat / (100+itemVat);
+                total = total ;
+                vat = discountVat;
+            } else
+                total = total ;
+        }
+
+
+        Constants.round(vat, 2);
+        Constants.round(total, 2);
+        Constants.round(discount, 2);
+
+        // updateFooters(vat, discount, total + vat);
+
+        updateFooters(vat, discount, total);
+        return Constants.round(total, 2);
+    }
+
+    float calculateVat(float vat, float price, int qty) {
+        String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
+        if (qty == 0) {
+            if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+                price = price * vat / 100;
+            else if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+                price = price * vat / (100 + vat);
+            else
+                price = 0;
+            return Constants.round(price, 2);
+        } else {
+            if (str_vat.equals(getActivity().getResources().getString(R.string.vat_exclusive)))
+                price = (qty * price) * vat / 100;
+            else if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive)))
+                price = (qty * price) * vat / (100 + vat);
+            else
+                price = 0;
+            return Constants.round(price, 2);
+        }
+    }*/
     float calculateTotal() {
 
         String str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
@@ -1853,7 +1958,6 @@ public class CheckoutFragment extends BaseFragment implements ClickListeners.Che
             return Constants.round(price, 2);
         }
     }
-
     void updateFooters(float vat, float discount, float total) {
         String totalStirng = String.valueOf(Constants.round(total, 2));
         String vatString = String.valueOf(Constants.round(vat, 2));
