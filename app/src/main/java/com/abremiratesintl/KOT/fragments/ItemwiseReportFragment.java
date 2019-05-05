@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.arch.lifecycle.LiveData;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -632,11 +633,26 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                             {
-                                Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
-                                Uri uri = Uri.parse (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
+                               Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
+                                Uri uri = Uri.parse (file.getPath());
                                 intent.setDataAndType (uri, "resource/folder");
                                 startActivity (Intent.createChooser (intent, "Open folder"));
 
+                             /*   Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(Uri.parse(file.getPath()),  "application/vnd.ms-excel");
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                                try {
+                                    getActivity().startActivity(intent);
+                                }
+                                catch (ActivityNotFoundException e) {
+                                    Toast.makeText(getActivity(), "No Application Available to View Excel", Toast.LENGTH_SHORT).show();
+                                }*/
+                               /* Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setData(Uri.fromFile(new File(file.getPath())));
+                                intent.putExtra("org.openintents.extra.ABSOLUTE_PATH", file.getPath());
+                                if (intent.resolveActivity(getContext().getPackageManager()) != null)
+                                    getContext().startActivity(intent);*/
                             }
                         }
                     });

@@ -654,10 +654,10 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                             {
-                                /*Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
+                                Intent intent = new Intent (Intent.ACTION_GET_CONTENT);
                                 Uri uri = Uri.parse (Environment.getExternalStorageDirectory().getAbsolutePath() + "/Reports");
                                 intent.setDataAndType (uri, "resource/folder");
-                                startActivity (Intent.createChooser (intent, "Open folder"));*/
+                                startActivity (Intent.createChooser (intent, "Open folder"));
 
                             }
                         }
