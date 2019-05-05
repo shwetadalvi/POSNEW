@@ -295,12 +295,33 @@
             android:layout_alignParentRight="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
         <TextView
+            android:id="@+id/text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vat :"
+            android:textColor="@color/white"
+            android:layout_below="@+id/text1"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textVat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/white"
+            android:layout_below="@+id/text1"
+            android:layout_alignParentRight="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:visibility="gone"/>
+        <TextView
             android:id="@+id/text2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Net :"
             android:textColor="@color/white"
-            android:layout_below="@+id/text1"
+            android:layout_below="@+id/text3"
             android:layout_alignParentLeft="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
@@ -310,7 +331,7 @@
             android:layout_height="wrap_content"
             android:text="Card :"
             android:textColor="@color/white"
-            android:layout_below="@+id/text1"
+            android:layout_below="@+id/text3"
             android:layout_alignParentRight="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
     </RelativeLayout>

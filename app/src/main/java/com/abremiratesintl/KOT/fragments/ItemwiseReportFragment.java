@@ -118,6 +118,10 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     TextView textDiscount;
     @BindView(R.id.textNet)
     TextView textNet;
+    @BindView(R.id.textVat)
+    TextView textVat;
+    @BindView(R.id.text3)
+    TextView text3;
     @BindView(R.id.spinItem)
     CustomSpinner spinItem;
     @BindView(R.id.spinner_arrow)
@@ -148,6 +152,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
     private BluetoothAdapter bluetoothAdapter;
     private boolean isAllSelected= true;
     String selFromDate,selToDate;
+    String str_vat;
     public ItemwiseReportFragment() {
         // Required empty public constructor
     }
@@ -162,6 +167,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         ((MainActivity)getActivity()).changeTitle(" Item REPORTS");
         mPrefUtils = new PrefUtils(getContext());
 
+        str_vat = mPrefUtils.getStringPrefrence(DEAFULT_PREFS, Constants.VAT_EXCLUSIVE, getActivity().getResources().getString(R.string.vat_exclusive));
         Thread t = new Thread(() -> {
             cashier = mDatabase.mCashierDao().getCashier();
         });
@@ -223,22 +229,32 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
         reportRecyclerview.setVisibility(View.VISIBLE);
         header.setVisibility(View.VISIBLE);
         footer.setVisibility(View.VISIBLE);
-        ItemwiseReportAdapter adapter = new ItemwiseReportAdapter(transactionList, this);
+
+        ItemwiseReportAdapter adapter = new ItemwiseReportAdapter(transactionList, this,getActivity());
         reportRecyclerview.setAdapter(adapter);
         setFooterValues(transactionList);
     }
 
     private void setFooterValues(List<Transaction> transactionList) {
 
-        float total = 0,discount= 0,net = 0;
+        float total = 0,discount= 0,net = 0,vat1=0;
         for (Transaction items : transactionList) {
 
             total = total + items.getGrandTotal();
             float net1 = items.getGrandTotal() - items.getDiscount();
             discount = discount + items.getDiscount();
+            if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive))) {
+                float vat =  net1 * items.getVat()/(100 + items.getVat());
+                net1 = net1 - vat;
+                vat1 = vat1 + vat;
+            }
             net = net + net1;
         }
-
+        if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive))) {
+            textVat.setVisibility(View.VISIBLE);
+            text3.setVisibility(View.VISIBLE);
+            textVat.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(vat1,2)));
+        }
         textTotal.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(total,2)));
         textDiscount.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(discount,2)));
         textNet.setText(getResources().getString(R.string.currency)+" "+String.valueOf(Constants.round(net,2)));
@@ -330,16 +346,20 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                     total = total+ order.getGrandTotal();
                     discount = discount + order.getDiscount();
                     float net1  = order.getGrandTotal() - order.getDiscount();
+                    if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive))) {
+                        float vat =  net1 * order.getVat()/(100 + order.getVat());
+                        net1 = net1 - vat;
+                    }
                     net = net+ net1;
 
                     String item_name = order.getItemName();
-                    if(item_name.length() <= 8) {
+                    if(item_name.length() <= 7) {
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) + order.getItemName() + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, String.valueOf(order.getItemName()).length(), false) +
                                         order.getQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
                                         order.getInvoiceDate() + createSpacePrinterData(REPORT_DATE, order.getInvoiceDate().length(), false) +
-                                        String.format("%.2f",order.getGrandTotal()) + createSpacePrinterData(COMPANY_ITEM_TOTAL, String.valueOf(order.getGrandTotal()).length(), false) +
+                                        String.format("%.2f",order.getGrandTotal()) + createSpacePrinterData(COMPANY_ITEM_TOTAL, String.format("%.2f",order.getGrandTotal()).length(), false) +
                                         String.format("%.2f",order.getDiscount()) + createSpaceAmtPrinter(String.format("%.2f",order.getDiscount()).length(), String.format("%.2f",net1).length()) +
                                         String.format("%.2f",net1 ))
 
@@ -347,14 +367,14 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                                 .setNewLinesAfter(2)
                                 .build());
                     }else{
-                        String str_first = item_name.substring(0,8);
-                        String str_next = item_name.substring(8,item_name.length());
+                        String str_first = item_name.substring(0,6);
+                        String str_next = item_name.substring(6,item_name.length());
                         printables.add(new Printable.PrintableBuilder()
                                 .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
                                 .setText(i + createSpacePrinterData(Sl_NO, String.valueOf(i).length(), false) + str_first + createSpacePrinterData(COMPANY_ITEM_DESCRIPTION, str_first.length(), false) +
                                         order.getQty() + createSpacePrinterData(COMPANY_ITEM_QUANTITY, String.valueOf(order.getQty()).length(), false) +
                                         order.getInvoiceDate() + createSpacePrinterData(REPORT_DATE, order.getInvoiceDate().length(), false) +
-                                        String.format("%.2f",order.getGrandTotal()) + createSpacePrinterData(COMPANY_ITEM_TOTAL, String.valueOf(order.getGrandTotal()).length(), false) +
+                                        String.format("%.2f",order.getGrandTotal()) + createSpacePrinterData(COMPANY_ITEM_TOTAL, String.format("%.2f",order.getGrandTotal()).length(), false) +
                                         String.format("%.2f",order.getDiscount()) + createSpaceAmtPrinter(String.format("%.2f",order.getDiscount()).length(), String.format("%.2f",net1).length()) +
                                         String.format("%.2f",net1 ))
 
@@ -602,10 +622,15 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
 
                 int i = 0;
 
-                Log.e("Inside123","live data"+mTransactionList.size());
+
                 for (Transaction item : mTransactionList) {
                     i = i + 1;
                     float net = item.getGrandTotal() - item.getDiscount();
+                    if (str_vat.equals(getActivity().getResources().getString(R.string.vat_inclusive))) {
+                        float vat =  net * item.getVat()/(100 + item.getVat());
+                        net = net - vat;
+
+                    }
                     sheet.addCell(new Label(0, i, String.valueOf(i)));
                     sheet.addCell(new Label(1, i, String.valueOf(item.getTransactionId())));
                     sheet.addCell(new Label(2, i, item.getItemName()));
@@ -787,7 +812,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
                 total = !isBluetooth ? 21 : 48;
-                num = 4;
+                num = 3;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_QUANTITY:
                 total = !isBluetooth ? 5 : 7;
@@ -795,11 +820,11 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 return new String(new char[num]).replace('\0', ' ');
             case REPORT_DATE:
                 total = !isBluetooth ? 11 : 15;
-                num = 1;
+                num = 7;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_TOTAL:
                 total = !isBluetooth ? 11 : 15;
-                num = 1;
+                num = 2;
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DISCOUNT:
                 total = !isBluetooth ? 11 : 15;
@@ -824,7 +849,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_DESCRIPTION:
 
-                num = 8-length;
+                num = 7-length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');
@@ -842,7 +867,7 @@ public class ItemwiseReportFragment extends BaseFragment implements ClickListene
                 return new String(new char[num]).replace('\0', ' ');
             case COMPANY_ITEM_TOTAL:
 
-                num = 6-length;
+                num = 7-length;
                 if (num < 0)
                     num = 0;
                 return new String(new char[num]).replace('\0', ' ');

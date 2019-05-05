@@ -370,19 +370,19 @@ public class VATwiseReportFragment extends BaseFragment implements ClickListener
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(TOTAL_VATABLE_AMT +createSpacePrinter(TOTAL_VATABLE_AMT.length(),String.valueOf(vatable_amt1).length())+vatable_amt1)
+                        .setText(TOTAL_VATABLE_AMT +createSpacePrinter(TOTAL_VATABLE_AMT.length(),String.format("%.2f",vatable_amt1).length())+String.format("%.2f",vatable_amt1))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(TOTAL_VAT_AMT+createSpacePrinter(TOTAL_VAT_AMT.length(),String.valueOf(vat_amt1).length())+vat_amt1)
+                        .setText(TOTAL_VAT_AMT+createSpacePrinter(TOTAL_VAT_AMT.length(),String.format("%.2f",vat_amt1).length())+String.format("%.2f",vat_amt1))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
                 printables.add(new Printable.PrintableBuilder()
                         .setAlignment(DefaultPrinter.Companion.getALLIGMENT_LEFT())
-                        .setText(COMPANY_ITEM_TOTAL +createSpacePrinter(COMPANY_ITEM_TOTAL.length(),String.valueOf(total).length())+total)
+                        .setText(COMPANY_ITEM_TOTAL +createSpacePrinter(COMPANY_ITEM_TOTAL.length(),String.format("%.2f",total).length())+String.format("%.2f",total))
                         .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
                         .setNewLinesAfter(2)
                         .build());
